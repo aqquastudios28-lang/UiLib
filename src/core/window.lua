@@ -23,11 +23,13 @@ function WindowModule.new(config)
     ScreenGui.ResetOnSpawn = false
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     
-    if syn and syn.protect_gui then 
-        syn.protect_gui(ScreenGui) 
-        ScreenGui.Parent = game:GetService("CoreGui")
-    elseif gethui then 
+    if gethui then 
         ScreenGui.Parent = gethui() 
+    elseif syn and syn.protect_gui then 
+        pcall(function()
+            syn.protect_gui(ScreenGui)
+        end)
+        ScreenGui.Parent = game:GetService("CoreGui")
     else 
         ScreenGui.Parent = game.Players.LocalPlayer.PlayerGui 
     end
