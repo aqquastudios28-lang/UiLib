@@ -9,7 +9,7 @@ Library:Notify({
     Title = "QwenUILib Loaded",
     Content = "Injecting premium liquid glass theme...",
     Duration = 4,
-    Image = "⚡"
+    Image = "zap"
 })
 
 -- Create main window
@@ -25,7 +25,7 @@ local Window = Library:CreateWindow({
 local CombatGroup = Window:CreateTabGroup("Combat")
 
 -- Tab: Aimbot (using Subtabs)
-local AimbotTab = CombatGroup:CreateTab("Aimbot", "🎯")
+local AimbotTab = CombatGroup:CreateTab("Aimbot", "target")
 local MainAimSub = AimbotTab:CreateSubTab("Main Settings")
 local VisualAimSub = AimbotTab:CreateSubTab("Draw FOV")
 
@@ -36,7 +36,7 @@ MainAimSub:CreateToggle("Aimbot Enabled", false, function(state)
         Title = "Aimbot Toggle",
         Content = state and "Aimbot is now ACTIVE." or "Aimbot is now INACTIVE.",
         Duration = 3,
-        Image = state and "🟢" or "🔴"
+        Image = state and "success" or "error"
     })
 end)
 
@@ -67,7 +67,7 @@ end)
 -- =========================================
 local VisualsGroup = Window:CreateTabGroup("Visuals")
 
-local EspTab = VisualsGroup:CreateTab("ESP Settings", "👁️")
+local EspTab = VisualsGroup:CreateTab("ESP Settings", "eye")
 local EspSection = EspTab:CreateSection("ESP Options")
 
 EspSection:CreateToggle("Enable ESP", false, function(state)
@@ -88,7 +88,7 @@ end)
 -- =========================================
 local UtilsGroup = Window:CreateTabGroup("Utilities")
 
-local UtilitiesTab = UtilsGroup:CreateTab("Logs & Actions", "🛠️")
+local UtilitiesTab = UtilsGroup:CreateTab("Logs & Actions", "terminal")
 
 -- Console Component for logging events in-game
 local Console = UtilitiesTab:CreateConsole("Action Console")
@@ -114,7 +114,7 @@ end)
 local SettingsGroup = Window:CreateTabGroup("Settings")
 
 -- Tab: Info (displays Label & Paragraph components)
-local InfoTab = SettingsGroup:CreateTab("Information", "ℹ️")
+local InfoTab = SettingsGroup:CreateTab("Information", "info")
 
 InfoTab:CreateLabel("QwenUILib - The Ultimate UI Framework", Enum.TextXAlignment.Center)
 
@@ -124,7 +124,7 @@ InfoTab:CreateParagraph("Liquid Glass Aesthetic",
 InfoTab:CreateParagraph("Credits", "Developed and upgraded with precision by Antigravity and QwenUI. Enjoy the smoothest UI experience on Roblox executors.")
 
 -- Tab: Settings
-local SettingsTab = SettingsGroup:CreateTab("Configuration", "⚙️")
+local SettingsTab = SettingsGroup:CreateTab("Configuration", "settings")
 
 SettingsTab:CreateKeybind("Toggle UI Keybind", Enum.KeyCode.RightShift, function(key)
     print("Menu toggle bind changed to:", key)
@@ -133,7 +133,7 @@ SettingsTab:CreateKeybind("Toggle UI Keybind", Enum.KeyCode.RightShift, function
         Title = "Keybind Changed",
         Content = "Menu toggle is now bound to " .. tostring(key.Name or key),
         Duration = 3,
-        Image = "⌨️"
+        Image = "key"
     })
 end)
 
@@ -146,7 +146,7 @@ SettingsTab:CreateButton("Save Settings", function()
         Title = "Config Saved",
         Content = "Configuration has been saved to workspace/QwenUI/configs!",
         Duration = 3.5,
-        Image = "💾"
+        Image = "check"
     })
 end)
 
@@ -156,6 +156,6 @@ SettingsTab:CreateButton("Destroy Library UI", function()
         Title = "Unloaded",
         Content = "GUI completely destroyed and memory released.",
         Duration = 3,
-        Image = "🗑️"
+        Image = "trash"
     })
 end)
