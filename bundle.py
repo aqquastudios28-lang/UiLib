@@ -33,7 +33,7 @@ def bundle_project():
                 rel_path = os.path.relpath(full_path, src_dir)
                 module_name = os.path.splitext(rel_path)[0].replace(os.sep, '/')
                 
-                with open(full_path, 'r', encoding='utf-8') as f:
+                with open(full_path, 'r', encoding='utf-8-sig') as f:
                     content = f.read()
                     
                 # Replace require statements

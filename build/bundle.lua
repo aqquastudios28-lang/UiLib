@@ -18,7 +18,7 @@ local function custom_require(name)
 end
 
 modules["components/button"] = function()
-﻿-- src/components/button.lua
+-- src/components/button.lua
 local Theme = custom_require("core/theme")
 local Utils = custom_require("core/utils")
 
@@ -1643,7 +1643,7 @@ end
 end
 
 modules["components/toggle"] = function()
-﻿-- src/components/toggle.lua
+-- src/components/toggle.lua
 local Theme = custom_require("core/theme")
 local Utils = custom_require("core/utils")
 
