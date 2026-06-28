@@ -1813,8 +1813,8 @@ end
 
 modules["core/notification"] = function()
 -- src/core/notification.lua
-local Theme = custom_require("theme")
-local Utils = custom_require("utils")
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 local NotificationManager = {}
 local Container = nil
@@ -1861,7 +1861,7 @@ function NotificationManager.Notify(parentScreenGui, config)
     local shadow = Utils.CreateShadow(Toast, UDim2.new(1, 10, 1, 10), UDim2.new(0, -5, 0, -5), 0.5)
     shadow.ZIndex = Toast.ZIndex - 1
     
-    local Icons = custom_require("icons")
+    local Icons = custom_require("core/icons")
     local resolvedIcon = Icons.Get(iconStr) or iconStr
     local isImage = tostring(resolvedIcon):find("rbxassetid") or tostring(resolvedIcon):find("http")
 
@@ -1998,7 +1998,7 @@ end
 modules["core/utils"] = function()
 -- src/core/utils.lua
 local TweenService = game:GetService("TweenService")
-local Theme = custom_require("theme")
+local Theme = custom_require("core/theme")
 
 local Utils = {}
 
@@ -2192,10 +2192,10 @@ end
 
 modules["core/window"] = function()
 -- src/core/window.lua
-local Theme = custom_require("theme")
-local Utils = custom_require("utils")
-local Notification = custom_require("notification")
-local Icons = custom_require("icons")
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
+local Notification = custom_require("core/notification")
+local Icons = custom_require("core/icons")
 local UIS = game:GetService("UserInputService")
 
 local WindowModule = {}

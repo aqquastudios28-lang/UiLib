@@ -8,10 +8,14 @@ def resolve_require(file_path, require_expr):
     if parts[0] != 'script':
         return None
     
-    # Get current file directory relative to src
-    rel_dir = os.path.dirname(os.path.relpath(file_path, 'src'))
-    path_parts = rel_dir.split(os.sep) if rel_dir else []
-    
+    # Get components relative to src
+    rel_path = os.path.relpath(file_path, 'src')
+    path_parts = rel_path.replace(os.sep, '/').split('/')
+    if path_parts:
+        path_parts[-1] = os.path.splitext(path_parts[-1])[0]
+        if path_parts[-1] == 'init':
+            path_parts.pop()
+            
     for part in parts[1:]:
         if part == 'Parent':
             if path_parts:
