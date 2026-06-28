@@ -123,12 +123,79 @@ function WindowModule.new(config)
     -- Search Box (Glass Effect)
     local SearchContainer = Instance.new("Frame", TitleBar)
     SearchContainer.Size = UDim2.new(0, 180, 0, 28)
-    SearchContainer.Position = UDim2.new(1, -195, 0.5, -14)
+    SearchContainer.Position = UDim2.new(1, -260, 0.5, -14)
     SearchContainer.BackgroundColor3 = Theme.Glass
     SearchContainer.BackgroundTransparency = 0.75
     SearchContainer.ZIndex = 4
     Utils.Corner(SearchContainer, 6)
     Utils.GlassBorder(SearchContainer, 0.8)
+
+    -- Close & Minimize Action Buttons
+    local CloseBtn = Instance.new("TextButton", TitleBar)
+    CloseBtn.Size = UDim2.new(0, 24, 0, 24)
+    CloseBtn.Position = UDim2.new(1, -34, 0.5, -12)
+    CloseBtn.BackgroundTransparency = 1
+    CloseBtn.Text = "✕"
+    CloseBtn.TextColor3 = Theme.SubText
+    CloseBtn.TextSize = 12
+    CloseBtn.Font = Theme.FontBold
+    CloseBtn.ZIndex = 5
+    
+    CloseBtn.MouseEnter:Connect(function()
+        Utils.Tween(CloseBtn, 0.15, {TextColor3 = Color3.fromRGB(255, 80, 80)})
+    end)
+    CloseBtn.MouseLeave:Connect(function()
+        Utils.Tween(CloseBtn, 0.15, {TextColor3 = Theme.SubText})
+    end)
+    
+    CloseBtn.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
+
+    local MinimizeBtn = Instance.new("TextButton", TitleBar)
+    MinimizeBtn.Size = UDim2.new(0, 24, 0, 24)
+    MinimizeBtn.Position = UDim2.new(1, -62, 0.5, -12)
+    MinimizeBtn.BackgroundTransparency = 1
+    MinimizeBtn.Text = "—"
+    MinimizeBtn.TextColor3 = Theme.SubText
+    MinimizeBtn.TextSize = 10
+    MinimizeBtn.Font = Theme.FontBold
+    MinimizeBtn.ZIndex = 5
+
+    local minimized = false
+    local originalSize = config.Size or UDim2.new(0, 620, 0, 460)
+
+    MinimizeBtn.MouseEnter:Connect(function()
+        Utils.Tween(MinimizeBtn, 0.15, {TextColor3 = Theme.Accent})
+    end)
+    MinimizeBtn.MouseLeave:Connect(function()
+        Utils.Tween(MinimizeBtn, 0.15, {TextColor3 = Theme.SubText})
+    end)
+
+    MinimizeBtn.MouseButton1Click:Connect(function()
+        minimized = not minimized
+        MinimizeBtn.Text = minimized and "⬜" or "—"
+        
+        if minimized then
+            Utils.Tween(Main, 0.25, {Size = UDim2.new(0, originalSize.X.Offset, 0, 42)})
+            Utils.Tween(Shadow, 0.25, {Size = UDim2.new(0, originalSize.X.Offset, 0, 42)})
+            Sidebar.Visible = false
+            Content.Visible = false
+            Blob1.Visible = false
+            Blob2.Visible = false
+        else
+            Utils.Tween(Main, 0.25, {Size = originalSize})
+            Utils.Tween(Shadow, 0.25, {Size = originalSize})
+            task.delay(0.25, function()
+                if not minimized then
+                    Sidebar.Visible = true
+                    Content.Visible = true
+                    Blob1.Visible = true
+                    Blob2.Visible = true
+                end
+            end)
+        end
+    end)
 
     local SearchIcon = Instance.new("TextLabel", SearchContainer)
     SearchIcon.Size = UDim2.new(0, 24, 1, 0)
@@ -227,6 +294,19 @@ function WindowModule.new(config)
                     end
                 end
             end
+
+            -- Handle ImageLabel ImageColor3
+            if obj:IsA("ImageLabel") then
+                if obj.Name ~= "Blob1" and obj.Name ~= "Blob2" then
+                    if areColorsEqual(obj.ImageColor3, oldTheme.Accent) then
+                        obj.ImageColor3 = Theme.Accent
+                    elseif areColorsEqual(obj.ImageColor3, oldTheme.Text) then
+                        obj.ImageColor3 = Theme.Text
+                    elseif areColorsEqual(obj.ImageColor3, oldTheme.SubText) then
+                        obj.ImageColor3 = Theme.SubText
+                    end
+                end
+            end
             
             -- Handle BackgroundColor3 & Transparency
             if obj:IsA("Frame") or obj:IsA("ScrollingFrame") or obj:IsA("TextButton") then
@@ -301,6 +381,8 @@ function WindowModule.new(config)
         SearchBox.Font = Theme.Font
         Sidebar.BackgroundColor3 = Theme.Glass
         Sidebar.ScrollBarImageColor3 = Theme.Accent
+        CloseBtn.TextColor3 = Theme.SubText
+        MinimizeBtn.TextColor3 = Theme.SubText
 
         -- Update Sidebar categories/tab groups labels
         for _, child in ipairs(Sidebar:GetChildren()) do

@@ -12,11 +12,12 @@ Library:Notify({
     Image = "zap"
 })
 
--- Create main window
+-- Create main window (with Close and Minimize buttons)
 local Window = Library:CreateWindow({
     Name = "QwenUI Premium v2.0",
     Size = UDim2.new(0, 620, 0, 460),
-    ToggleKey = Enum.KeyCode.RightShift
+    ToggleKey = Enum.KeyCode.RightShift,
+    ThemeEditor = true -- Show built-in Theme Customizer
 })
 
 -- =========================================
@@ -30,7 +31,7 @@ local MainAimSub = AimbotTab:CreateSubTab("Main Settings")
 local VisualAimSub = AimbotTab:CreateSubTab("Draw FOV")
 
 -- Main Settings Subtab
-MainAimSub:CreateToggle("Aimbot Enabled", false, function(state)
+MainAimSub:CreateToggle("Aimbot Enabled", false, "zap", function(state)
     print("Aimbot status:", state)
     Window:Notify({
         Title = "Aimbot Toggle",
@@ -48,8 +49,18 @@ MainAimSub:CreateDropdown("Hitbox Priority", {"Head", "Torso", "Random"}, "Head"
     print("Hitbox Target:", target)
 end)
 
+-- Showcase horizontal row container (Side-by-Side buttons with prefix icons)
+local ActionRow = MainAimSub:CreateSection("Quick Actions")
+local Row = ActionRow:CreateRow()
+Row:CreateButton("Lock Target", "target", function()
+    print("Target locked!")
+end)
+Row:CreateButton("Release Lock", "close", function()
+    print("Target released.")
+end)
+
 -- Visual Aim Subtab
-VisualAimSub:CreateToggle("Show FOV Circle", false, function(state)
+VisualAimSub:CreateToggle("Show FOV Circle", false, "eye", function(state)
     print("FOV Circle Visible:", state)
 end)
 
@@ -68,9 +79,11 @@ end)
 local VisualsGroup = Window:CreateTabGroup("Visuals")
 
 local EspTab = VisualsGroup:CreateTab("ESP Settings", "eye")
-local EspSection = EspTab:CreateSection("ESP Options")
 
-EspSection:CreateToggle("Enable ESP", false, function(state)
+-- Showcase Collapsible Section with a custom icon
+local EspSection = EspTab:CreateSection("ESP Options", "visuals")
+
+EspSection:CreateToggle("Enable ESP", false, "eye", function(state)
     print("ESP Active:", state)
 end)
 
@@ -96,13 +109,15 @@ local Console = UtilitiesTab:CreateConsole("Action Console")
 Console:Log("Console initialized successfully.", "success")
 Console:Log("Welcome to QwenUILib premium console environment.", "info")
 
-UtilitiesTab:CreateButton("Trigger Test Log", function()
+-- Side-by-side action controls inside a row container
+local LogControlsRow = UtilitiesTab:CreateRow()
+LogControlsRow:CreateButton("Trigger Test Log", "zap", function()
     local logTypes = {"info", "warn", "error", "success"}
     local chosenType = logTypes[math.random(1, #logTypes)]
     Console:Log("This is a random test log entry of type: " .. chosenType, chosenType)
 end)
 
-UtilitiesTab:CreateButton("Clear Logs", function()
+LogControlsRow:CreateButton("Clear Logs", "trash", function()
     Console:Clear()
     Console:Log("Console logs cleared by user.", "warn")
 end)
@@ -113,8 +128,11 @@ end)
 -- =========================================
 local SettingsGroup = Window:CreateTabGroup("Settings")
 
--- Tab: Info (displays Label & Paragraph components)
+-- Tab: Info (displays Banner, Label & Paragraph components)
 local InfoTab = SettingsGroup:CreateTab("Information", "info")
+
+-- Showcase custom glassmorphic cropped banner/image
+InfoTab:CreateBanner("rbxassetid://7047087192", 110)
 
 InfoTab:CreateLabel("QwenUILib - The Ultimate UI Framework", Enum.TextXAlignment.Center)
 
@@ -137,11 +155,14 @@ SettingsTab:CreateKeybind("Toggle UI Keybind", Enum.KeyCode.RightShift, function
     })
 end)
 
-SettingsTab:CreateTextbox("Config Name", "Enter name...", "DefaultConfig", function(text)
+-- Textbox with prefix file icon
+SettingsTab:CreateTextbox("Config Name", "Enter name...", "DefaultConfig", "file", function(text)
     print("Current configuration title:", text)
 end)
 
-SettingsTab:CreateButton("Save Settings", function()
+-- Layout Row for Save/Reset Config
+local ConfigRow = SettingsTab:CreateRow()
+ConfigRow:CreateButton("Save Settings", "check", function()
     Window:Notify({
         Title = "Config Saved",
         Content = "Configuration has been saved to workspace/QwenUI/configs!",
@@ -150,7 +171,7 @@ SettingsTab:CreateButton("Save Settings", function()
     })
 end)
 
-SettingsTab:CreateButton("Destroy Library UI", function()
+ConfigRow:CreateButton("Unload Library UI", "trash", function()
     Window.ScreenGui:Destroy()
     Library:Notify({
         Title = "Unloaded",

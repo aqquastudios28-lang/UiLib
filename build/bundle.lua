@@ -17,12 +17,58 @@ local function custom_require(name)
     return result
 end
 
+modules["components/banner"] = function()
+-- src/components/banner.lua
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
+
+return function(Tab, imageAsset, height)
+    height = height or 120
+    
+    -- Main Frame (Glass border frame)
+    local Frame = Instance.new("Frame", Tab.Frame)
+    Frame.Size = UDim2.new(1, 0, 0, height)
+    Frame.BackgroundColor3 = Theme.Glass
+    Frame.BackgroundTransparency = 0.5
+    Frame.BorderSizePixel = 0
+    Frame.ZIndex = 2
+    Utils.Corner(Frame, 8)
+    Utils.GlassBorder(Frame, 1.2)
+    
+    -- Banner Image Label
+    local Image = Instance.new("ImageLabel", Frame)
+    Image.Size = UDim2.new(1, -6, 1, -6)
+    Image.Position = UDim2.new(0, 3, 0, 3)
+    Image.BackgroundTransparency = 1
+    Image.Image = imageAsset or "rbxassetid://0"
+    Image.ScaleType = Enum.ScaleType.Crop
+    Image.ZIndex = 3
+    Utils.Corner(Image, 6)
+    
+    table.insert(Tab.Elements, { Frame = Frame, Name = "Banner" })
+    
+    return {
+        SetImage = function(img)
+            Image.Image = img
+        end,
+        Frame = Frame
+    }
+end
+
+end
+
 modules["components/button"] = function()
 -- src/components/button.lua
 local Theme = custom_require("core/theme")
 local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
 
-return function(Tab, name, callback)
+return function(Tab, name, icon, callback)
+    -- Handle backwards compatibility for Tab:CreateButton(name, callback)
+    if type(icon) == "function" then
+        callback = icon
+        icon = nil
+    end
     callback = callback or function() end
 
     -- Main Button Frame (Glass)
@@ -36,16 +82,42 @@ return function(Tab, name, callback)
     Utils.Corner(Frame, 8)
     Utils.GlassBorder(Frame, 0.8)
 
+    -- Lucide Icon Prefix (Optional)
+    local IconImg, IconTxt
+    if icon then
+        local resolved = Icons.Get(icon) or icon
+        if tostring(resolved):find("rbxassetid") or tostring(resolved):find("http") then
+            IconImg = Instance.new("ImageLabel", Frame)
+            IconImg.Size = UDim2.new(0, 16, 0, 16)
+            IconImg.Position = UDim2.new(0, 12, 0.5, -8)
+            IconImg.BackgroundTransparency = 1
+            IconImg.Image = resolved
+            IconImg.ImageColor3 = Theme.Text
+            IconImg.ZIndex = 3
+        else
+            IconTxt = Instance.new("TextLabel", Frame)
+            IconTxt.Size = UDim2.new(0, 16, 1, 0)
+            IconTxt.Position = UDim2.new(0, 12, 0, 0)
+            IconTxt.BackgroundTransparency = 1
+            IconTxt.Text = resolved
+            IconTxt.TextColor3 = Theme.Text
+            IconTxt.TextSize = 13
+            IconTxt.Font = Theme.Font
+            IconTxt.ZIndex = 3
+        end
+    end
+
     -- Button Label
     local Label = Instance.new("TextLabel", Frame)
-    Label.Size = UDim2.new(1, -20, 1, 0)
-    Label.Position = UDim2.new(0, 10, 0, 0)
+    Label.Size = UDim2.new(1, icon and -42 or -20, 1, 0)
+    Label.Position = UDim2.new(0, icon and 34 or 10, 0, 0)
     Label.BackgroundTransparency = 1
     Label.Text = name
     Label.TextColor3 = Theme.Text
     Label.TextSize = 13
     Label.Font = Theme.Font
     Label.ZIndex = 3
+    Label.TextXAlignment = icon and Enum.TextXAlignment.Left or Enum.TextXAlignment.Center
 
     -- Accent glow layer (hidden by default)
     local Glow = Instance.new("Frame", Frame)
@@ -60,11 +132,15 @@ return function(Tab, name, callback)
         Utils.Tween(Frame, 0.2, {BackgroundTransparency = 0.65})
         Utils.Tween(Glow, 0.2, {BackgroundTransparency = 0.85})
         Utils.Tween(Label, 0.2, {TextColor3 = Theme.Text})
+        if IconImg then Utils.Tween(IconImg, 0.2, {ImageColor3 = Theme.Accent}) end
+        if IconTxt then Utils.Tween(IconTxt, 0.2, {TextColor3 = Theme.Accent}) end
     end)
 
     Frame.MouseLeave:Connect(function()
         Utils.Tween(Frame, 0.2, {BackgroundTransparency = 0.75})
         Utils.Tween(Glow, 0.2, {BackgroundTransparency = 1})
+        if IconImg then Utils.Tween(IconImg, 0.2, {ImageColor3 = Theme.Text}) end
+        if IconTxt then Utils.Tween(IconTxt, 0.2, {TextColor3 = Theme.Text}) end
     end)
 
     -- Press Effect
@@ -1355,26 +1431,112 @@ end
 
 end
 
+modules["components/row"] = function()
+-- src/components/row.lua
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
+
+return function(Tab)
+    -- Row Container (Transparent)
+    local Frame = Instance.new("Frame", Tab.Frame)
+    Frame.Size = UDim2.new(1, 0, 0, 38)
+    Frame.BackgroundTransparency = 1
+    Frame.BorderSizePixel = 0
+    Frame.ZIndex = 2
+
+    local Layout = Instance.new("UIListLayout", Frame)
+    Layout.FillDirection = Enum.FillDirection.Horizontal
+    Layout.Padding = UDim.new(0, 8)
+    Layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+    -- Automatically resize children to fill horizontal space evenly
+    local function resizeChildren()
+        local children = {}
+        for _, child in ipairs(Frame:GetChildren()) do
+            if child:IsA("Frame") or child:IsA("TextButton") then
+                table.insert(children, child)
+            end
+        end
+        
+        local count = #children
+        if count > 0 then
+            local spacing = Layout.Padding.Offset
+            local totalSpacing = spacing * (count - 1)
+            for _, child in ipairs(children) do
+                -- We divide width evenly and preserve height
+                child.Size = UDim2.new(1 / count, -totalSpacing / count, 1, 0)
+            end
+        end
+    end
+
+    Frame.ChildAdded:Connect(function(child)
+        if child:IsA("Frame") or child:IsA("TextButton") then
+            task.defer(resizeChildren)
+        end
+    end)
+
+    Frame.ChildRemoved:Connect(function(child)
+        task.defer(resizeChildren)
+    end)
+
+    table.insert(Tab.Elements, { Frame = Frame, Name = "Row" })
+
+    return Frame
+end
+
+end
+
 modules["components/section"] = function()
 -- src/components/section.lua
 local Theme = custom_require("core/theme")
 local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
 
-return function(Tab, name)
-    -- Section Header
-    local Header = Instance.new("Frame", Tab.Frame)
+return function(Tab, name, icon)
+    local isExpanded = true
+
+    -- Section Header (Clickable Button for collapse/expand)
+    local Header = Instance.new("TextButton", Tab.Frame)
     Header.Size = UDim2.new(1, 0, 0, 30)
     Header.BackgroundColor3 = Theme.Glass
     Header.BackgroundTransparency = 0.85
     Header.BorderSizePixel = 0
+    Header.Text = ""
+    Header.AutoButtonColor = false
     Header.ZIndex = 2
     Utils.Corner(Header, 6)
     Utils.GlassBorder(Header, 0.6)
+    Utils.HoverEffect(Header, Theme.GlassLight, Theme.Glass)
+
+    -- Lucide Icon Prefix (Optional)
+    local IconImg, IconTxt
+    if icon then
+        local resolved = Icons.Get(icon) or icon
+        if tostring(resolved):find("rbxassetid") or tostring(resolved):find("http") then
+            IconImg = Instance.new("ImageLabel", Header)
+            IconImg.Size = UDim2.new(0, 14, 0, 14)
+            IconImg.Position = UDim2.new(0, 10, 0.5, -7)
+            IconImg.BackgroundTransparency = 1
+            IconImg.Image = resolved
+            IconImg.ImageColor3 = Theme.Accent
+            IconImg.ZIndex = 3
+        else
+            IconTxt = Instance.new("TextLabel", Header)
+            IconTxt.Size = UDim2.new(0, 14, 1, 0)
+            IconTxt.Position = UDim2.new(0, 10, 0, 0)
+            IconTxt.BackgroundTransparency = 1
+            IconTxt.Text = resolved
+            IconTxt.TextColor3 = Theme.Accent
+            IconTxt.TextSize = 12
+            IconTxt.Font = Theme.Font
+            IconTxt.ZIndex = 3
+        end
+    end
 
     -- Section Title
     local Title = Instance.new("TextLabel", Header)
-    Title.Size = UDim2.new(1, -20, 1, 0)
-    Title.Position = UDim2.new(0, 12, 0, 0)
+    Title.Size = UDim2.new(1, icon and -60 or -40, 1, 0)
+    Title.Position = UDim2.new(0, icon and 30 or 12, 0, 0)
     Title.BackgroundTransparency = 1
     Title.Text = name
     Title.TextColor3 = Theme.Accent
@@ -1382,6 +1544,17 @@ return function(Tab, name)
     Title.Font = Theme.FontBold
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.ZIndex = 3
+
+    -- Collapse Arrow
+    local Arrow = Instance.new("TextLabel", Header)
+    Arrow.Size = UDim2.new(0, 24, 1, 0)
+    Arrow.Position = UDim2.new(1, -26, 0, 0)
+    Arrow.BackgroundTransparency = 1
+    Arrow.Text = "▼"
+    Arrow.TextColor3 = Theme.Muted
+    Arrow.TextSize = 9
+    Arrow.Font = Theme.FontBold
+    Arrow.ZIndex = 3
 
     -- Section Content Container
     local Content = Instance.new("Frame", Tab.Frame)
@@ -1396,10 +1569,22 @@ return function(Tab, name)
         Content.Size = UDim2.new(1, 0, 0, Layout.AbsoluteContentSize.Y)
     end)
 
+    -- Toggle expand/collapse action
+    Header.MouseButton1Click:Connect(function()
+        isExpanded = not isExpanded
+        Arrow.Text = isExpanded and "▼" or "►"
+        Content.Visible = isExpanded
+    end)
+
     table.insert(Tab.Elements, { Frame = Header, Name = name })
 
     return {
         Frame = Content,
+        Header = Header,
+        Arrow = Arrow,
+        Title = Title,
+        IconImg = IconImg,
+        IconTxt = IconTxt,
         Elements = {}
     }
 end
@@ -1563,8 +1748,14 @@ modules["components/textbox"] = function()
 -- src/components/textbox.lua
 local Theme = custom_require("core/theme")
 local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
 
-return function(Tab, name, placeholder, default, callback)
+return function(Tab, name, placeholder, default, icon, callback)
+    -- Handle parameter overloading for backwards compatibility
+    if type(icon) == "function" then
+        callback = icon
+        icon = nil
+    end
     placeholder = placeholder or "Enter text..."
     default = default or ""
     callback = callback or function() end
@@ -1579,10 +1770,35 @@ return function(Tab, name, placeholder, default, callback)
     Utils.Corner(Frame, 8)
     Utils.GlassBorder(Frame, 0.8)
 
+    -- Lucide Icon Prefix (Optional)
+    local IconImg, IconTxt
+    if icon then
+        local resolved = Icons.Get(icon) or icon
+        if tostring(resolved):find("rbxassetid") or tostring(resolved):find("http") then
+            IconImg = Instance.new("ImageLabel", Frame)
+            IconImg.Size = UDim2.new(0, 16, 0, 16)
+            IconImg.Position = UDim2.new(0, 12, 0.5, -8)
+            IconImg.BackgroundTransparency = 1
+            IconImg.Image = resolved
+            IconImg.ImageColor3 = Theme.SubText
+            IconImg.ZIndex = 3
+        else
+            IconTxt = Instance.new("TextLabel", Frame)
+            IconTxt.Size = UDim2.new(0, 16, 1, 0)
+            IconTxt.Position = UDim2.new(0, 12, 0, 0)
+            IconTxt.BackgroundTransparency = 1
+            IconTxt.Text = resolved
+            IconTxt.TextColor3 = Theme.SubText
+            IconTxt.TextSize = 12
+            IconTxt.Font = Theme.Font
+            IconTxt.ZIndex = 3
+        end
+    end
+
     -- Label
     local Label = Instance.new("TextLabel", Frame)
     Label.Size = UDim2.new(0, 80, 1, 0)
-    Label.Position = UDim2.new(0, 14, 0, 0)
+    Label.Position = UDim2.new(0, icon and 34 or 14, 0, 0)
     Label.BackgroundTransparency = 1
     Label.Text = name
     Label.TextColor3 = Theme.SubText
@@ -1593,8 +1809,8 @@ return function(Tab, name, placeholder, default, callback)
 
     -- Input Box
     local Input = Instance.new("TextBox", Frame)
-    Input.Size = UDim2.new(1, -110, 0, 26)
-    Input.Position = UDim2.new(0, 95, 0.5, -13)
+    Input.Size = UDim2.new(1, icon and -130 or -110, 0, 26)
+    Input.Position = UDim2.new(0, icon and 115 or 95, 0.5, -13)
     Input.BackgroundColor3 = Theme.GlassLight
     Input.BackgroundTransparency = 0.7
     Input.Text = default
@@ -1611,17 +1827,21 @@ return function(Tab, name, placeholder, default, callback)
     Input.Focused:Connect(function()
         Utils.Tween(Input, 0.2, {
             BackgroundTransparency = 0.6,
-            Size = UDim2.new(1, -105, 0, 28)
+            Size = UDim2.new(1, icon and -125 or -105, 0, 28)
         })
         Utils.Tween(Frame, 0.2, {BackgroundTransparency = 0.7})
+        if IconImg then Utils.Tween(IconImg, 0.2, {ImageColor3 = Theme.Accent}) end
+        if IconTxt then Utils.Tween(IconTxt, 0.2, {TextColor3 = Theme.Accent}) end
     end)
 
     Input.FocusLost:Connect(function(enterPressed)
         Utils.Tween(Input, 0.2, {
             BackgroundTransparency = 0.7,
-            Size = UDim2.new(1, -110, 0, 26)
+            Size = UDim2.new(1, icon and -130 or -110, 0, 26)
         })
         Utils.Tween(Frame, 0.2, {BackgroundTransparency = 0.75})
+        if IconImg then Utils.Tween(IconImg, 0.2, {ImageColor3 = Theme.SubText}) end
+        if IconTxt then Utils.Tween(IconTxt, 0.2, {TextColor3 = Theme.SubText}) end
         
         if enterPressed then
             task.spawn(callback, Input.Text)
@@ -1646,8 +1866,20 @@ modules["components/toggle"] = function()
 -- src/components/toggle.lua
 local Theme = custom_require("core/theme")
 local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
 
-return function(Tab, name, default, callback)
+return function(Tab, name, default, icon, callback)
+    -- Handle parameter overloading for backwards compatibility
+    if type(icon) == "function" then
+        callback = icon
+        icon = nil
+    end
+    if type(default) == "function" then
+        callback = default
+        default = false
+        icon = nil
+    end
+    
     local state = default or false
     callback = callback or function() end
 
@@ -1661,10 +1893,35 @@ return function(Tab, name, default, callback)
     Utils.Corner(Frame, 8)
     Utils.GlassBorder(Frame, 0.8)
 
+    -- Lucide Icon Prefix (Optional)
+    local IconImg, IconTxt
+    if icon then
+        local resolved = Icons.Get(icon) or icon
+        if tostring(resolved):find("rbxassetid") or tostring(resolved):find("http") then
+            IconImg = Instance.new("ImageLabel", Frame)
+            IconImg.Size = UDim2.new(0, 16, 0, 16)
+            IconImg.Position = UDim2.new(0, 12, 0.5, -8)
+            IconImg.BackgroundTransparency = 1
+            IconImg.Image = resolved
+            IconImg.ImageColor3 = Theme.SubText
+            IconImg.ZIndex = 3
+        else
+            IconTxt = Instance.new("TextLabel", Frame)
+            IconTxt.Size = UDim2.new(0, 16, 1, 0)
+            IconTxt.Position = UDim2.new(0, 12, 0, 0)
+            IconTxt.BackgroundTransparency = 1
+            IconTxt.Text = resolved
+            IconTxt.TextColor3 = Theme.SubText
+            IconTxt.TextSize = 13
+            IconTxt.Font = Theme.Font
+            IconTxt.ZIndex = 3
+        end
+    end
+
     -- Label
     local Label = Instance.new("TextLabel", Frame)
-    Label.Size = UDim2.new(1, -60, 1, 0)
-    Label.Position = UDim2.new(0, 14, 0, 0)
+    Label.Size = UDim2.new(1, icon and -100 or -80, 1, 0)
+    Label.Position = UDim2.new(0, icon and 36 or 14, 0, 0)
     Label.BackgroundTransparency = 1
     Label.Text = name
     Label.TextColor3 = Theme.Text
@@ -1713,6 +1970,12 @@ return function(Tab, name, default, callback)
         Utils.Tween(Circle, 0.25, {
             Position = state and UDim2.new(1, -21, 0.5, -9) or UDim2.new(0, 3, 0.5, -9)
         })
+        if IconImg then
+            Utils.Tween(IconImg, 0.2, {ImageColor3 = state and Theme.Accent or Theme.SubText})
+        end
+        if IconTxt then
+            Utils.Tween(IconTxt, 0.2, {TextColor3 = state and Theme.Accent or Theme.SubText})
+        end
         task.spawn(callback, state)
     end
 
@@ -2369,12 +2632,79 @@ function WindowModule.new(config)
     -- Search Box (Glass Effect)
     local SearchContainer = Instance.new("Frame", TitleBar)
     SearchContainer.Size = UDim2.new(0, 180, 0, 28)
-    SearchContainer.Position = UDim2.new(1, -195, 0.5, -14)
+    SearchContainer.Position = UDim2.new(1, -260, 0.5, -14)
     SearchContainer.BackgroundColor3 = Theme.Glass
     SearchContainer.BackgroundTransparency = 0.75
     SearchContainer.ZIndex = 4
     Utils.Corner(SearchContainer, 6)
     Utils.GlassBorder(SearchContainer, 0.8)
+
+    -- Close & Minimize Action Buttons
+    local CloseBtn = Instance.new("TextButton", TitleBar)
+    CloseBtn.Size = UDim2.new(0, 24, 0, 24)
+    CloseBtn.Position = UDim2.new(1, -34, 0.5, -12)
+    CloseBtn.BackgroundTransparency = 1
+    CloseBtn.Text = "✕"
+    CloseBtn.TextColor3 = Theme.SubText
+    CloseBtn.TextSize = 12
+    CloseBtn.Font = Theme.FontBold
+    CloseBtn.ZIndex = 5
+    
+    CloseBtn.MouseEnter:Connect(function()
+        Utils.Tween(CloseBtn, 0.15, {TextColor3 = Color3.fromRGB(255, 80, 80)})
+    end)
+    CloseBtn.MouseLeave:Connect(function()
+        Utils.Tween(CloseBtn, 0.15, {TextColor3 = Theme.SubText})
+    end)
+    
+    CloseBtn.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
+
+    local MinimizeBtn = Instance.new("TextButton", TitleBar)
+    MinimizeBtn.Size = UDim2.new(0, 24, 0, 24)
+    MinimizeBtn.Position = UDim2.new(1, -62, 0.5, -12)
+    MinimizeBtn.BackgroundTransparency = 1
+    MinimizeBtn.Text = "—"
+    MinimizeBtn.TextColor3 = Theme.SubText
+    MinimizeBtn.TextSize = 10
+    MinimizeBtn.Font = Theme.FontBold
+    MinimizeBtn.ZIndex = 5
+
+    local minimized = false
+    local originalSize = config.Size or UDim2.new(0, 620, 0, 460)
+
+    MinimizeBtn.MouseEnter:Connect(function()
+        Utils.Tween(MinimizeBtn, 0.15, {TextColor3 = Theme.Accent})
+    end)
+    MinimizeBtn.MouseLeave:Connect(function()
+        Utils.Tween(MinimizeBtn, 0.15, {TextColor3 = Theme.SubText})
+    end)
+
+    MinimizeBtn.MouseButton1Click:Connect(function()
+        minimized = not minimized
+        MinimizeBtn.Text = minimized and "⬜" or "—"
+        
+        if minimized then
+            Utils.Tween(Main, 0.25, {Size = UDim2.new(0, originalSize.X.Offset, 0, 42)})
+            Utils.Tween(Shadow, 0.25, {Size = UDim2.new(0, originalSize.X.Offset, 0, 42)})
+            Sidebar.Visible = false
+            Content.Visible = false
+            Blob1.Visible = false
+            Blob2.Visible = false
+        else
+            Utils.Tween(Main, 0.25, {Size = originalSize})
+            Utils.Tween(Shadow, 0.25, {Size = originalSize})
+            task.delay(0.25, function()
+                if not minimized then
+                    Sidebar.Visible = true
+                    Content.Visible = true
+                    Blob1.Visible = true
+                    Blob2.Visible = true
+                end
+            end)
+        end
+    end)
 
     local SearchIcon = Instance.new("TextLabel", SearchContainer)
     SearchIcon.Size = UDim2.new(0, 24, 1, 0)
@@ -2473,6 +2803,19 @@ function WindowModule.new(config)
                     end
                 end
             end
+
+            -- Handle ImageLabel ImageColor3
+            if obj:IsA("ImageLabel") then
+                if obj.Name ~= "Blob1" and obj.Name ~= "Blob2" then
+                    if areColorsEqual(obj.ImageColor3, oldTheme.Accent) then
+                        obj.ImageColor3 = Theme.Accent
+                    elseif areColorsEqual(obj.ImageColor3, oldTheme.Text) then
+                        obj.ImageColor3 = Theme.Text
+                    elseif areColorsEqual(obj.ImageColor3, oldTheme.SubText) then
+                        obj.ImageColor3 = Theme.SubText
+                    end
+                end
+            end
             
             -- Handle BackgroundColor3 & Transparency
             if obj:IsA("Frame") or obj:IsA("ScrollingFrame") or obj:IsA("TextButton") then
@@ -2547,6 +2890,8 @@ function WindowModule.new(config)
         SearchBox.Font = Theme.Font
         Sidebar.BackgroundColor3 = Theme.Glass
         Sidebar.ScrollBarImageColor3 = Theme.Accent
+        CloseBtn.TextColor3 = Theme.SubText
+        MinimizeBtn.TextColor3 = Theme.SubText
 
         -- Update Sidebar categories/tab groups labels
         for _, child in ipairs(Sidebar:GetChildren()) do
@@ -3029,7 +3374,9 @@ local Components = {
     Section = custom_require("components/section"),
     Label = custom_require("components/label"),
     Paragraph = custom_require("components/paragraph"),
-    Console = custom_require("components/console")
+    Console = custom_require("components/console"),
+    Row = custom_require("components/row"),
+    Banner = custom_require("components/banner")
 }
 
 local Library = {}
@@ -3058,12 +3405,12 @@ function Library:CreateWindow(config)
     -- Tab / Section / SubTab Methods
     local TabMethods = {}
     
-    function TabMethods:CreateToggle(name, default, callback)
-        return Components.Toggle(self, name, default, callback)
+    function TabMethods:CreateToggle(name, default, icon, callback)
+        return Components.Toggle(self, name, default, icon, callback)
     end
     
-    function TabMethods:CreateButton(name, callback)
-        return Components.Button(self, name, callback)
+    function TabMethods:CreateButton(name, icon, callback)
+        return Components.Button(self, name, icon, callback)
     end
     
     function TabMethods:CreateSlider(name, min, max, default, callback)
@@ -3086,8 +3433,8 @@ function Library:CreateWindow(config)
         return Components.Keybind(self, name, defaultKey, callback)
     end
     
-    function TabMethods:CreateTextbox(name, placeholder, default, callback)
-        return Components.Textbox(self, name, placeholder, default, callback)
+    function TabMethods:CreateTextbox(name, placeholder, default, icon, callback)
+        return Components.Textbox(self, name, placeholder, default, icon, callback)
     end
 
     function TabMethods:CreateLabel(text, alignment)
@@ -3102,11 +3449,26 @@ function Library:CreateWindow(config)
         return Components.Console(self, name)
     end
     
-    function TabMethods:CreateSection(name)
-        local section = Components.Section(self, name)
+    function TabMethods:CreateSection(name, icon)
+        local section = Components.Section(self, name, icon)
         -- Inject same methods into section
         setmetatable(section, {__index = TabMethods})
         return section
+    end
+
+    local function decorateContainer(container, targetFrame)
+        local decorated = { Frame = targetFrame, Elements = container.Elements }
+        setmetatable(decorated, {__index = TabMethods})
+        return decorated
+    end
+
+    function TabMethods:CreateRow()
+        local RowFrame = Components.Row(self)
+        return decorateContainer(self, RowFrame)
+    end
+    
+    function TabMethods:CreateBanner(imageAsset, height)
+        return Components.Banner(self, imageAsset, height)
     end
 
     -- Override CreateTab to apply metatable and decorate CreateSubTab

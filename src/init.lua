@@ -21,7 +21,9 @@ local Components = {
     Section = require(script.components.section),
     Label = require(script.components.label),
     Paragraph = require(script.components.paragraph),
-    Console = require(script.components.console)
+    Console = require(script.components.console),
+    Row = require(script.components.row),
+    Banner = require(script.components.banner)
 }
 
 local Library = {}
@@ -50,12 +52,12 @@ function Library:CreateWindow(config)
     -- Tab / Section / SubTab Methods
     local TabMethods = {}
     
-    function TabMethods:CreateToggle(name, default, callback)
-        return Components.Toggle(self, name, default, callback)
+    function TabMethods:CreateToggle(name, default, icon, callback)
+        return Components.Toggle(self, name, default, icon, callback)
     end
     
-    function TabMethods:CreateButton(name, callback)
-        return Components.Button(self, name, callback)
+    function TabMethods:CreateButton(name, icon, callback)
+        return Components.Button(self, name, icon, callback)
     end
     
     function TabMethods:CreateSlider(name, min, max, default, callback)
@@ -78,8 +80,8 @@ function Library:CreateWindow(config)
         return Components.Keybind(self, name, defaultKey, callback)
     end
     
-    function TabMethods:CreateTextbox(name, placeholder, default, callback)
-        return Components.Textbox(self, name, placeholder, default, callback)
+    function TabMethods:CreateTextbox(name, placeholder, default, icon, callback)
+        return Components.Textbox(self, name, placeholder, default, icon, callback)
     end
 
     function TabMethods:CreateLabel(text, alignment)
@@ -94,11 +96,26 @@ function Library:CreateWindow(config)
         return Components.Console(self, name)
     end
     
-    function TabMethods:CreateSection(name)
-        local section = Components.Section(self, name)
+    function TabMethods:CreateSection(name, icon)
+        local section = Components.Section(self, name, icon)
         -- Inject same methods into section
         setmetatable(section, {__index = TabMethods})
         return section
+    end
+
+    local function decorateContainer(container, targetFrame)
+        local decorated = { Frame = targetFrame, Elements = container.Elements }
+        setmetatable(decorated, {__index = TabMethods})
+        return decorated
+    end
+
+    function TabMethods:CreateRow()
+        local RowFrame = Components.Row(self)
+        return decorateContainer(self, RowFrame)
+    end
+    
+    function TabMethods:CreateBanner(imageAsset, height)
+        return Components.Banner(self, imageAsset, height)
     end
 
     -- Override CreateTab to apply metatable and decorate CreateSubTab
