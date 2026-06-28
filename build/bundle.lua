@@ -2216,17 +2216,11 @@ function WindowModule.new(config)
     ScreenGui.ResetOnSpawn = false
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     
-    -- Set ScreenGui Parent safely to avoid anti-cheat SEH crashes on CoreGui
-    local targetParent = nil
-    if gethui then
-        local hui = gethui()
-        if hui and tostring(hui) ~= "CoreGui" and hui ~= game:GetService("CoreGui") then
-            targetParent = hui
-        end
-    end
+    -- Set ScreenGui Parent safely to avoid anti-cheat SEH crashes on broken executors
+    local targetParent = config.Parent
     
     if not targetParent then
-        targetParent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+        targetParent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
     end
     
     ScreenGui.Parent = targetParent
