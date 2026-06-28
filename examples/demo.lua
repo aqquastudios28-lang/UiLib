@@ -2,7 +2,7 @@
 -- Complete Premium Showcase of QwenUILib v2.0.0
 -- Beautiful Obsidian Dark Glass UI with Liquid Neon effects
 
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/YourName/QwenUILib/main/build/bundle.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/main/build/bundle.lua"))()
 
 -- Initial Load Notification
 Library:Notify({
