@@ -1738,6 +1738,79 @@ return function(Tab, name, default, callback)
 end
 end
 
+modules["core/icons"] = function()
+-- src/core/icons.lua
+-- Built-in Lucide Roblox Icon Library for QwenUILib
+
+local Icons = {
+    -- Navigation & Core
+    ["home"] = "rbxassetid://10747373864",
+    ["search"] = "rbxassetid://10747373033",
+    ["settings"] = "rbxassetid://10747373111",
+    ["gear"] = "rbxassetid://10747373111",
+    ["info"] = "rbxassetid://10747372792",
+    ["help"] = "rbxassetid://10747372792",
+    ["bell"] = "rbxassetid://10747371253",
+    ["notification"] = "rbxassetid://10747371253",
+    
+    -- Combat & Action
+    ["combat"] = "rbxassetid://10747383842",
+    ["sword"] = "rbxassetid://10747383842",
+    ["aimbot"] = "rbxassetid://10747365995",
+    ["crosshair"] = "rbxassetid://10747365995",
+    ["shield"] = "rbxassetid://10747383474",
+    ["target"] = "rbxassetid://10747365995",
+    
+    -- Visuals & Theme
+    ["visuals"] = "rbxassetid://10747372701",
+    ["eye"] = "rbxassetid://10747372701",
+    ["eye-off"] = "rbxassetid://10747372714",
+    ["palette"] = "rbxassetid://10747373400",
+    ["brush"] = "rbxassetid://10747373400",
+    
+    -- Players & Movement
+    ["player"] = "rbxassetid://10747384394",
+    ["user"] = "rbxassetid://10747384394",
+    ["zap"] = "rbxassetid://10747383921",
+    ["speed"] = "rbxassetid://10747383921",
+    ["run"] = "rbxassetid://10747383921",
+    
+    -- Files, Coding & Configs
+    ["terminal"] = "rbxassetid://10888290230",
+    ["console"] = "rbxassetid://10888290230",
+    ["code"] = "rbxassetid://10747363456",
+    ["folder"] = "rbxassetid://10747372992",
+    ["config"] = "rbxassetid://10747372992",
+    ["file"] = "rbxassetid://10747363539",
+    ["key"] = "rbxassetid://10747372910",
+    ["keybind"] = "rbxassetid://10747372910",
+    
+    -- Actions & Status
+    ["trash"] = "rbxassetid://10747373158",
+    ["delete"] = "rbxassetid://10747373158",
+    ["check"] = "rbxassetid://10747371510",
+    ["success"] = "rbxassetid://10747371510",
+    ["x"] = "rbxassetid://10747373217",
+    ["close"] = "rbxassetid://10747373217",
+    ["error"] = "rbxassetid://10747373217",
+    ["plus"] = "rbxassetid://10747371661",
+    ["add"] = "rbxassetid://10747371661",
+    ["minus"] = "rbxassetid://10747371556",
+    ["mouse"] = "rbxassetid://10747373280"
+}
+
+local IconLibrary = {}
+
+function IconLibrary.Get(name)
+    if not name then return nil end
+    local lowerName = tostring(name):lower():gsub("lucide%-", "")
+    return Icons[lowerName]
+end
+
+return IconLibrary
+
+end
+
 modules["core/notification"] = function()
 -- src/core/notification.lua
 local Theme = custom_require("theme")
@@ -1788,23 +1861,27 @@ function NotificationManager.Notify(parentScreenGui, config)
     local shadow = Utils.CreateShadow(Toast, UDim2.new(1, 10, 1, 10), UDim2.new(0, -5, 0, -5), 0.5)
     shadow.ZIndex = Toast.ZIndex - 1
     
+    local Icons = custom_require("icons")
+    local resolvedIcon = Icons.Get(iconStr) or iconStr
+    local isImage = tostring(resolvedIcon):find("rbxassetid") or tostring(resolvedIcon):find("http")
+
     -- Icon Label
     local Icon = Instance.new("TextLabel", Toast)
     Icon.Size = UDim2.new(0, 32, 0, 32)
     Icon.Position = UDim2.new(0, 12, 0.5, -16)
     Icon.BackgroundTransparency = 1
-    Icon.Text = iconStr
+    Icon.Text = isImage and "" or resolvedIcon
     Icon.TextSize = 20
     Icon.ZIndex = Toast.ZIndex + 1
     
-    -- If it's an asset id instead of an emoji
-    if tostring(iconStr):find("rbxassetid") or tostring(iconStr):find("http") then
-        Icon.Text = ""
-        local IconImg = Instance.new("ImageLabel", Toast)
+    local IconImg
+    if isImage then
+        IconImg = Instance.new("ImageLabel", Toast)
         IconImg.Size = UDim2.new(0, 24, 0, 24)
         IconImg.Position = UDim2.new(0, 16, 0.5, -12)
         IconImg.BackgroundTransparency = 1
-        IconImg.Image = iconStr
+        IconImg.Image = resolvedIcon
+        IconImg.ImageColor3 = Theme.Accent -- Glow/Accent tint for Lucide icons
         IconImg.ZIndex = Toast.ZIndex + 1
     end
     
@@ -1862,10 +1939,12 @@ function NotificationManager.Notify(parentScreenGui, config)
             Position = UDim2.new(1, 300, 0, 0),
             BackgroundTransparency = 1
         })
-        -- Fade out labels as well
         Utils.Tween(Title, 0.25, {TextTransparency = 1})
         Utils.Tween(Desc, 0.25, {TextTransparency = 1})
         Utils.Tween(Icon, 0.25, {TextTransparency = 1})
+        if IconImg then
+            Utils.Tween(IconImg, 0.25, {ImageTransparency = 1})
+        end
         
         task.delay(0.35, function()
             Toast:Destroy()
@@ -2116,6 +2195,7 @@ modules["core/window"] = function()
 local Theme = custom_require("theme")
 local Utils = custom_require("utils")
 local Notification = custom_require("notification")
+local Icons = custom_require("icons")
 local UIS = game:GetService("UserInputService")
 
 local WindowModule = {}
@@ -2376,15 +2456,51 @@ function WindowModule.new(config)
         TabBtn.Size = UDim2.new(1, 0, 0, 34)
         TabBtn.BackgroundColor3 = Theme.Glass
         TabBtn.BackgroundTransparency = 0.75
-        TabBtn.Text = (icon and icon .. "  " or "") .. name
-        TabBtn.TextColor3 = Theme.SubText
-        TabBtn.TextSize = 12
-        TabBtn.Font = Theme.Font
+        TabBtn.Text = ""
         TabBtn.AutoButtonColor = false
         TabBtn.ZIndex = 3
         Utils.Corner(TabBtn, 6)
         Utils.GlassBorder(TabBtn, 0.8)
+
+        local TabLabel = Instance.new("TextLabel", TabBtn)
+        TabLabel.Size = UDim2.new(1, icon and -42 or -24, 1, 0)
+        TabLabel.Position = UDim2.new(0, icon and 32 or 12, 0, 0)
+        TabLabel.BackgroundTransparency = 1
+        TabLabel.Text = name
+        TabLabel.TextColor3 = Theme.SubText
+        TabLabel.TextSize = 12
+        TabLabel.Font = Theme.Font
+        TabLabel.TextXAlignment = Enum.TextXAlignment.Left
+        TabLabel.ZIndex = 4
+
+        local TabIconImg, TabIconTxt
+        if icon then
+            local resolved = Icons.Get(icon) or icon
+            if tostring(resolved):find("rbxassetid") or tostring(resolved):find("http") then
+                TabIconImg = Instance.new("ImageLabel", TabBtn)
+                TabIconImg.Size = UDim2.new(0, 16, 0, 16)
+                TabIconImg.Position = UDim2.new(0, 10, 0.5, -8)
+                TabIconImg.BackgroundTransparency = 1
+                TabIconImg.Image = resolved
+                TabIconImg.ImageColor3 = Theme.SubText
+                TabIconImg.ZIndex = 4
+            else
+                TabIconTxt = Instance.new("TextLabel", TabBtn)
+                TabIconTxt.Size = UDim2.new(0, 16, 1, 0)
+                TabIconTxt.Position = UDim2.new(0, 10, 0, 0)
+                TabIconTxt.BackgroundTransparency = 1
+                TabIconTxt.Text = resolved
+                TabIconTxt.TextColor3 = Theme.SubText
+                TabIconTxt.TextSize = 12
+                TabIconTxt.Font = Theme.Font
+                TabIconTxt.ZIndex = 4
+            end
+        end
         
+        Tab.Label = TabLabel
+        Tab.IconImg = TabIconImg
+        Tab.IconTxt = TabIconTxt
+
         if groupParent then
             -- Position below group parent in LayoutOrder if sorted
             TabBtn.LayoutOrder = groupParent.LayoutOrder
@@ -2533,16 +2649,28 @@ function WindowModule.new(config)
                 t.Frame.Visible = false
                 Utils.Tween(t.Button, 0.2, {
                     BackgroundColor3 = Theme.Glass,
-                    BackgroundTransparency = 0.75,
-                    TextColor3 = Theme.SubText
+                    BackgroundTransparency = 0.75
                 })
+                Utils.Tween(t.Label, 0.2, {TextColor3 = Theme.SubText})
+                if t.IconImg then
+                    Utils.Tween(t.IconImg, 0.2, {ImageColor3 = Theme.SubText})
+                end
+                if t.IconTxt then
+                    Utils.Tween(t.IconTxt, 0.2, {TextColor3 = Theme.SubText})
+                end
             end
             TabFrame.Visible = true
             Utils.Tween(TabBtn, 0.2, {
                 BackgroundColor3 = Theme.Accent,
-                BackgroundTransparency = 0.35,
-                TextColor3 = Theme.Text
+                BackgroundTransparency = 0.35
             })
+            Utils.Tween(Tab.Label, 0.2, {TextColor3 = Theme.Text})
+            if Tab.IconImg then
+                Utils.Tween(Tab.IconImg, 0.2, {ImageColor3 = Theme.Accent})
+            end
+            if Tab.IconTxt then
+                Utils.Tween(Tab.IconTxt, 0.2, {TextColor3 = Theme.Accent})
+            end
             Window.ActiveTab = Tab
             
             if Tab.ActiveSubTab then

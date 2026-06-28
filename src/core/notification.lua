@@ -47,23 +47,27 @@ function NotificationManager.Notify(parentScreenGui, config)
     local shadow = Utils.CreateShadow(Toast, UDim2.new(1, 10, 1, 10), UDim2.new(0, -5, 0, -5), 0.5)
     shadow.ZIndex = Toast.ZIndex - 1
     
+    local Icons = require(script.Parent.icons)
+    local resolvedIcon = Icons.Get(iconStr) or iconStr
+    local isImage = tostring(resolvedIcon):find("rbxassetid") or tostring(resolvedIcon):find("http")
+
     -- Icon Label
     local Icon = Instance.new("TextLabel", Toast)
     Icon.Size = UDim2.new(0, 32, 0, 32)
     Icon.Position = UDim2.new(0, 12, 0.5, -16)
     Icon.BackgroundTransparency = 1
-    Icon.Text = iconStr
+    Icon.Text = isImage and "" or resolvedIcon
     Icon.TextSize = 20
     Icon.ZIndex = Toast.ZIndex + 1
     
-    -- If it's an asset id instead of an emoji
-    if tostring(iconStr):find("rbxassetid") or tostring(iconStr):find("http") then
-        Icon.Text = ""
-        local IconImg = Instance.new("ImageLabel", Toast)
+    local IconImg
+    if isImage then
+        IconImg = Instance.new("ImageLabel", Toast)
         IconImg.Size = UDim2.new(0, 24, 0, 24)
         IconImg.Position = UDim2.new(0, 16, 0.5, -12)
         IconImg.BackgroundTransparency = 1
-        IconImg.Image = iconStr
+        IconImg.Image = resolvedIcon
+        IconImg.ImageColor3 = Theme.Accent -- Glow/Accent tint for Lucide icons
         IconImg.ZIndex = Toast.ZIndex + 1
     end
     
@@ -121,10 +125,12 @@ function NotificationManager.Notify(parentScreenGui, config)
             Position = UDim2.new(1, 300, 0, 0),
             BackgroundTransparency = 1
         })
-        -- Fade out labels as well
         Utils.Tween(Title, 0.25, {TextTransparency = 1})
         Utils.Tween(Desc, 0.25, {TextTransparency = 1})
         Utils.Tween(Icon, 0.25, {TextTransparency = 1})
+        if IconImg then
+            Utils.Tween(IconImg, 0.25, {ImageTransparency = 1})
+        end
         
         task.delay(0.35, function()
             Toast:Destroy()

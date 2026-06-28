@@ -2,6 +2,7 @@
 local Theme = require(script.Parent.theme)
 local Utils = require(script.Parent.utils)
 local Notification = require(script.Parent.notification)
+local Icons = require(script.Parent.icons)
 local UIS = game:GetService("UserInputService")
 
 local WindowModule = {}
@@ -262,15 +263,51 @@ function WindowModule.new(config)
         TabBtn.Size = UDim2.new(1, 0, 0, 34)
         TabBtn.BackgroundColor3 = Theme.Glass
         TabBtn.BackgroundTransparency = 0.75
-        TabBtn.Text = (icon and icon .. "  " or "") .. name
-        TabBtn.TextColor3 = Theme.SubText
-        TabBtn.TextSize = 12
-        TabBtn.Font = Theme.Font
+        TabBtn.Text = ""
         TabBtn.AutoButtonColor = false
         TabBtn.ZIndex = 3
         Utils.Corner(TabBtn, 6)
         Utils.GlassBorder(TabBtn, 0.8)
+
+        local TabLabel = Instance.new("TextLabel", TabBtn)
+        TabLabel.Size = UDim2.new(1, icon and -42 or -24, 1, 0)
+        TabLabel.Position = UDim2.new(0, icon and 32 or 12, 0, 0)
+        TabLabel.BackgroundTransparency = 1
+        TabLabel.Text = name
+        TabLabel.TextColor3 = Theme.SubText
+        TabLabel.TextSize = 12
+        TabLabel.Font = Theme.Font
+        TabLabel.TextXAlignment = Enum.TextXAlignment.Left
+        TabLabel.ZIndex = 4
+
+        local TabIconImg, TabIconTxt
+        if icon then
+            local resolved = Icons.Get(icon) or icon
+            if tostring(resolved):find("rbxassetid") or tostring(resolved):find("http") then
+                TabIconImg = Instance.new("ImageLabel", TabBtn)
+                TabIconImg.Size = UDim2.new(0, 16, 0, 16)
+                TabIconImg.Position = UDim2.new(0, 10, 0.5, -8)
+                TabIconImg.BackgroundTransparency = 1
+                TabIconImg.Image = resolved
+                TabIconImg.ImageColor3 = Theme.SubText
+                TabIconImg.ZIndex = 4
+            else
+                TabIconTxt = Instance.new("TextLabel", TabBtn)
+                TabIconTxt.Size = UDim2.new(0, 16, 1, 0)
+                TabIconTxt.Position = UDim2.new(0, 10, 0, 0)
+                TabIconTxt.BackgroundTransparency = 1
+                TabIconTxt.Text = resolved
+                TabIconTxt.TextColor3 = Theme.SubText
+                TabIconTxt.TextSize = 12
+                TabIconTxt.Font = Theme.Font
+                TabIconTxt.ZIndex = 4
+            end
+        end
         
+        Tab.Label = TabLabel
+        Tab.IconImg = TabIconImg
+        Tab.IconTxt = TabIconTxt
+
         if groupParent then
             -- Position below group parent in LayoutOrder if sorted
             TabBtn.LayoutOrder = groupParent.LayoutOrder
@@ -419,16 +456,28 @@ function WindowModule.new(config)
                 t.Frame.Visible = false
                 Utils.Tween(t.Button, 0.2, {
                     BackgroundColor3 = Theme.Glass,
-                    BackgroundTransparency = 0.75,
-                    TextColor3 = Theme.SubText
+                    BackgroundTransparency = 0.75
                 })
+                Utils.Tween(t.Label, 0.2, {TextColor3 = Theme.SubText})
+                if t.IconImg then
+                    Utils.Tween(t.IconImg, 0.2, {ImageColor3 = Theme.SubText})
+                end
+                if t.IconTxt then
+                    Utils.Tween(t.IconTxt, 0.2, {TextColor3 = Theme.SubText})
+                end
             end
             TabFrame.Visible = true
             Utils.Tween(TabBtn, 0.2, {
                 BackgroundColor3 = Theme.Accent,
-                BackgroundTransparency = 0.35,
-                TextColor3 = Theme.Text
+                BackgroundTransparency = 0.35
             })
+            Utils.Tween(Tab.Label, 0.2, {TextColor3 = Theme.Text})
+            if Tab.IconImg then
+                Utils.Tween(Tab.IconImg, 0.2, {ImageColor3 = Theme.Accent})
+            end
+            if Tab.IconTxt then
+                Utils.Tween(Tab.IconTxt, 0.2, {TextColor3 = Theme.Accent})
+            end
             Window.ActiveTab = Tab
             
             if Tab.ActiveSubTab then
