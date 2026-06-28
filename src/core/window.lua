@@ -23,16 +23,20 @@ function WindowModule.new(config)
     ScreenGui.ResetOnSpawn = false
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     
-    if gethui then 
-        ScreenGui.Parent = gethui() 
-    elseif syn and syn.protect_gui then 
-        pcall(function()
-            syn.protect_gui(ScreenGui)
-        end)
-        ScreenGui.Parent = game:GetService("CoreGui")
-    else 
-        ScreenGui.Parent = game.Players.LocalPlayer.PlayerGui 
+    -- Set ScreenGui Parent safely to avoid anti-cheat SEH crashes on CoreGui
+    local targetParent = nil
+    if gethui then
+        local hui = gethui()
+        if hui and tostring(hui) ~= "CoreGui" and hui ~= game:GetService("CoreGui") then
+            targetParent = hui
+        end
     end
+    
+    if not targetParent then
+        targetParent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    end
+    
+    ScreenGui.Parent = targetParent
 
     -- Shadow Layer
     local Shadow = Instance.new("Frame", ScreenGui)

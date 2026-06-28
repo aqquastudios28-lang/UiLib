@@ -27,9 +27,11 @@ local Library = {}
 -- Expose global notification
 function Library:Notify(config, parentGui)
     if not parentGui then
-        -- Attempt to find active UI screen or fallback to PlayerGui
-        local fallback = game:GetService("CoreGui"):FindFirstChildWhichIsA("ScreenGui") or
-                         game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):FindFirstChildWhichIsA("ScreenGui")
+        local fallback = Library.ActiveScreenGui
+        if not fallback then
+            local playerGui = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
+            fallback = playerGui and playerGui:FindFirstChildWhichIsA("ScreenGui")
+        end
         parentGui = fallback
     end
     if parentGui then
@@ -39,6 +41,7 @@ end
 
 function Library:CreateWindow(config)
     local Window = WindowModule.new(config)
+    Library.ActiveScreenGui = Window.ScreenGui
     
     -- Tab / Section / SubTab Methods
     local TabMethods = {}
