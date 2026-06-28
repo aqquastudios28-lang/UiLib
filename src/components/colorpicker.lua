@@ -1,6 +1,7 @@
 -- src/components/colorpicker.lua
 local Theme = require(script.Parent.Parent.core.theme)
 local Utils = require(script.Parent.Parent.core.utils)
+local UIS = game:GetService("UserInputService")
 
 -- HSV to RGB conversion
 local function HSVtoRGB(h, s, v)

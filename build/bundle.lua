@@ -191,6 +191,7 @@ modules["components/colorpicker"] = function()
 -- src/components/colorpicker.lua
 local Theme = custom_require("core/theme")
 local Utils = custom_require("core/utils")
+local UIS = game:GetService("UserInputService")
 
 -- HSV to RGB conversion
 local function HSVtoRGB(h, s, v)
@@ -2644,17 +2645,22 @@ function WindowModule.new(config)
     CloseBtn.Size = UDim2.new(0, 24, 0, 24)
     CloseBtn.Position = UDim2.new(1, -34, 0.5, -12)
     CloseBtn.BackgroundTransparency = 1
-    CloseBtn.Text = "✕"
-    CloseBtn.TextColor3 = Theme.SubText
-    CloseBtn.TextSize = 12
-    CloseBtn.Font = Theme.FontBold
+    CloseBtn.Text = ""
     CloseBtn.ZIndex = 5
     
+    local CloseIcon = Instance.new("ImageLabel", CloseBtn)
+    CloseIcon.Size = UDim2.new(0, 14, 0, 14)
+    CloseIcon.Position = UDim2.new(0.5, -7, 0.5, -7)
+    CloseIcon.BackgroundTransparency = 1
+    CloseIcon.Image = "rbxassetid://10747373217"
+    CloseIcon.ImageColor3 = Theme.SubText
+    CloseIcon.ZIndex = 6
+
     CloseBtn.MouseEnter:Connect(function()
-        Utils.Tween(CloseBtn, 0.15, {TextColor3 = Color3.fromRGB(255, 80, 80)})
+        Utils.Tween(CloseIcon, 0.15, {ImageColor3 = Color3.fromRGB(255, 80, 80)})
     end)
     CloseBtn.MouseLeave:Connect(function()
-        Utils.Tween(CloseBtn, 0.15, {TextColor3 = Theme.SubText})
+        Utils.Tween(CloseIcon, 0.15, {ImageColor3 = Theme.SubText})
     end)
     
     CloseBtn.MouseButton1Click:Connect(function()
@@ -2665,25 +2671,30 @@ function WindowModule.new(config)
     MinimizeBtn.Size = UDim2.new(0, 24, 0, 24)
     MinimizeBtn.Position = UDim2.new(1, -62, 0.5, -12)
     MinimizeBtn.BackgroundTransparency = 1
-    MinimizeBtn.Text = "—"
-    MinimizeBtn.TextColor3 = Theme.SubText
-    MinimizeBtn.TextSize = 10
-    MinimizeBtn.Font = Theme.FontBold
+    MinimizeBtn.Text = ""
     MinimizeBtn.ZIndex = 5
+
+    local MinimizeIcon = Instance.new("ImageLabel", MinimizeBtn)
+    MinimizeIcon.Size = UDim2.new(0, 14, 0, 14)
+    MinimizeIcon.Position = UDim2.new(0.5, -7, 0.5, -7)
+    MinimizeIcon.BackgroundTransparency = 1
+    MinimizeIcon.Image = "rbxassetid://10747371556"
+    MinimizeIcon.ImageColor3 = Theme.SubText
+    MinimizeIcon.ZIndex = 6
 
     local minimized = false
     local originalSize = config.Size or UDim2.new(0, 620, 0, 460)
 
     MinimizeBtn.MouseEnter:Connect(function()
-        Utils.Tween(MinimizeBtn, 0.15, {TextColor3 = Theme.Accent})
+        Utils.Tween(MinimizeIcon, 0.15, {ImageColor3 = Theme.Accent})
     end)
     MinimizeBtn.MouseLeave:Connect(function()
-        Utils.Tween(MinimizeBtn, 0.15, {TextColor3 = Theme.SubText})
+        Utils.Tween(MinimizeIcon, 0.15, {ImageColor3 = Theme.SubText})
     end)
 
     MinimizeBtn.MouseButton1Click:Connect(function()
         minimized = not minimized
-        MinimizeBtn.Text = minimized and "⬜" or "—"
+        MinimizeIcon.Image = minimized and "rbxassetid://10747373115" or "rbxassetid://10747371556"
         
         if minimized then
             Utils.Tween(Main, 0.25, {Size = UDim2.new(0, originalSize.X.Offset, 0, 42)})
@@ -2890,8 +2901,8 @@ function WindowModule.new(config)
         SearchBox.Font = Theme.Font
         Sidebar.BackgroundColor3 = Theme.Glass
         Sidebar.ScrollBarImageColor3 = Theme.Accent
-        CloseBtn.TextColor3 = Theme.SubText
-        MinimizeBtn.TextColor3 = Theme.SubText
+        CloseIcon.ImageColor3 = Theme.SubText
+        MinimizeIcon.ImageColor3 = Theme.SubText
 
         -- Update Sidebar categories/tab groups labels
         for _, child in ipairs(Sidebar:GetChildren()) do
