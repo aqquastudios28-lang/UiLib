@@ -1958,41 +1958,94 @@ end
 
 modules["core/theme"] = function()
 -- src/core/theme.lua
--- Premium Obsidian/Cyan Dark Theme for QwenUILib
+-- Premium Obsidian/Cyan Dark Theme with Reactive Updates
 
-return {
-    -- Base Colors (Obsidian Dark with Vibrant Cyan Accents)
-    Background = Color3.fromRGB(10, 10, 14),
-    Glass = Color3.fromRGB(18, 18, 26),
-    GlassLight = Color3.fromRGB(28, 28, 40),
-    Accent = Color3.fromRGB(0, 180, 255),
-    AccentHover = Color3.fromRGB(30, 200, 255),
-    AccentDim = Color3.fromRGB(0, 120, 180),
-    
-    -- Text Colors
-    Text = Color3.fromRGB(255, 255, 255),
-    SubText = Color3.fromRGB(170, 175, 190),
-    Muted = Color3.fromRGB(100, 105, 120),
-    
-    -- Glass Effect Properties
-    GlassTransparency = 0.55, -- Slightly more visible for liquid neon contrast
-    GlassBorder = Color3.fromRGB(45, 45, 62),
-    GlassHighlight = Color3.fromRGB(255, 255, 255),
-    
-    -- Shadows & Depth
-    ShadowColor = Color3.fromRGB(0, 0, 0),
-    ShadowTransparency = 0.65,
-    
-    -- Fonts
-    Font = Enum.Font.GothamMedium,
-    FontBold = Enum.Font.GothamBold,
-    FontLight = Enum.Font.Gotham,
-    
-    -- Animation
-    TweenTime = 0.2,
-    EasingStyle = Enum.EasingStyle.Quart,
-    EasingDirection = Enum.EasingDirection.Out
+local Theme = {
+    Values = {
+        -- Base Colors (Obsidian Dark with Vibrant Cyan Accents)
+        Background = Color3.fromRGB(10, 10, 14),
+        BackgroundTransparency = 0.35, -- Let neon blobs shine through beautifully
+        Glass = Color3.fromRGB(18, 18, 26),
+        GlassLight = Color3.fromRGB(28, 28, 40),
+        GlassTransparency = 0.45, -- Enhanced transparency for glassmorphism
+        Accent = Color3.fromRGB(0, 180, 255),
+        AccentHover = Color3.fromRGB(30, 200, 255),
+        AccentDim = Color3.fromRGB(0, 120, 180),
+        
+        -- Text Colors
+        Text = Color3.fromRGB(255, 255, 255),
+        SubText = Color3.fromRGB(170, 175, 190),
+        Muted = Color3.fromRGB(100, 105, 120),
+        
+        -- Glass Effect Properties
+        GlassBorder = Color3.fromRGB(45, 45, 62),
+        GlassBorderTransparency = 0.4,
+        GlassHighlight = Color3.fromRGB(255, 255, 255),
+        
+        -- Shadows & Depth
+        ShadowColor = Color3.fromRGB(0, 0, 0),
+        ShadowTransparency = 0.5,
+        
+        -- Fonts
+        Font = Enum.Font.GothamMedium,
+        FontBold = Enum.Font.GothamBold,
+        FontLight = Enum.Font.Gotham,
+        
+        -- Animation
+        TweenTime = 0.2,
+        EasingStyle = Enum.EasingStyle.Quart,
+        EasingDirection = Enum.EasingDirection.Out,
+        
+        -- Liquid Neon Blobs
+        Blob1Color = Color3.fromRGB(0, 180, 255),
+        Blob2Color = Color3.fromRGB(180, 0, 255),
+        BlobTransparency = 0.72, -- Visible yet elegant
+        BlobSpeed = 1.0,
+    }
 }
+
+-- Simple reactive event listener system (Pure Lua Signal)
+local Signal = { Listeners = {} }
+function Signal:Connect(callback)
+    table.insert(self.Listeners, callback)
+    return {
+        Disconnect = function()
+            local idx = table.find(self.Listeners, callback)
+            if idx then table.remove(self.Listeners, idx) end
+        end
+    }
+end
+function Signal:Fire(arg)
+    for _, callback in ipairs(self.Listeners) do
+        task.spawn(callback, arg)
+    end
+end
+
+Theme.Changed = Signal
+
+-- Update theme values and trigger event listeners
+function Theme:Update(newValues)
+    local oldTheme = {}
+    for k, v in pairs(Theme.Values) do
+        oldTheme[k] = v
+    end
+
+    for k, v in pairs(newValues) do
+        if Theme.Values[k] ~= nil then
+            Theme.Values[k] = v
+        end
+    end
+    Theme.Changed:Fire(oldTheme)
+end
+
+-- Allow direct access to values (e.g., Theme.Accent)
+setmetatable(Theme, {
+    __index = function(_, key)
+        return Theme.Values[key]
+    end
+})
+
+return Theme
 end
 
 modules["core/utils"] = function()
@@ -2107,7 +2160,7 @@ function Utils.CreateGlowBlob(parent, color, size, position)
     blob.BackgroundTransparency = 1
     blob.Image = "rbxassetid://5554236805" -- Soft blur texture
     blob.ImageColor3 = color
-    blob.ImageTransparency = 0.91 -- Very soft and subtle
+    blob.ImageTransparency = Theme.BlobTransparency
     blob.ZIndex = 0
     return blob
 end
@@ -2224,8 +2277,6 @@ function WindowModule.new(config)
         targetParent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui", 5)
         if not targetParent then
             warn("[QwenUI] PlayerGui not found within 5 seconds! Defaulting to CoreGui to avoid silent freeze.")
-            -- If we can't find PlayerGui, the script would just freeze silently.
-            -- We fallback to CoreGui as a last resort, but wrapped safely.
             pcall(function() targetParent = game:GetService("CoreGui") end)
         end
     end
@@ -2238,35 +2289,42 @@ function WindowModule.new(config)
     Shadow.Size = config.Size or UDim2.new(0, 620, 0, 460)
     Shadow.Position = UDim2.new(0.5, -310, 0.5, -230)
     Shadow.BackgroundTransparency = 1
-    Utils.CreateShadow(Shadow, UDim2.new(1, 20, 1, 20), UDim2.new(0, -10, 0, -10), 0.65)
+    
+    local shadowObj = Utils.CreateShadow(Shadow, UDim2.new(1, 20, 1, 20), UDim2.new(0, -10, 0, -10), Theme.ShadowTransparency)
 
     -- Main Frame (Obsidian Dark Glass)
     local Main = Instance.new("Frame", ScreenGui)
     Main.Size = config.Size or UDim2.new(0, 620, 0, 460)
     Main.Position = UDim2.new(0.5, -310, 0.5, -230)
     Main.BackgroundColor3 = Theme.Background
-    Main.BackgroundTransparency = 0.12
+    Main.BackgroundTransparency = Theme.BackgroundTransparency
     Main.BorderSizePixel = 0
     Utils.Corner(Main, 12)
-    Utils.GlassBorder(Main, 1.5)
+    local borderStroke = Utils.GlassBorder(Main, 1.5)
     Utils.MakeDraggable(Main, Main)
 
     -- Liquid Neon Background Blobs
-    local Blob1 = Utils.CreateGlowBlob(Main, Theme.Accent, UDim2.new(0, 260, 0, 260), UDim2.new(-0.2, 0, -0.2, 0))
-    local Blob2 = Utils.CreateGlowBlob(Main, Color3.fromRGB(180, 0, 255), UDim2.new(0, 300, 0, 300), UDim2.new(0.6, 0, 0.5, 0))
+    local Blob1 = Utils.CreateGlowBlob(Main, Theme.Blob1Color, UDim2.new(0, 260, 0, 260), UDim2.new(-0.2, 0, -0.2, 0))
+    local Blob2 = Utils.CreateGlowBlob(Main, Theme.Blob2Color, UDim2.new(0, 300, 0, 300), UDim2.new(0.6, 0, 0.5, 0))
     
     -- Animate Neon Blobs (Liquid Flow)
     task.spawn(function()
         local startTime = os.clock()
         while task.wait(0.04) do
             if not Main or not Main.Parent then break end
-            local t = os.clock() - startTime
+            local t = (os.clock() - startTime) * Theme.BlobSpeed
             local x1 = -0.15 + 0.12 * math.sin(t * 0.4)
             local y1 = -0.15 + 0.12 * math.cos(t * 0.3)
             local x2 = 0.55 + 0.12 * math.cos(t * 0.25)
             local y2 = 0.45 + 0.12 * math.sin(t * 0.35)
+            
             Blob1.Position = UDim2.new(x1, 0, y1, 0)
+            Blob1.ImageColor3 = Theme.Blob1Color
+            Blob1.ImageTransparency = Theme.BlobTransparency
+            
             Blob2.Position = UDim2.new(x2, 0, y2, 0)
+            Blob2.ImageColor3 = Theme.Blob2Color
+            Blob2.ImageTransparency = Theme.BlobTransparency
         end
     end)
 
@@ -2286,6 +2344,7 @@ function WindowModule.new(config)
     TitleBar.BorderSizePixel = 0
     TitleBar.ZIndex = 3
     Utils.Corner(TitleBar, 12)
+    
     -- Hide bottom rounded corners of title bar
     local TitleBarBottomCut = Instance.new("Frame", TitleBar)
     TitleBarBottomCut.Size = UDim2.new(1, 0, 0, 6)
@@ -2323,6 +2382,7 @@ function WindowModule.new(config)
     SearchIcon.BackgroundTransparency = 1
     SearchIcon.Text = "🔍"
     SearchIcon.TextSize = 12
+    SearchIcon.TextColor3 = Theme.SubText
     SearchIcon.ZIndex = 5
 
     local SearchBox = Instance.new("TextBox", SearchContainer)
@@ -2380,10 +2440,191 @@ function WindowModule.new(config)
         end
     end)
 
+    -- Central Reactive Theme Changed Connection
+    local themeConnection
+    themeConnection = Theme.Changed:Connect(function(oldTheme)
+        if not oldTheme then return end
+        
+        -- Recursively update all descendants to match the new theme
+        local function areColorsEqual(c1, c2)
+            return math.abs(c1.R - c2.R) < 0.005 and math.abs(c1.G - c2.G) < 0.005 and math.abs(c1.B - c2.B) < 0.005
+        end
+
+        local function recurse(obj)
+            -- Handle TextColor3 & Font
+            if obj:IsA("TextLabel") or obj:IsA("TextBox") or obj:IsA("TextButton") then
+                if obj.Text ~= "" or obj:IsA("TextBox") then
+                    if areColorsEqual(obj.TextColor3, oldTheme.Text) then
+                        obj.TextColor3 = Theme.Text
+                    elseif areColorsEqual(obj.TextColor3, oldTheme.SubText) then
+                        obj.TextColor3 = Theme.SubText
+                    elseif areColorsEqual(obj.TextColor3, oldTheme.Muted) then
+                        obj.TextColor3 = Theme.Muted
+                    elseif areColorsEqual(obj.TextColor3, oldTheme.Accent) then
+                        obj.TextColor3 = Theme.Accent
+                    end
+                    
+                    if obj.Font == oldTheme.Font then
+                        obj.Font = Theme.Font
+                    elseif obj.Font == oldTheme.FontBold then
+                        obj.Font = Theme.FontBold
+                    elseif obj.Font == oldTheme.FontLight then
+                        obj.Font = Theme.FontLight
+                    end
+                end
+            end
+            
+            -- Handle BackgroundColor3 & Transparency
+            if obj:IsA("Frame") or obj:IsA("ScrollingFrame") or obj:IsA("TextButton") then
+                if obj ~= ScreenGui and obj.Name ~= "NotificationContainer" and obj.Name ~= "Shadow" and obj.Name ~= "Blob1" and obj.Name ~= "Blob2" then
+                    if areColorsEqual(obj.BackgroundColor3, oldTheme.Glass) then
+                        obj.BackgroundColor3 = Theme.Glass
+                        if obj.BackgroundTransparency == oldTheme.GlassTransparency then
+                            obj.BackgroundTransparency = Theme.GlassTransparency
+                        end
+                    elseif areColorsEqual(obj.BackgroundColor3, oldTheme.GlassLight) then
+                        obj.BackgroundColor3 = Theme.GlassLight
+                    elseif areColorsEqual(obj.BackgroundColor3, oldTheme.Background) then
+                        obj.BackgroundColor3 = Theme.Background
+                        if obj.BackgroundTransparency == oldTheme.BackgroundTransparency then
+                            obj.BackgroundTransparency = Theme.BackgroundTransparency
+                        end
+                    elseif areColorsEqual(obj.BackgroundColor3, oldTheme.Accent) then
+                        obj.BackgroundColor3 = Theme.Accent
+                    end
+                end
+            end
+
+            -- Handle UIStroke
+            if obj:IsA("UIStroke") then
+                if areColorsEqual(obj.Color, oldTheme.GlassBorder) then
+                    obj.Color = Theme.GlassBorder
+                end
+                local grad = obj:FindFirstChildWhichIsA("UIGradient")
+                if grad then
+                    grad.Color = ColorSequence.new({
+                        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+                        ColorSequenceKeypoint.new(0.4, Theme.GlassBorder),
+                        ColorSequenceKeypoint.new(1, Color3.fromRGB(30, 30, 45))
+                    })
+                end
+            end
+
+            -- Handle UIGradient sequences
+            if obj:IsA("UIGradient") and obj.Parent and obj.Parent:IsA("Frame") then
+                local parent = obj.Parent
+                if areColorsEqual(parent.BackgroundColor3, Theme.Accent) then
+                    obj.Color = ColorSequence.new({
+                        ColorSequenceKeypoint.new(0, Theme.Accent),
+                        ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 200, 255):lerp(Theme.Accent, 0.5))
+                    })
+                end
+            end
+
+            for _, child in ipairs(obj:GetChildren()) do
+                recurse(child)
+            end
+        end
+
+        recurse(ScreenGui)
+
+        -- Extra manual tuning for specific layout nodes
+        if shadowObj then
+            shadowObj.ImageColor3 = Theme.ShadowColor
+            shadowObj.ImageTransparency = Theme.ShadowTransparency
+        end
+        Main.BackgroundColor3 = Theme.Background
+        Main.BackgroundTransparency = Theme.BackgroundTransparency
+        GlassOverlay.BackgroundColor3 = Theme.Glass
+        GlassOverlay.BackgroundTransparency = Theme.GlassTransparency
+        TitleBar.BackgroundColor3 = Theme.GlassLight
+        TitleBarBottomCut.BackgroundColor3 = Theme.GlassLight
+        Title.TextColor3 = Theme.Text
+        Title.Font = Theme.FontBold
+        SearchIcon.TextColor3 = Theme.SubText
+        SearchBox.PlaceholderColor3 = Theme.Muted
+        SearchBox.TextColor3 = Theme.Text
+        SearchBox.Font = Theme.Font
+        Sidebar.BackgroundColor3 = Theme.Glass
+        Sidebar.ScrollBarImageColor3 = Theme.Accent
+
+        -- Update Sidebar categories/tab groups labels
+        for _, child in ipairs(Sidebar:GetChildren()) do
+            if child:IsA("TextButton") and child:FindFirstChildWhichIsA("TextLabel") then
+                local label = child:FindFirstChildWhichIsA("TextLabel")
+                if label.Text:upper() == label.Text then
+                    label.TextColor3 = Theme.Accent
+                    label.Font = Theme.FontBold
+                    local arrow = child:FindFirstChild("Arrow") or child:FindFirstChildWhichIsA("TextLabel")
+                    if arrow and arrow ~= label then
+                        arrow.TextColor3 = Theme.Muted
+                        arrow.Font = Theme.FontBold
+                    end
+                end
+            end
+        end
+
+        -- Update tab indicators and active state
+        for _, t in ipairs(Window.Tabs) do
+            if t == Window.ActiveTab then
+                t.Button.BackgroundColor3 = Theme.Accent
+                t.Button.BackgroundTransparency = 0.35
+                t.Label.TextColor3 = Theme.Text
+                if t.IconImg then t.IconImg.ImageColor3 = Theme.Accent end
+                if t.IconTxt then t.IconTxt.TextColor3 = Theme.Accent end
+                if t.Indicator then
+                    t.Indicator.BackgroundColor3 = Theme.Accent
+                    t.Indicator.BackgroundTransparency = 0
+                    t.Indicator.Size = UDim2.new(0, 4, 1, -8)
+                end
+            else
+                t.Button.BackgroundColor3 = Theme.Glass
+                t.Button.BackgroundTransparency = 0.75
+                t.Label.TextColor3 = Theme.SubText
+                if t.IconImg then t.IconImg.ImageColor3 = Theme.SubText end
+                if t.IconTxt then t.IconTxt.TextColor3 = Theme.SubText end
+                if t.Indicator then
+                    t.Indicator.BackgroundColor3 = Theme.Accent
+                    t.Indicator.BackgroundTransparency = 1
+                    t.Indicator.Size = UDim2.new(0, 0, 1, -8)
+                end
+            end
+
+            if t.SubTabContainer then
+                t.SubTabContainer.BackgroundColor3 = Theme.Glass
+                for _, s in ipairs(t.SubTabs) do
+                    if s == t.ActiveSubTab then
+                        s.Button.BackgroundColor3 = Theme.Accent
+                        s.Button.BackgroundTransparency = 0.4
+                        s.Button.TextColor3 = Theme.Text
+                        if s.Indicator then
+                            s.Indicator.BackgroundColor3 = Theme.Accent
+                            s.Indicator.BackgroundTransparency = 0
+                            s.Indicator.Size = UDim2.new(1, -12, 0, 3)
+                        end
+                    else
+                        s.Button.BackgroundColor3 = Theme.Glass
+                        s.Button.BackgroundTransparency = 0.8
+                        s.Button.TextColor3 = Theme.SubText
+                        if s.Indicator then
+                            s.Indicator.BackgroundColor3 = Theme.Accent
+                            s.Indicator.BackgroundTransparency = 1
+                            s.Indicator.Size = UDim2.new(1, -12, 0, 0)
+                        end
+                    end
+                end
+            end
+        end
+    end)
+
     ScreenGui.Destroying:Connect(function()
         if toggleConnection then
             toggleConnection:Disconnect()
             toggleConnection = nil
+        end
+        if themeConnection then
+            themeConnection:Disconnect()
+            themeConnection = nil
         end
     end)
 
@@ -2423,6 +2664,7 @@ function WindowModule.new(config)
         GroupLabel.ZIndex = 4
         
         local Arrow = Instance.new("TextLabel", GroupHeader)
+        Arrow.Name = "Arrow"
         Arrow.Size = UDim2.new(0, 20, 1, 0)
         Arrow.Position = UDim2.new(1, -20, 0, 0)
         Arrow.BackgroundTransparency = 1
@@ -2470,6 +2712,17 @@ function WindowModule.new(config)
         Utils.Corner(TabBtn, 6)
         Utils.GlassBorder(TabBtn, 0.8)
 
+        -- Micro-indicator bar (sliding glass style expansion)
+        local Indicator = Instance.new("Frame", TabBtn)
+        Indicator.Size = UDim2.new(0, 0, 1, -8)
+        Indicator.Position = UDim2.new(0, 2, 0.5, -4)
+        Indicator.AnchorPoint = Vector2.new(0, 0.5)
+        Indicator.BackgroundColor3 = Theme.Accent
+        Indicator.BackgroundTransparency = 1
+        Indicator.ZIndex = 5
+        Utils.Corner(Indicator, 2)
+        Tab.Indicator = Indicator
+
         local TabLabel = Instance.new("TextLabel", TabBtn)
         TabLabel.Size = UDim2.new(1, icon and -42 or -24, 1, 0)
         TabLabel.Position = UDim2.new(0, icon and 32 or 12, 0, 0)
@@ -2510,7 +2763,6 @@ function WindowModule.new(config)
         Tab.IconTxt = TabIconTxt
 
         if groupParent then
-            -- Position below group parent in LayoutOrder if sorted
             TabBtn.LayoutOrder = groupParent.LayoutOrder
         end
 
@@ -2593,6 +2845,17 @@ function WindowModule.new(config)
             SubBtn.ZIndex = 4
             Utils.Corner(SubBtn, 4)
             Utils.GlassBorder(SubBtn, 0.6)
+
+            -- Subtab active bar indicator
+            local SubIndicator = Instance.new("Frame", SubBtn)
+            SubIndicator.Size = UDim2.new(1, -12, 0, 0)
+            SubIndicator.Position = UDim2.new(0.5, 0, 1, -2)
+            SubIndicator.AnchorPoint = Vector2.new(0.5, 1)
+            SubIndicator.BackgroundColor3 = Theme.Accent
+            SubIndicator.BackgroundTransparency = 1
+            SubIndicator.ZIndex = 5
+            Utils.Corner(SubIndicator, 1)
+            SubTab.Indicator = SubIndicator
             
             -- Subtab View scrolling frame
             local SubFrame = Instance.new("ScrollingFrame", Tab.SubViews)
@@ -2622,6 +2885,12 @@ function WindowModule.new(config)
                         BackgroundTransparency = 0.8,
                         TextColor3 = Theme.SubText
                     })
+                    if s.Indicator then
+                        Utils.Tween(s.Indicator, 0.2, {
+                            Size = UDim2.new(1, -12, 0, 0),
+                            BackgroundTransparency = 1
+                        })
+                    end
                 end
                 SubFrame.Visible = true
                 Utils.Tween(SubBtn, 0.2, {
@@ -2629,6 +2898,12 @@ function WindowModule.new(config)
                     BackgroundTransparency = 0.4,
                     TextColor3 = Theme.Text
                 })
+                if SubIndicator then
+                    Utils.Tween(SubIndicator, 0.2, {
+                        Size = UDim2.new(1, -12, 0, 3),
+                        BackgroundTransparency = 0
+                    })
+                end
                 Tab.ActiveSubTab = SubTab
                 Window.ActiveView = SubTab
                 
@@ -2666,6 +2941,12 @@ function WindowModule.new(config)
                 if t.IconTxt then
                     Utils.Tween(t.IconTxt, 0.2, {TextColor3 = Theme.SubText})
                 end
+                if t.Indicator then
+                    Utils.Tween(t.Indicator, 0.2, {
+                        Size = UDim2.new(0, 0, 1, -8),
+                        BackgroundTransparency = 1
+                    })
+                end
             end
             TabFrame.Visible = true
             Utils.Tween(TabBtn, 0.2, {
@@ -2678,6 +2959,12 @@ function WindowModule.new(config)
             end
             if Tab.IconTxt then
                 Utils.Tween(Tab.IconTxt, 0.2, {TextColor3 = Theme.Accent})
+            end
+            if Tab.Indicator then
+                Utils.Tween(Tab.Indicator, 0.2, {
+                    Size = UDim2.new(0, 4, 1, -8),
+                    BackgroundTransparency = 0
+                })
             end
             Window.ActiveTab = Tab
             
@@ -2727,6 +3014,7 @@ end
 
 local WindowModule = custom_require("core/window")
 local Notification = custom_require("core/notification")
+local Theme = custom_require("core/theme")
 print("[QwenUI] Core modules loaded!")
 
 local Components = {
@@ -2836,6 +3124,129 @@ function Library:CreateWindow(config)
         end
         
         return Tab
+    end
+
+    -- Apply initial custom theme parameters if provided
+    if config.Theme then
+        Theme:Update(config.Theme)
+    end
+
+    -- Automatically build the Theme Customizer Tab unless disabled
+    if config.ThemeEditor ~= false then
+        local SettingsGroup = Window:CreateTabGroup("Settings")
+        local EditorTab = SettingsGroup:CreateTab("Theme Editor", "palette")
+        
+        local ColSec = EditorTab:CreateSection("Theme Colors")
+        ColSec:CreateColorPicker("Accent Color", Theme.Accent, function(val)
+            Theme:Update({
+                Accent = val,
+                AccentHover = val:lerp(Color3.new(1, 1, 1), 0.25),
+                AccentDim = val:lerp(Color3.new(0, 0, 0), 0.25)
+            })
+        end)
+        ColSec:CreateColorPicker("Background Color", Theme.Background, function(val)
+            Theme:Update({ Background = val })
+        end)
+        ColSec:CreateColorPicker("Glass Color", Theme.Glass, function(val)
+            Theme:Update({ Glass = val })
+        end)
+        ColSec:CreateColorPicker("Glass Border Color", Theme.GlassBorder, function(val)
+            Theme:Update({ GlassBorder = val })
+        end)
+        ColSec:CreateColorPicker("Text Color", Theme.Text, function(val)
+            Theme:Update({ Text = val })
+        end)
+        ColSec:CreateColorPicker("SubText Color", Theme.SubText, function(val)
+            Theme:Update({ SubText = val })
+        end)
+
+        local TransSec = EditorTab:CreateSection("UI Transparency")
+        TransSec:CreateSlider("Background Opacity", 0, 100, math.round((1 - Theme.BackgroundTransparency) * 100), function(val)
+            Theme:Update({ BackgroundTransparency = 1 - (val / 100) })
+        end)
+        TransSec:CreateSlider("Glass Opacity", 0, 100, math.round((1 - Theme.GlassTransparency) * 100), function(val)
+            Theme:Update({ GlassTransparency = 1 - (val / 100) })
+        end)
+        TransSec:CreateSlider("Shadow Opacity", 0, 100, math.round((1 - Theme.ShadowTransparency) * 100), function(val)
+            Theme:Update({ ShadowTransparency = 1 - (val / 100) })
+        end)
+
+        local NeonSec = EditorTab:CreateSection("Liquid Neon")
+        NeonSec:CreateColorPicker("Neon Glow 1", Theme.Blob1Color, function(val)
+            Theme:Update({ Blob1Color = val })
+        end)
+        NeonSec:CreateColorPicker("Neon Glow 2", Theme.Blob2Color, function(val)
+            Theme:Update({ Blob2Color = val })
+        end)
+        NeonSec:CreateSlider("Neon Transparency", 0, 100, math.round((1 - Theme.BlobTransparency) * 100), function(val)
+            Theme:Update({ BlobTransparency = 1 - (val / 100) })
+        end)
+        NeonSec:CreateSlider("Neon Animation Speed", 0, 300, math.round(Theme.BlobSpeed * 100), function(val)
+            Theme:Update({ BlobSpeed = val / 100 })
+        end)
+
+        local FontSec = EditorTab:CreateSection("Typography")
+        local fonts = {"Gotham", "GothamMedium", "GothamBold", "SourceSans", "SourceSansBold", "Code"}
+        local fontEnums = {
+            ["Gotham"] = Enum.Font.Gotham,
+            ["GothamMedium"] = Enum.Font.GothamMedium,
+            ["GothamBold"] = Enum.Font.GothamBold,
+            ["SourceSans"] = Enum.Font.SourceSans,
+            ["SourceSansBold"] = Enum.Font.SourceSansBold,
+            ["Code"] = Enum.Font.Code
+        }
+        
+        -- Find current font name
+        local currentFontName = "GothamMedium"
+        for k, v in pairs(fontEnums) do
+            if v == Theme.Font then
+                currentFontName = k
+                break
+            end
+        end
+        
+        FontSec:CreateDropdown("UI Font", fonts, currentFontName, function(val)
+            local chosenFont = fontEnums[val]
+            Theme:Update({
+                Font = chosenFont,
+                FontBold = (val:find("Bold") or val == "GothamBold") and chosenFont or Enum.Font.GothamBold
+            })
+        end)
+
+        local ActionSec = EditorTab:CreateSection("Theme Actions")
+        ActionSec:CreateButton("Copy Theme Table to Clipboard", function()
+            local exportStr = "return {\n"
+            for k, v in pairs(Theme.Values) do
+                local valStr
+                if typeof(v) == "Color3" then
+                    valStr = string.format("Color3.fromRGB(%d, %d, %d)", math.round(v.R * 255), math.round(v.G * 255), math.round(v.B * 255))
+                elseif typeof(v) == "EnumItem" then
+                    valStr = "Enum.Font." .. tostring(v.Name or v)
+                else
+                    valStr = tostring(v)
+                end
+                exportStr = exportStr .. string.format("    %s = %s,\n", k, valStr)
+            end
+            exportStr = exportStr .. "}"
+            
+            if setclipboard then
+                setclipboard(exportStr)
+                Window:Notify({
+                    Title = "Export Success",
+                    Content = "Theme configuration copied to clipboard!",
+                    Duration = 3,
+                    Image = "check"
+                })
+            else
+                print("[QwenUI Theme]\n" .. exportStr)
+                Window:Notify({
+                    Title = "Clipboard Error",
+                    Content = "setclipboard not supported. Theme printed to executor console.",
+                    Duration = 4,
+                    Image = "error"
+                })
+            end
+        end)
     end
 
     return Window

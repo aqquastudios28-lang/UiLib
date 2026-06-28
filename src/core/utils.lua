@@ -109,7 +109,7 @@ function Utils.CreateGlowBlob(parent, color, size, position)
     blob.BackgroundTransparency = 1
     blob.Image = "rbxassetid://5554236805" -- Soft blur texture
     blob.ImageColor3 = color
-    blob.ImageTransparency = 0.91 -- Very soft and subtle
+    blob.ImageTransparency = Theme.BlobTransparency
     blob.ZIndex = 0
     return blob
 end
