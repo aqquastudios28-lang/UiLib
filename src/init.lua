@@ -6,6 +6,7 @@
 
 local WindowModule = require(script.core.window)
 local Notification = require(script.core.notification)
+print("[QwenUI] Core modules loaded!")
 
 local Components = {
     Toggle = require(script.components.toggle),
@@ -40,8 +41,10 @@ function Library:Notify(config, parentGui)
 end
 
 function Library:CreateWindow(config)
+    print("[QwenUI] CreateWindow called with config:", config and config.Name or "No Name")
     local Window = WindowModule.new(config)
     Library.ActiveScreenGui = Window.ScreenGui
+    print("[QwenUI] Window created successfully!")
     
     -- Tab / Section / SubTab Methods
     local TabMethods = {}

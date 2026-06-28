@@ -27,8 +27,16 @@ function WindowModule.new(config)
     local targetParent = config.Parent
     
     if not targetParent then
-        targetParent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+        print("[QwenUI] No config.Parent provided, searching for PlayerGui...")
+        targetParent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui", 5)
+        if not targetParent then
+            warn("[QwenUI] PlayerGui not found within 5 seconds! Defaulting to CoreGui to avoid silent freeze.")
+            -- If we can't find PlayerGui, the script would just freeze silently.
+            -- We fallback to CoreGui as a last resort, but wrapped safely.
+            pcall(function() targetParent = game:GetService("CoreGui") end)
+        end
     end
+    print("[QwenUI] ScreenGui Parent set to:", tostring(targetParent))
     
     ScreenGui.Parent = targetParent
 
