@@ -143,7 +143,7 @@ function QwenUI:Init()
 	Icons:LoadPreset("Phosphor")
 
 	-- Print initialization message
-	print(`{self.Name} v{self.Version} initialized successfully!`)
+	print((tostring(self.Name) .. " v" .. tostring(self.Version) .. " initialized successfully!"))
 	print("Premium Roblox UI Library - Awwwards-tier Design System")
 	print("Components: Window, Notifications, Section, Row, Divider, Banner")
 	print("Inputs: Button, Toggle, Slider, TextBox, Dropdown, MultiDropdown, ColorPicker, Keybind")

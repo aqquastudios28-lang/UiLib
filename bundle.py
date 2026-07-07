@@ -578,10 +578,16 @@ while {v_pc} ~= 0 do
         local {v_ls} = _env[{v_ds}({str_indices['loadstring']})] or loadstring
         if {v_ls} then
             local _fn, _err = {v_ls}({v_mem}["final"])
-            if _fn then {v_ret} = _fn() end
+            if _fn then
+                {v_ret} = _fn()
+            else
+                error("QwenUILib failed to compile: " .. tostring(_err))
+            end
+        else
+            error("QwenUILib: loadstring is unavailable in this environment")
         end
         {v_pc} = 0
-        
+
     elseif {v_pc} == {states['JUNK1']} then
         local _x = 0
         for i = 1, 100 do _x = _x + i end

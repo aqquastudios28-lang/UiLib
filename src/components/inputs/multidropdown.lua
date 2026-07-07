@@ -23,7 +23,7 @@ function MultiDropdown.Create(config: table)
 
 	-- Main multidropdown container
 	local multidropdownFrame = Instance.new("Frame")
-	multidropdownFrame.Name = `MultiDropdown_{text}`
+	multidropdownFrame.Name = ("MultiDropdown_" .. tostring(text))
 	multidropdownFrame.Size = UDim2.new(1, 0, 0, 40)
 	multidropdownFrame.BackgroundTransparency = 1
 	multidropdownFrame.ZIndex = 2
@@ -38,7 +38,6 @@ function MultiDropdown.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2
@@ -66,7 +65,7 @@ function MultiDropdown.Create(config: table)
 	selectedText.Size = UDim2.new(1, -40, 1, 0)
 	selectedText.Position = UDim2.new(0, 12, 0, 0)
 	selectedText.BackgroundTransparency = 1
-	selectedText.Text = #default > 0 and `{ #default } selected` or "Select..."
+	selectedText.Text = #default > 0 and (tostring(#default) .. " selected") or "Select..."
 	selectedText.TextColor3 = #default > 0 and Theme.Colors.TextPrimary or Theme.Colors.TextMuted
 	selectedText.TextSize = Theme.Font.Size.Body
 	selectedText.Font = Theme.Font.Family
@@ -137,12 +136,12 @@ function MultiDropdown.Create(config: table)
 	-- Update selected text display
 	local function updateSelectedText()
 		local count = 0
-		for _, _ in multidropdownState.SelectedValues do
-			count += 1
+		for _, _ in pairs(multidropdownState.SelectedValues) do
+			count = count + (1)
 		end
 
 		if count > 0 then
-			selectedText.Text = `{count} selected`
+			selectedText.Text = (tostring(count) .. " selected")
 			selectedText.TextColor3 = Theme.Colors.TextPrimary
 		else
 			selectedText.Text = "Select..."
@@ -160,7 +159,7 @@ function MultiDropdown.Create(config: table)
 			dropdownList.Size = UDim2.new(1, 0, 0, 0)
 
 			-- Clear existing options
-			for _, btn in multidropdownState.OptionButtons do
+			for _, btn in pairs(multidropdownState.OptionButtons) do
 				if btn.Parent then
 					btn:Destroy()
 				end
@@ -170,7 +169,7 @@ function MultiDropdown.Create(config: table)
 			-- Create option buttons
 			for i, option in ipairs(options) do
 				local optionButton = Instance.new("TextButton")
-				optionButton.Name = `Option_{option}`
+				optionButton.Name = ("Option_" .. tostring(option))
 				optionButton.Size = UDim2.new(1, 0, 0, 28)
 				optionButton.BackgroundTransparency = 1
 				optionButton.Text = option
@@ -261,7 +260,7 @@ function MultiDropdown.Create(config: table)
 
 					-- Build selected values list
 					local selectedList = {}
-					for val, _ in multidropdownState.SelectedValues do
+					for val, _ in pairs(multidropdownState.SelectedValues) do
 						table.insert(selectedList, val)
 					end
 
@@ -295,7 +294,7 @@ function MultiDropdown.Create(config: table)
 				dropdownList.Transparency = 0
 
 				-- Clear options
-				for _, btn in multidropdownState.OptionButtons do
+				for _, btn in pairs(multidropdownState.OptionButtons) do
 					if btn.Parent then
 						btn:Destroy()
 					end
@@ -323,7 +322,7 @@ function MultiDropdown.Create(config: table)
 
 	function multidropdownState:GetValue(): {string}
 		local selectedList = {}
-		for val, _ in multidropdownState.SelectedValues do
+		for val, _ in pairs(multidropdownState.SelectedValues) do
 			table.insert(selectedList, val)
 		end
 		return selectedList

@@ -42,7 +42,7 @@ function Console.Create(config: table)
 
 	
 	local consoleFrame = Instance.new("Frame")
-	consoleFrame.Name = `Console_{title}`
+	consoleFrame.Name = ("Console_" .. tostring(title))
 	consoleFrame.Size = UDim2.new(1, 0, 0, 300)
 	consoleFrame.BackgroundTransparency = 1
 	consoleFrame.ZIndex = 2
@@ -71,7 +71,6 @@ function Console.Create(config: table)
 	titleLabel.TextColor3 = Theme.Colors.TextPrimary
 	titleLabel.TextSize = Theme.Font.Size.Header
 	titleLabel.Font = Theme.Font.Family
-	titleLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Semibold, Theme.Font.Size.Header)
 	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 	titleLabel.TextYAlignment = Enum.TextYAlignment.Center
 	titleLabel.ZIndex = 2
@@ -169,11 +168,11 @@ function Console.Create(config: table)
 
 		
 		local entry = Instance.new("TextLabel")
-		entry.Name = `Log_{self.LineCount}`
+		entry.Name = ("Log_" .. tostring(self.LineCount))
 		entry.Size = UDim2.new(1, -16, 0, 20)
 		entry.Position = UDim2.new(0, 8, 0, 0)
 		entry.BackgroundTransparency = 1
-		entry.Text = `{logData.Prefix} {message}`
+		entry.Text = (tostring(logData.Prefix) .. " " .. tostring(message))
 		entry.TextColor3 = logData.Color
 		entry.TextSize = Theme.Font.Size.Small
 		entry.Font = Theme.Font.Family
@@ -182,14 +181,14 @@ function Console.Create(config: table)
 		entry.ZIndex = 3
 
 		entry.Parent = logContainer
-		self.LineCount += 1
+		self.LineCount = self.LineCount + (1)
 
 		
 		if self.LineCount > maxLines then
-			for i, child in logContainer:GetChildren() do
+			for i, child in ipairs(logContainer:GetChildren()) do
 				if child.Name:match("^Log_") and child ~= entry then
 					child:Destroy()
-					self.LineCount -= 1
+					self.LineCount = self.LineCount - (1)
 					break
 				end
 			end
@@ -202,7 +201,7 @@ function Console.Create(config: table)
 
 	
 	function consoleState:Clear()
-		for _, child in logContainer:GetChildren() do
+		for _, child in ipairs(logContainer:GetChildren()) do
 			if child.Name:match("^Log_") then
 				child:Destroy()
 			end
@@ -213,7 +212,7 @@ function Console.Create(config: table)
 	
 	function consoleState:Copy()
 		local logs = {}
-		for _, child in logContainer:GetChildren() do
+		for _, child in ipairs(logContainer:GetChildren()) do
 			if child.Name:match("^Log_") then
 				table.insert(logs, child.Text)
 			end
@@ -228,7 +227,7 @@ function Console.Create(config: table)
 
 	
 	function consoleState:Filter(level: string)
-		for _, child in logContainer:GetChildren() do
+		for _, child in ipairs(logContainer:GetChildren()) do
 			if child.Name:match("^Log_") then
 				local isMatch = child.Text:find(level:upper())
 				child.Visible = isMatch ~= nil
@@ -325,7 +324,7 @@ function Image.Create(config: table)
 
 	
 	local imageFrame = Instance.new("Frame")
-	imageFrame.Name = `Image_{imageId:sub(1, 20)}`
+	imageFrame.Name = ("Image_" .. tostring(imageId:sub(1, 20)))
 	imageFrame.Size = width
 	imageFrame.BackgroundTransparency = 1
 	imageFrame.ZIndex = 2
@@ -336,7 +335,7 @@ function Image.Create(config: table)
 	imageLabel.Size = UDim2.new(1, 0, 1, 0)
 	imageLabel.Position = UDim2.new(0, 0, 0, 0)
 	imageLabel.BackgroundTransparency = 1
-	imageLabel.Image = imageId ~= "" and `rbxassetid://{imageId}` or ""
+	imageLabel.Image = imageId ~= "" and ("rbxassetid://" .. tostring(imageId)) or ""
 	imageLabel.ScaleType = Enum.ScaleType.Fit
 	imageLabel.ZIndex = 2
 
@@ -370,7 +369,7 @@ function Image.Create(config: table)
 
 	
 	function imageState:SetImage(newImageId: string)
-		imageState.ImageLabel.Image = newImageId ~= "" and `rbxassetid://{newImageId}` or ""
+		imageState.ImageLabel.Image = newImageId ~= "" and ("rbxassetid://" .. tostring(newImageId)) or ""
 	end
 
 	function imageState:SetCaption(newCaption: string)
@@ -442,14 +441,13 @@ function Label.Create(config: table)
 
 	
 	local labelFrame = Instance.new("TextLabel")
-	labelFrame.Name = `Label_{text}`
+	labelFrame.Name = ("Label_" .. tostring(text))
 	labelFrame.Size = width
 	labelFrame.BackgroundTransparency = 1
 	labelFrame.Text = text
 	labelFrame.TextColor3 = color
 	labelFrame.TextSize = size
 	labelFrame.Font = Theme.Font.Family
-	labelFrame.FontFace = Font.new(Theme.Font.Family, weight, size)
 	labelFrame.TextXAlignment = align
 	labelFrame.TextYAlignment = Enum.TextYAlignment.Top
 	labelFrame.ZIndex = 2
@@ -511,14 +509,13 @@ function Paragraph.Create(config: table)
 
 	
 	local paragraphFrame = Instance.new("TextLabel")
-	paragraphFrame.Name = `Paragraph_{text:sub(1, 20)}`
+	paragraphFrame.Name = ("Paragraph_" .. tostring(text:sub(1, 20)))
 	paragraphFrame.Size = width
 	paragraphFrame.BackgroundTransparency = 1
 	paragraphFrame.Text = text
 	paragraphFrame.TextColor3 = color
 	paragraphFrame.TextSize = size
 	paragraphFrame.Font = Theme.Font.Family
-	paragraphFrame.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Regular, size)
 	paragraphFrame.TextXAlignment = align
 	paragraphFrame.TextYAlignment = Enum.TextYAlignment.Top
 	paragraphFrame.ZIndex = 2
@@ -578,7 +575,7 @@ function ProgressBar.Create(config: table)
 
 	
 	local progressFrame = Instance.new("Frame")
-	progressFrame.Name = `ProgressBar_{text}`
+	progressFrame.Name = ("ProgressBar_" .. tostring(text))
 	progressFrame.Size = width
 	progressFrame.BackgroundTransparency = 1
 	progressFrame.ZIndex = 2
@@ -646,7 +643,7 @@ function ProgressBar.Create(config: table)
 	valueLabel.Size = UDim2.new(0, 50, 0, 20)
 	valueLabel.Position = UDim2.new(1, 8, text ~= "" and 0 or 0.5, text ~= "" and 8 or -10)
 	valueLabel.BackgroundTransparency = 1
-	valueLabel.Text = `{math.round(value)}%`
+	valueLabel.Text = (tostring(math.round(value)) .. "%")
 	valueLabel.TextColor3 = Theme.Colors.TextSecondary
 	valueLabel.TextSize = Theme.Font.Size.Small
 	valueLabel.Font = Theme.Font.Family
@@ -677,7 +674,7 @@ function ProgressBar.Create(config: table)
 		}, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 
 		
-		valueLabel.Text = `{math.round(clampedValue)}%`
+		valueLabel.Text = (tostring(math.round(clampedValue)) .. "%")
 
 		progressState.CurrentValue = clampedValue
 	end
@@ -748,7 +745,7 @@ function Button.Create(config: table)
 
 	
 	local outerShell = Instance.new("Frame")
-	outerShell.Name = `Button_{text}`
+	outerShell.Name = ("Button_" .. tostring(text))
 	outerShell.Size = width
 	outerShell.BackgroundColor3 = Theme.Colors.BackgroundTertiary
 	outerShell.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
@@ -781,7 +778,6 @@ function Button.Create(config: table)
 	textLabel.TextColor3 = disabled and Theme.Colors.TextMuted or Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 3
@@ -983,7 +979,7 @@ function ColorPicker.Create(config: table)
 
 	
 	local colorPickerFrame = Instance.new("Frame")
-	colorPickerFrame.Name = `ColorPicker_{text}`
+	colorPickerFrame.Name = ("ColorPicker_" .. tostring(text))
 	colorPickerFrame.Size = UDim2.new(1, 0, 0, 200)
 	colorPickerFrame.BackgroundTransparency = 1
 	colorPickerFrame.ZIndex = 2
@@ -998,7 +994,6 @@ function ColorPicker.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2
@@ -1340,7 +1335,7 @@ function Dropdown.Create(config: table)
 
 	
 	local dropdownFrame = Instance.new("Frame")
-	dropdownFrame.Name = `Dropdown_{text}`
+	dropdownFrame.Name = ("Dropdown_" .. tostring(text))
 	dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
 	dropdownFrame.BackgroundTransparency = 1
 	dropdownFrame.ZIndex = 2
@@ -1355,7 +1350,6 @@ function Dropdown.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2
@@ -1458,7 +1452,7 @@ function Dropdown.Create(config: table)
 			
 			for i, option in ipairs(options) do
 				local optionButton = Instance.new("TextButton")
-				optionButton.Name = `Option_{option}`
+				optionButton.Name = ("Option_" .. tostring(option))
 				optionButton.Size = UDim2.new(1, 0, 0, 28)
 				optionButton.BackgroundTransparency = 1
 				optionButton.Text = option
@@ -1529,7 +1523,7 @@ function Dropdown.Create(config: table)
 				dropdownList.Transparency = 0
 
 				
-				for _, btn in dropdownState.OptionButtons do
+				for _, btn in pairs(dropdownState.OptionButtons) do
 					if btn.Parent then
 						btn:Destroy()
 					end
@@ -1642,7 +1636,7 @@ function Keybind.Create(config: table)
 
 	
 	local keybindFrame = Instance.new("Frame")
-	keybindFrame.Name = `Keybind_{text}`
+	keybindFrame.Name = ("Keybind_" .. tostring(text))
 	keybindFrame.Size = UDim2.new(1, 0, 0, 36)
 	keybindFrame.BackgroundTransparency = 1
 	keybindFrame.ZIndex = 2
@@ -1657,7 +1651,6 @@ function Keybind.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2
@@ -1847,7 +1840,7 @@ function MultiDropdown.Create(config: table)
 
 	
 	local multidropdownFrame = Instance.new("Frame")
-	multidropdownFrame.Name = `MultiDropdown_{text}`
+	multidropdownFrame.Name = ("MultiDropdown_" .. tostring(text))
 	multidropdownFrame.Size = UDim2.new(1, 0, 0, 40)
 	multidropdownFrame.BackgroundTransparency = 1
 	multidropdownFrame.ZIndex = 2
@@ -1862,7 +1855,6 @@ function MultiDropdown.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2
@@ -1890,7 +1882,7 @@ function MultiDropdown.Create(config: table)
 	selectedText.Size = UDim2.new(1, -40, 1, 0)
 	selectedText.Position = UDim2.new(0, 12, 0, 0)
 	selectedText.BackgroundTransparency = 1
-	selectedText.Text = #default > 0 and `{ #default } selected` or "Select..."
+	selectedText.Text = #default > 0 and (tostring(#default) .. " selected") or "Select..."
 	selectedText.TextColor3 = #default > 0 and Theme.Colors.TextPrimary or Theme.Colors.TextMuted
 	selectedText.TextSize = Theme.Font.Size.Body
 	selectedText.Font = Theme.Font.Family
@@ -1961,12 +1953,12 @@ function MultiDropdown.Create(config: table)
 	
 	local function updateSelectedText()
 		local count = 0
-		for _, _ in multidropdownState.SelectedValues do
-			count += 1
+		for _, _ in pairs(multidropdownState.SelectedValues) do
+			count = count + (1)
 		end
 
 		if count > 0 then
-			selectedText.Text = `{count} selected`
+			selectedText.Text = (tostring(count) .. " selected")
 			selectedText.TextColor3 = Theme.Colors.TextPrimary
 		else
 			selectedText.Text = "Select..."
@@ -1984,7 +1976,7 @@ function MultiDropdown.Create(config: table)
 			dropdownList.Size = UDim2.new(1, 0, 0, 0)
 
 			
-			for _, btn in multidropdownState.OptionButtons do
+			for _, btn in pairs(multidropdownState.OptionButtons) do
 				if btn.Parent then
 					btn:Destroy()
 				end
@@ -1994,7 +1986,7 @@ function MultiDropdown.Create(config: table)
 			
 			for i, option in ipairs(options) do
 				local optionButton = Instance.new("TextButton")
-				optionButton.Name = `Option_{option}`
+				optionButton.Name = ("Option_" .. tostring(option))
 				optionButton.Size = UDim2.new(1, 0, 0, 28)
 				optionButton.BackgroundTransparency = 1
 				optionButton.Text = option
@@ -2085,7 +2077,7 @@ function MultiDropdown.Create(config: table)
 
 					
 					local selectedList = {}
-					for val, _ in multidropdownState.SelectedValues do
+					for val, _ in pairs(multidropdownState.SelectedValues) do
 						table.insert(selectedList, val)
 					end
 
@@ -2119,7 +2111,7 @@ function MultiDropdown.Create(config: table)
 				dropdownList.Transparency = 0
 
 				
-				for _, btn in multidropdownState.OptionButtons do
+				for _, btn in pairs(multidropdownState.OptionButtons) do
 					if btn.Parent then
 						btn:Destroy()
 					end
@@ -2147,7 +2139,7 @@ function MultiDropdown.Create(config: table)
 
 	function multidropdownState:GetValue(): {string}
 		local selectedList = {}
-		for val, _ in multidropdownState.SelectedValues do
+		for val, _ in pairs(multidropdownState.SelectedValues) do
 			table.insert(selectedList, val)
 		end
 		return selectedList
@@ -2221,7 +2213,7 @@ function Slider.Create(config: table)
 
 	
 	local sliderFrame = Instance.new("Frame")
-	sliderFrame.Name = `Slider_{text}`
+	sliderFrame.Name = ("Slider_" .. tostring(text))
 	sliderFrame.Size = UDim2.new(1, 0, 0, 44)
 	sliderFrame.BackgroundTransparency = 1
 	sliderFrame.ZIndex = 2
@@ -2236,7 +2228,6 @@ function Slider.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2
@@ -2470,7 +2461,7 @@ function TextBox.Create(config: table)
 
 	
 	local textboxFrame = Instance.new("Frame")
-	textboxFrame.Name = `TextBox_{text}`
+	textboxFrame.Name = ("TextBox_" .. tostring(text))
 	textboxFrame.Size = width
 	textboxFrame.BackgroundColor3 = Theme.Colors.BackgroundTertiary
 	textboxFrame.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
@@ -2644,7 +2635,7 @@ function Toggle.Create(config: table)
 
 	
 	local toggleFrame = Instance.new("Frame")
-	toggleFrame.Name = `Toggle_{text}`
+	toggleFrame.Name = ("Toggle_" .. tostring(text))
 	toggleFrame.Size = UDim2.new(1, 0, 0, 36)
 	toggleFrame.BackgroundTransparency = 1
 	toggleFrame.ZIndex = 2
@@ -2687,7 +2678,6 @@ function Toggle.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2
@@ -2843,7 +2833,7 @@ function Banner.Create(config: table)
 
 	
 	local bannerFrame = Instance.new("Frame")
-	bannerFrame.Name = `Banner_{title}`
+	bannerFrame.Name = ("Banner_" .. tostring(title))
 	bannerFrame.Size = UDim2.new(1, 0, 0, height)
 	bannerFrame.BackgroundTransparency = 1
 	bannerFrame.ZIndex = 2
@@ -2854,7 +2844,7 @@ function Banner.Create(config: table)
 	backgroundImage.Size = UDim2.new(1, 0, 1, 0)
 	backgroundImage.Position = UDim2.new(0, 0, 0, 0)
 	backgroundImage.BackgroundTransparency = 1
-	backgroundImage.Image = imageId ~= "" and `rbxassetid://{imageId}` or ""
+	backgroundImage.Image = imageId ~= "" and ("rbxassetid://" .. tostring(imageId)) or ""
 	backgroundImage.ScaleType = Enum.ScaleType.Crop
 	backgroundImage.ZIndex = 1
 
@@ -2892,7 +2882,6 @@ function Banner.Create(config: table)
 	titleText.TextColor3 = Theme.Colors.TextPrimary
 	titleText.TextSize = Theme.Font.Size.Header
 	titleText.Font = Theme.Font.Family
-	titleText.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Bold, Theme.Font.Size.Header)
 	titleText.TextXAlignment = Enum.TextXAlignment.Left
 	titleText.TextYAlignment = Enum.TextYAlignment.Top
 	titleText.ZIndex = 3
@@ -2963,7 +2952,7 @@ function Banner.Create(config: table)
 	end
 
 	function bannerState:SetImage(imageId: string)
-		bannerState.BackgroundImage.Image = imageId ~= "" and `rbxassetid://{imageId}` or ""
+		bannerState.BackgroundImage.Image = imageId ~= "" and ("rbxassetid://" .. tostring(imageId)) or ""
 	end
 
 	function bannerState:Destroy()
@@ -3232,7 +3221,7 @@ function Section.Create(config: table)
 
 	
 	local sectionFrame = Instance.new("Frame")
-	sectionFrame.Name = `Section_{title}`
+	sectionFrame.Name = ("Section_" .. tostring(title))
 	sectionFrame.Size = UDim2.new(1, 0, 0, 0)
 	sectionFrame.BackgroundTransparency = 1
 	sectionFrame.ZIndex = 2
@@ -3261,7 +3250,6 @@ function Section.Create(config: table)
 	titleText.TextColor3 = Theme.Colors.TextPrimary
 	titleText.TextSize = Theme.Font.Size.Header
 	titleText.Font = Theme.Font.Family
-	titleText.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Semibold, Theme.Font.Size.Header)
 	titleText.TextXAlignment = Enum.TextXAlignment.Left
 	titleText.TextYAlignment = Enum.TextYAlignment.Center
 	titleText.ZIndex = 2
@@ -3330,7 +3318,7 @@ function Section.Create(config: table)
 			expandIcon.Image = Icons.Get("caret-right", "Regular")
 
 			
-			for _, child in contentFrame:GetChildren() do
+			for _, child in ipairs(contentFrame:GetChildren()) do
 				if child:IsA("Frame") then
 					Utils.Tween(child, {
 						Transparency = 1,
@@ -3364,7 +3352,7 @@ function Section.Create(config: table)
 			sectionFrame.Size = UDim2.new(1, 0, 0, 32 + contentFrame.AbsoluteContentSize.Y)
 
 			
-			for i, child in contentFrame:GetChildren() do
+			for i, child in ipairs(contentFrame:GetChildren()) do
 				if child:IsA("Frame") then
 					child.Transparency = 1
 					child.Size = UDim2.new(1, 0, 0, 0)
@@ -3863,7 +3851,7 @@ function Icons.Create(
 ): ImageLabel
 	local assetId = Icons.Get(name, weight)
 	if not assetId then
-		warn(`Icon "{name}" not found in preset {Icons.ActivePreset}`)
+		warn(("Icon \"" .. tostring(name) .. "\" not found in preset " .. tostring(Icons.ActivePreset)))
 		return nil
 	end
 
@@ -3895,7 +3883,7 @@ function Icons.CreatePill(
 	local pillSize = size or 22
 
 	local pill = Instance.new("Frame")
-	pill.Name = `{name}Pill`
+	pill.Name = (tostring(name) .. "Pill")
 	pill.Size = UDim2.new(0, pillSize, 0, pillSize)
 	pill.BackgroundColor3 = color or Color3.fromHex("#7c3aed")
 	pill.BackgroundTransparency = transparency or 0.85
@@ -4007,7 +3995,7 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 
 	
 	local container = Instance.new("Frame")
-	container.Name = `Notification_{Notification.NextId}`
+	container.Name = ("Notification_" .. tostring(Notification.NextId))
 	container.Size = UDim2.new(1, -40, 0, 64)
 	container.Position = UDim2.new(0, 20, 1, 100)
 	container.BackgroundColor3 = Theme.Colors.BackgroundSecondary
@@ -4196,14 +4184,14 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 
 	
 	Notification.Registry[notifState] = notifState
-	Notification.NextId += 1
+	Notification.NextId = Notification.NextId + (1)
 
 	return notifState
 end
 
 
 function Notification.DismissAll()
-	for notifState, _ in Notification.Registry do
+	for notifState, _ in pairs(Notification.Registry) do
 		if notifState.Container and notifState.Container.Parent then
 			notifState.Container:Destroy()
 		end
@@ -4213,7 +4201,7 @@ end
 
 
 function Notification.Dismiss(id: number)
-	for notifState, _ in Notification.Registry do
+	for notifState, _ in pairs(Notification.Registry) do
 		if notifState.Id == id then
 			if notifState.Container and notifState.Container.Parent then
 				notifState.Container:Destroy()
@@ -4349,7 +4337,7 @@ end
 
 function Signal:Connect(callback)
 	local id = self._nextId
-	self._nextId += 1
+	self._nextId = self._nextId + (1)
 	self._connections[id] = callback
 
 	return {
@@ -4619,7 +4607,7 @@ function Utils.CreateListLayout(
 	align: Enum.FlexAlignment?
 ): UIListLayout
 	local layout = Instance.new("UIListLayout")
-	layout.FillDirection = if horizontal then Enum.FillDirection.Horizontal else Enum.FillDirection.Vertical
+	layout.FillDirection = horizontal and Enum.FillDirection.Horizontal or Enum.FillDirection.Vertical
 	layout.HorizontalAlignment = align or Enum.FlexAlignment.Center
 	layout.VerticalAlignment = align or Enum.FlexAlignment.Center
 	layout.Padding = UDim.new(0, padding or 8)
@@ -4970,7 +4958,6 @@ function Window.Create(config: table)
 	titleText.TextColor3 = Theme.Colors.TextPrimary
 	titleText.TextSize = Theme.Font.Size.Title
 	titleText.Font = Theme.Font.Family
-	titleText.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Semibold, Theme.Font.Size.Title)
 	titleText.TextXAlignment = Enum.TextXAlignment.Left
 	titleText.ZIndex = 3
 
@@ -5087,7 +5074,7 @@ function Window.Create(config: table)
 			IsActive = false,
 		}
 
-		tabData.Content.Name = `Tab_{tabName}`
+		tabData.Content.Name = ("Tab_" .. tostring(tabName))
 		tabData.Content.Size = UDim2.new(1, 0, 0, 0)
 		tabData.Content.Position = UDim2.new(0, 0, 0, 0)
 		tabData.Content.BackgroundTransparency = 1
@@ -5109,21 +5096,21 @@ function Window.Create(config: table)
 
 	function windowState:SwitchTab(tabName: string)
 		
-		for _, child in contentContainer:GetChildren() do
+		for _, child in ipairs(contentContainer:GetChildren()) do
 			if child.Name:match("^Tab_") then
 				child.Visible = false
 			end
 		end
 
 		
-		local targetTab = contentContainer:FindFirstChild(`Tab_{tabName}`)
+		local targetTab = contentContainer:FindFirstChild(("Tab_" .. tostring(tabName)))
 		if targetTab then
 			targetTab.Visible = true
 
 			
 			
 			
-			for i, child in targetTab:GetChildren() do
+			for i, child in ipairs(targetTab:GetChildren()) do
 				if child:IsA("GuiObject") then
 					local basePos = child.Position
 					child.Position = UDim2.new(basePos.X.Scale, basePos.X.Offset, basePos.Y.Scale, basePos.Y.Offset + 10)
@@ -5187,7 +5174,7 @@ end
 
 
 function Window.DestroyAll()
-	for windowState, _ in Window.Registry do
+	for windowState, _ in pairs(Window.Registry) do
 		windowState:Destroy()
 	end
 	table.clear(Window.Registry)
@@ -5343,7 +5330,7 @@ function QwenUI:Init()
 	Icons:LoadPreset("Phosphor")
 
 	
-	print(`{self.Name} v{self.Version} initialized successfully!`)
+	print((tostring(self.Name) .. " v" .. tostring(self.Version) .. " initialized successfully!"))
 	print("Premium Roblox UI Library - Awwwards-tier Design System")
 	print("Components: Window, Notifications, Section, Row, Divider, Banner")
 	print("Inputs: Button, Toggle, Slider, TextBox, Dropdown, MultiDropdown, ColorPicker, Keybind")

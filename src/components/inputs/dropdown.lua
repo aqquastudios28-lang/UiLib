@@ -23,7 +23,7 @@ function Dropdown.Create(config: table)
 
 	-- Main dropdown container
 	local dropdownFrame = Instance.new("Frame")
-	dropdownFrame.Name = `Dropdown_{text}`
+	dropdownFrame.Name = ("Dropdown_" .. tostring(text))
 	dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
 	dropdownFrame.BackgroundTransparency = 1
 	dropdownFrame.ZIndex = 2
@@ -38,7 +38,6 @@ function Dropdown.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2
@@ -141,7 +140,7 @@ function Dropdown.Create(config: table)
 			-- Create option buttons
 			for i, option in ipairs(options) do
 				local optionButton = Instance.new("TextButton")
-				optionButton.Name = `Option_{option}`
+				optionButton.Name = ("Option_" .. tostring(option))
 				optionButton.Size = UDim2.new(1, 0, 0, 28)
 				optionButton.BackgroundTransparency = 1
 				optionButton.Text = option
@@ -212,7 +211,7 @@ function Dropdown.Create(config: table)
 				dropdownList.Transparency = 0
 
 				-- Clear options
-				for _, btn in dropdownState.OptionButtons do
+				for _, btn in pairs(dropdownState.OptionButtons) do
 					if btn.Parent then
 						btn:Destroy()
 					end

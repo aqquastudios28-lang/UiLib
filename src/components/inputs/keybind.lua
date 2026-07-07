@@ -23,7 +23,7 @@ function Keybind.Create(config: table)
 
 	-- Main keybind container
 	local keybindFrame = Instance.new("Frame")
-	keybindFrame.Name = `Keybind_{text}`
+	keybindFrame.Name = ("Keybind_" .. tostring(text))
 	keybindFrame.Size = UDim2.new(1, 0, 0, 36)
 	keybindFrame.BackgroundTransparency = 1
 	keybindFrame.ZIndex = 2
@@ -38,7 +38,6 @@ function Keybind.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2

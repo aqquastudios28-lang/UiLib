@@ -443,7 +443,7 @@ function Icons.Create(
 ): ImageLabel
 	local assetId = Icons.Get(name, weight)
 	if not assetId then
-		warn(`Icon "{name}" not found in preset {Icons.ActivePreset}`)
+		warn(("Icon \"" .. tostring(name) .. "\" not found in preset " .. tostring(Icons.ActivePreset)))
 		return nil
 	end
 
@@ -475,7 +475,7 @@ function Icons.CreatePill(
 	local pillSize = size or 22
 
 	local pill = Instance.new("Frame")
-	pill.Name = `{name}Pill`
+	pill.Name = (tostring(name) .. "Pill")
 	pill.Size = UDim2.new(0, pillSize, 0, pillSize)
 	pill.BackgroundColor3 = color or Color3.fromHex("#7c3aed")
 	pill.BackgroundTransparency = transparency or 0.85

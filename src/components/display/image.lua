@@ -22,7 +22,7 @@ function Image.Create(config: table)
 
 	-- Main image container
 	local imageFrame = Instance.new("Frame")
-	imageFrame.Name = `Image_{imageId:sub(1, 20)}`
+	imageFrame.Name = ("Image_" .. tostring(imageId:sub(1, 20)))
 	imageFrame.Size = width
 	imageFrame.BackgroundTransparency = 1
 	imageFrame.ZIndex = 2
@@ -33,7 +33,7 @@ function Image.Create(config: table)
 	imageLabel.Size = UDim2.new(1, 0, 1, 0)
 	imageLabel.Position = UDim2.new(0, 0, 0, 0)
 	imageLabel.BackgroundTransparency = 1
-	imageLabel.Image = imageId ~= "" and `rbxassetid://{imageId}` or ""
+	imageLabel.Image = imageId ~= "" and ("rbxassetid://" .. tostring(imageId)) or ""
 	imageLabel.ScaleType = Enum.ScaleType.Fit
 	imageLabel.ZIndex = 2
 
@@ -67,7 +67,7 @@ function Image.Create(config: table)
 
 	-- Image methods
 	function imageState:SetImage(newImageId: string)
-		imageState.ImageLabel.Image = newImageId ~= "" and `rbxassetid://{newImageId}` or ""
+		imageState.ImageLabel.Image = newImageId ~= "" and ("rbxassetid://" .. tostring(newImageId)) or ""
 	end
 
 	function imageState:SetCaption(newCaption: string)

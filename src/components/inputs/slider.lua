@@ -24,7 +24,7 @@ function Slider.Create(config: table)
 
 	-- Main slider container
 	local sliderFrame = Instance.new("Frame")
-	sliderFrame.Name = `Slider_{text}`
+	sliderFrame.Name = ("Slider_" .. tostring(text))
 	sliderFrame.Size = UDim2.new(1, 0, 0, 44)
 	sliderFrame.BackgroundTransparency = 1
 	sliderFrame.ZIndex = 2
@@ -39,7 +39,6 @@ function Slider.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2

@@ -22,7 +22,7 @@ function Banner.Create(config: table)
 
 	-- Main banner container
 	local bannerFrame = Instance.new("Frame")
-	bannerFrame.Name = `Banner_{title}`
+	bannerFrame.Name = ("Banner_" .. tostring(title))
 	bannerFrame.Size = UDim2.new(1, 0, 0, height)
 	bannerFrame.BackgroundTransparency = 1
 	bannerFrame.ZIndex = 2
@@ -33,7 +33,7 @@ function Banner.Create(config: table)
 	backgroundImage.Size = UDim2.new(1, 0, 1, 0)
 	backgroundImage.Position = UDim2.new(0, 0, 0, 0)
 	backgroundImage.BackgroundTransparency = 1
-	backgroundImage.Image = imageId ~= "" and `rbxassetid://{imageId}` or ""
+	backgroundImage.Image = imageId ~= "" and ("rbxassetid://" .. tostring(imageId)) or ""
 	backgroundImage.ScaleType = Enum.ScaleType.Crop
 	backgroundImage.ZIndex = 1
 
@@ -71,7 +71,6 @@ function Banner.Create(config: table)
 	titleText.TextColor3 = Theme.Colors.TextPrimary
 	titleText.TextSize = Theme.Font.Size.Header
 	titleText.Font = Theme.Font.Family
-	titleText.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Bold, Theme.Font.Size.Header)
 	titleText.TextXAlignment = Enum.TextXAlignment.Left
 	titleText.TextYAlignment = Enum.TextYAlignment.Top
 	titleText.ZIndex = 3
@@ -142,7 +141,7 @@ function Banner.Create(config: table)
 	end
 
 	function bannerState:SetImage(imageId: string)
-		bannerState.BackgroundImage.Image = imageId ~= "" and `rbxassetid://{imageId}` or ""
+		bannerState.BackgroundImage.Image = imageId ~= "" and ("rbxassetid://" .. tostring(imageId)) or ""
 	end
 
 	function bannerState:Destroy()

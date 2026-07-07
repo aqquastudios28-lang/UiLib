@@ -21,7 +21,7 @@ function Console.Create(config: table)
 
 	-- Main console container
 	local consoleFrame = Instance.new("Frame")
-	consoleFrame.Name = `Console_{title}`
+	consoleFrame.Name = ("Console_" .. tostring(title))
 	consoleFrame.Size = UDim2.new(1, 0, 0, 300)
 	consoleFrame.BackgroundTransparency = 1
 	consoleFrame.ZIndex = 2
@@ -50,7 +50,6 @@ function Console.Create(config: table)
 	titleLabel.TextColor3 = Theme.Colors.TextPrimary
 	titleLabel.TextSize = Theme.Font.Size.Header
 	titleLabel.Font = Theme.Font.Family
-	titleLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Semibold, Theme.Font.Size.Header)
 	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 	titleLabel.TextYAlignment = Enum.TextYAlignment.Center
 	titleLabel.ZIndex = 2
@@ -148,11 +147,11 @@ function Console.Create(config: table)
 
 		-- Create log entry
 		local entry = Instance.new("TextLabel")
-		entry.Name = `Log_{self.LineCount}`
+		entry.Name = ("Log_" .. tostring(self.LineCount))
 		entry.Size = UDim2.new(1, -16, 0, 20)
 		entry.Position = UDim2.new(0, 8, 0, 0)
 		entry.BackgroundTransparency = 1
-		entry.Text = `{logData.Prefix} {message}`
+		entry.Text = (tostring(logData.Prefix) .. " " .. tostring(message))
 		entry.TextColor3 = logData.Color
 		entry.TextSize = Theme.Font.Size.Small
 		entry.Font = Theme.Font.Family
@@ -161,14 +160,14 @@ function Console.Create(config: table)
 		entry.ZIndex = 3
 
 		entry.Parent = logContainer
-		self.LineCount += 1
+		self.LineCount = self.LineCount + (1)
 
 		-- Remove old lines if exceeding max
 		if self.LineCount > maxLines then
-			for i, child in logContainer:GetChildren() do
+			for i, child in ipairs(logContainer:GetChildren()) do
 				if child.Name:match("^Log_") and child ~= entry then
 					child:Destroy()
-					self.LineCount -= 1
+					self.LineCount = self.LineCount - (1)
 					break
 				end
 			end
@@ -181,7 +180,7 @@ function Console.Create(config: table)
 
 	-- Clear console
 	function consoleState:Clear()
-		for _, child in logContainer:GetChildren() do
+		for _, child in ipairs(logContainer:GetChildren()) do
 			if child.Name:match("^Log_") then
 				child:Destroy()
 			end
@@ -192,7 +191,7 @@ function Console.Create(config: table)
 	-- Copy all logs
 	function consoleState:Copy()
 		local logs = {}
-		for _, child in logContainer:GetChildren() do
+		for _, child in ipairs(logContainer:GetChildren()) do
 			if child.Name:match("^Log_") then
 				table.insert(logs, child.Text)
 			end
@@ -207,7 +206,7 @@ function Console.Create(config: table)
 
 	-- Filter logs
 	function consoleState:Filter(level: string)
-		for _, child in logContainer:GetChildren() do
+		for _, child in ipairs(logContainer:GetChildren()) do
 			if child.Name:match("^Log_") then
 				local isMatch = child.Text:find(level:upper())
 				child.Visible = isMatch ~= nil

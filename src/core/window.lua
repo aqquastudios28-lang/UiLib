@@ -105,7 +105,6 @@ function Window.Create(config: table)
 	titleText.TextColor3 = Theme.Colors.TextPrimary
 	titleText.TextSize = Theme.Font.Size.Title
 	titleText.Font = Theme.Font.Family
-	titleText.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Semibold, Theme.Font.Size.Title)
 	titleText.TextXAlignment = Enum.TextXAlignment.Left
 	titleText.ZIndex = 3
 
@@ -222,7 +221,7 @@ function Window.Create(config: table)
 			IsActive = false,
 		}
 
-		tabData.Content.Name = `Tab_{tabName}`
+		tabData.Content.Name = ("Tab_" .. tostring(tabName))
 		tabData.Content.Size = UDim2.new(1, 0, 0, 0)
 		tabData.Content.Position = UDim2.new(0, 0, 0, 0)
 		tabData.Content.BackgroundTransparency = 1
@@ -244,21 +243,21 @@ function Window.Create(config: table)
 
 	function windowState:SwitchTab(tabName: string)
 		-- Hide all tabs
-		for _, child in contentContainer:GetChildren() do
+		for _, child in ipairs(contentContainer:GetChildren()) do
 			if child.Name:match("^Tab_") then
 				child.Visible = false
 			end
 		end
 
 		-- Show selected tab
-		local targetTab = contentContainer:FindFirstChild(`Tab_{tabName}`)
+		local targetTab = contentContainer:FindFirstChild(("Tab_" .. tostring(tabName)))
 		if targetTab then
 			targetTab.Visible = true
 
 			-- Staggered reveal animation (slide up into place).
-			-- Note: GuiObject has no `Transparency` property, so we only animate
+			-- Note: GuiObject has no Transparency property, so we only animate
 			-- Position, which is valid on every GuiObject.
-			for i, child in targetTab:GetChildren() do
+			for i, child in ipairs(targetTab:GetChildren()) do
 				if child:IsA("GuiObject") then
 					local basePos = child.Position
 					child.Position = UDim2.new(basePos.X.Scale, basePos.X.Offset, basePos.Y.Scale, basePos.Y.Offset + 10)
@@ -322,7 +321,7 @@ end
 
 -- Close all windows
 function Window.DestroyAll()
-	for windowState, _ in Window.Registry do
+	for windowState, _ in pairs(Window.Registry) do
 		windowState:Destroy()
 	end
 	table.clear(Window.Registry)

@@ -47,7 +47,7 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 
 	-- Main container
 	local container = Instance.new("Frame")
-	container.Name = `Notification_{Notification.NextId}`
+	container.Name = ("Notification_" .. tostring(Notification.NextId))
 	container.Size = UDim2.new(1, -40, 0, 64)
 	container.Position = UDim2.new(0, 20, 1, 100)
 	container.BackgroundColor3 = Theme.Colors.BackgroundSecondary
@@ -236,14 +236,14 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 
 	-- Register notification
 	Notification.Registry[notifState] = notifState
-	Notification.NextId += 1
+	Notification.NextId = Notification.NextId + (1)
 
 	return notifState
 end
 
 -- Dismiss all notifications
 function Notification.DismissAll()
-	for notifState, _ in Notification.Registry do
+	for notifState, _ in pairs(Notification.Registry) do
 		if notifState.Container and notifState.Container.Parent then
 			notifState.Container:Destroy()
 		end
@@ -253,7 +253,7 @@ end
 
 -- Dismiss specific notification by ID
 function Notification.Dismiss(id: number)
-	for notifState, _ in Notification.Registry do
+	for notifState, _ in pairs(Notification.Registry) do
 		if notifState.Id == id then
 			if notifState.Container and notifState.Container.Parent then
 				notifState.Container:Destroy()

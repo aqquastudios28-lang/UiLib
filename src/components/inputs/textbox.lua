@@ -23,7 +23,7 @@ function TextBox.Create(config: table)
 
 	-- Main textbox container
 	local textboxFrame = Instance.new("Frame")
-	textboxFrame.Name = `TextBox_{text}`
+	textboxFrame.Name = ("TextBox_" .. tostring(text))
 	textboxFrame.Size = width
 	textboxFrame.BackgroundColor3 = Theme.Colors.BackgroundTertiary
 	textboxFrame.BackgroundTransparency = Theme.Transparency.BackgroundTertiary

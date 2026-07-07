@@ -21,7 +21,7 @@ function ProgressBar.Create(config: table)
 
 	-- Main progress bar container
 	local progressFrame = Instance.new("Frame")
-	progressFrame.Name = `ProgressBar_{text}`
+	progressFrame.Name = ("ProgressBar_" .. tostring(text))
 	progressFrame.Size = width
 	progressFrame.BackgroundTransparency = 1
 	progressFrame.ZIndex = 2
@@ -89,7 +89,7 @@ function ProgressBar.Create(config: table)
 	valueLabel.Size = UDim2.new(0, 50, 0, 20)
 	valueLabel.Position = UDim2.new(1, 8, text ~= "" and 0 or 0.5, text ~= "" and 8 or -10)
 	valueLabel.BackgroundTransparency = 1
-	valueLabel.Text = `{math.round(value)}%`
+	valueLabel.Text = (tostring(math.round(value)) .. "%")
 	valueLabel.TextColor3 = Theme.Colors.TextSecondary
 	valueLabel.TextSize = Theme.Font.Size.Small
 	valueLabel.Font = Theme.Font.Family
@@ -120,7 +120,7 @@ function ProgressBar.Create(config: table)
 		}, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 
 		-- Update value label
-		valueLabel.Text = `{math.round(clampedValue)}%`
+		valueLabel.Text = (tostring(math.round(clampedValue)) .. "%")
 
 		progressState.CurrentValue = clampedValue
 	end

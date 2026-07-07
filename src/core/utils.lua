@@ -183,7 +183,7 @@ function Utils.CreateListLayout(
 	align: Enum.FlexAlignment?
 ): UIListLayout
 	local layout = Instance.new("UIListLayout")
-	layout.FillDirection = if horizontal then Enum.FillDirection.Horizontal else Enum.FillDirection.Vertical
+	layout.FillDirection = horizontal and Enum.FillDirection.Horizontal or Enum.FillDirection.Vertical
 	layout.HorizontalAlignment = align or Enum.FlexAlignment.Center
 	layout.VerticalAlignment = align or Enum.FlexAlignment.Center
 	layout.Padding = UDim.new(0, padding or 8)

@@ -119,7 +119,7 @@ end
 
 function Signal:Connect(callback)
 	local id = self._nextId
-	self._nextId += 1
+	self._nextId = self._nextId + (1)
 	self._connections[id] = callback
 
 	return {

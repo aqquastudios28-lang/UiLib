@@ -21,7 +21,7 @@ function Toggle.Create(config: table)
 
 	-- Main toggle container
 	local toggleFrame = Instance.new("Frame")
-	toggleFrame.Name = `Toggle_{text}`
+	toggleFrame.Name = ("Toggle_" .. tostring(text))
 	toggleFrame.Size = UDim2.new(1, 0, 0, 36)
 	toggleFrame.BackgroundTransparency = 1
 	toggleFrame.ZIndex = 2
@@ -64,7 +64,6 @@ function Toggle.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2

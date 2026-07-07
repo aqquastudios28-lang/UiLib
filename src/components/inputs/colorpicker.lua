@@ -21,7 +21,7 @@ function ColorPicker.Create(config: table)
 
 	-- Main color picker container
 	local colorPickerFrame = Instance.new("Frame")
-	colorPickerFrame.Name = `ColorPicker_{text}`
+	colorPickerFrame.Name = ("ColorPicker_" .. tostring(text))
 	colorPickerFrame.Size = UDim2.new(1, 0, 0, 200)
 	colorPickerFrame.BackgroundTransparency = 1
 	colorPickerFrame.ZIndex = 2
@@ -36,7 +36,6 @@ function ColorPicker.Create(config: table)
 	textLabel.TextColor3 = Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 2

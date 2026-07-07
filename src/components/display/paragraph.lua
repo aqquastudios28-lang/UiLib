@@ -23,14 +23,13 @@ function Paragraph.Create(config: table)
 
 	-- Main paragraph
 	local paragraphFrame = Instance.new("TextLabel")
-	paragraphFrame.Name = `Paragraph_{text:sub(1, 20)}`
+	paragraphFrame.Name = ("Paragraph_" .. tostring(text:sub(1, 20)))
 	paragraphFrame.Size = width
 	paragraphFrame.BackgroundTransparency = 1
 	paragraphFrame.Text = text
 	paragraphFrame.TextColor3 = color
 	paragraphFrame.TextSize = size
 	paragraphFrame.Font = Theme.Font.Family
-	paragraphFrame.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Regular, size)
 	paragraphFrame.TextXAlignment = align
 	paragraphFrame.TextYAlignment = Enum.TextYAlignment.Top
 	paragraphFrame.ZIndex = 2

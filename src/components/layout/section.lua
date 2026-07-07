@@ -21,7 +21,7 @@ function Section.Create(config: table)
 
 	-- Main section container
 	local sectionFrame = Instance.new("Frame")
-	sectionFrame.Name = `Section_{title}`
+	sectionFrame.Name = ("Section_" .. tostring(title))
 	sectionFrame.Size = UDim2.new(1, 0, 0, 0)
 	sectionFrame.BackgroundTransparency = 1
 	sectionFrame.ZIndex = 2
@@ -50,7 +50,6 @@ function Section.Create(config: table)
 	titleText.TextColor3 = Theme.Colors.TextPrimary
 	titleText.TextSize = Theme.Font.Size.Header
 	titleText.Font = Theme.Font.Family
-	titleText.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Semibold, Theme.Font.Size.Header)
 	titleText.TextXAlignment = Enum.TextXAlignment.Left
 	titleText.TextYAlignment = Enum.TextYAlignment.Center
 	titleText.ZIndex = 2
@@ -119,7 +118,7 @@ function Section.Create(config: table)
 			expandIcon.Image = Icons.Get("caret-right", "Regular")
 
 			-- Animate content out
-			for _, child in contentFrame:GetChildren() do
+			for _, child in ipairs(contentFrame:GetChildren()) do
 				if child:IsA("Frame") then
 					Utils.Tween(child, {
 						Transparency = 1,
@@ -153,7 +152,7 @@ function Section.Create(config: table)
 			sectionFrame.Size = UDim2.new(1, 0, 0, 32 + contentFrame.AbsoluteContentSize.Y)
 
 			-- Staggered reveal
-			for i, child in contentFrame:GetChildren() do
+			for i, child in ipairs(contentFrame:GetChildren()) do
 				if child:IsA("Frame") then
 					child.Transparency = 1
 					child.Size = UDim2.new(1, 0, 0, 0)

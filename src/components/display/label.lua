@@ -24,14 +24,13 @@ function Label.Create(config: table)
 
 	-- Main label
 	local labelFrame = Instance.new("TextLabel")
-	labelFrame.Name = `Label_{text}`
+	labelFrame.Name = ("Label_" .. tostring(text))
 	labelFrame.Size = width
 	labelFrame.BackgroundTransparency = 1
 	labelFrame.Text = text
 	labelFrame.TextColor3 = color
 	labelFrame.TextSize = size
 	labelFrame.Font = Theme.Font.Family
-	labelFrame.FontFace = Font.new(Theme.Font.Family, weight, size)
 	labelFrame.TextXAlignment = align
 	labelFrame.TextYAlignment = Enum.TextYAlignment.Top
 	labelFrame.ZIndex = 2

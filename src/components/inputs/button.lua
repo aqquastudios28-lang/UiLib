@@ -24,7 +24,7 @@ function Button.Create(config: table)
 
 	-- Outer shell (concentric bezel)
 	local outerShell = Instance.new("Frame")
-	outerShell.Name = `Button_{text}`
+	outerShell.Name = ("Button_" .. tostring(text))
 	outerShell.Size = width
 	outerShell.BackgroundColor3 = Theme.Colors.BackgroundTertiary
 	outerShell.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
@@ -57,7 +57,6 @@ function Button.Create(config: table)
 	textLabel.TextColor3 = disabled and Theme.Colors.TextMuted or Theme.Colors.TextPrimary
 	textLabel.TextSize = Theme.Font.Size.Body
 	textLabel.Font = Theme.Font.Family
-	textLabel.FontFace = Font.new(Theme.Font.Family, Theme.Font.Weight.Medium, Theme.Font.Size.Body)
 	textLabel.TextXAlignment = Enum.TextXAlignment.Left
 	textLabel.TextYAlignment = Enum.TextYAlignment.Center
 	textLabel.ZIndex = 3
