@@ -261,9 +261,12 @@ function Utils.Debounce(func: any, delay: number): any
 	return function(...)
 		if not running then
 			running = true
+			-- Capture varargs here: the vararg cannot be referenced inside the
+			-- nested (non-vararg) task.delay callback below.
+			local args = table.pack(...)
 			task.delay(delay, function()
 				running = false
-				func(...)
+				func(table.unpack(args, 1, args.n))
 			end)
 		end
 	end

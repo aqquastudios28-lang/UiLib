@@ -4685,9 +4685,12 @@ function Utils.Debounce(func: any, delay: number): any
 	return function(...)
 		if not running then
 			running = true
+			
+			
+			local args = table.pack(...)
 			task.delay(delay, function()
 				running = false
-				func(...)
+				func(table.unpack(args, 1, args.n))
 			end)
 		end
 	end
