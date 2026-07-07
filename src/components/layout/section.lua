@@ -86,6 +86,11 @@ function Section.Create(config: table)
 
 	contentFrame.Parent = sectionFrame
 
+	-- Auto-size so the section grows/shrinks to fit its children (and its
+	-- collapsed state) without any manual AbsoluteContentSize math.
+	Utils.SafeAutoSize(contentFrame, "Y")
+	Utils.SafeAutoSize(sectionFrame, "Y")
+
 	-- Section state
 	local sectionState = {
 		Frame = sectionFrame,
@@ -103,9 +108,8 @@ function Section.Create(config: table)
 		sectionState:Toggle()
 	end)
 
-	-- Initial collapsed state
+	-- Initial collapsed state (section auto-sizes; hiding content shrinks it)
 	if collapsed then
-		sectionFrame.Size = UDim2.new(1, 0, 0, 32)
 		contentFrame.Visible = false
 	end
 
@@ -114,29 +118,14 @@ function Section.Create(config: table)
 		sectionState.IsCollapsed = not sectionState.IsCollapsed
 
 		if sectionState.IsCollapsed then
-			-- Collapse
+			-- Collapse: hide content; AutomaticSize shrinks the section to the header
 			expandIcon.Image = Icons.Get("caret-right", "Regular")
-
-			-- Animate content out
-			for _, child in ipairs(contentFrame:GetChildren()) do
-				if child:IsA("Frame") then
-					Utils.Tween(child, {
-						Transparency = 1,
-						Size = UDim2.new(1, 0, 0, 0),
-					}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-				end
-			end
-
-			task.delay(0.2, function()
-				contentFrame.Visible = false
-				sectionFrame.Size = UDim2.new(1, 0, 0, 32)
-			end)
+			contentFrame.Visible = false
 		else
-			-- Expand
+			-- Expand: show content; AutomaticSize grows the section to fit it
 			expandIcon.Image = Icons.Get("caret-down", "Regular")
 			contentFrame.Visible = true
 
-			-- Animate header
 			Utils.Tween(header, {
 				BackgroundColor3 = Theme.Colors.BackgroundHover,
 			}, 0.15, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
@@ -146,25 +135,6 @@ function Section.Create(config: table)
 					BackgroundColor3 = Theme.Colors.BackgroundTertiary,
 				}, 0.15, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 			end)
-
-			-- Allow layout to calculate new size
-			task.wait(0.01)
-			sectionFrame.Size = UDim2.new(1, 0, 0, 32 + contentFrame.AbsoluteContentSize.Y)
-
-			-- Staggered reveal
-			for i, child in ipairs(contentFrame:GetChildren()) do
-				if child:IsA("Frame") then
-					child.Transparency = 1
-					child.Size = UDim2.new(1, 0, 0, 0)
-
-					task.delay(i * 0.03, function()
-						Utils.Tween(child, {
-							Transparency = 0,
-							Size = UDim2.new(1, 0, 0, child.AbsoluteContentSize.Y),
-						}, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-					end)
-				end
-			end
 		end
 	end
 
@@ -174,14 +144,9 @@ function Section.Create(config: table)
 	end
 
 	function sectionState:AddComponent(component)
+		-- AutomaticSize keeps the section fitted; no manual resize needed.
 		if typeof(component) == "Instance" then
 			component.Parent = contentFrame
-		end
-
-		-- Update section size
-		if not sectionState.IsCollapsed then
-			task.wait(0.01)
-			sectionFrame.Size = UDim2.new(1, 0, 0, 32 + contentFrame.AbsoluteContentSize.Y)
 		end
 	end
 

@@ -34,6 +34,9 @@ function Row.Create(config: table)
 	layout.SortOrder = Enum.SortOrder.LayoutOrder
 	layout.Parent = rowFrame
 
+	-- Grow to the height of the tallest item.
+	Utils.SafeAutoSize(rowFrame, "Y")
+
 	-- Row state
 	local rowState = {
 		Frame = rowFrame,
@@ -82,12 +85,8 @@ function Row.Create(config: table)
 		return self
 	end
 
-	-- Parent row
+	-- Parent row (height is handled by SafeAutoSize above)
 	rowFrame.Parent = parent
-
-	-- Update size
-	task.wait(0.01)
-	rowFrame.Size = UDim2.new(1, 0, 0, rowFrame.AbsoluteContentSize.Y)
 
 	return rowState
 end

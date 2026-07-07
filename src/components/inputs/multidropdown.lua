@@ -291,7 +291,6 @@ function MultiDropdown.Create(config: table)
 
 			task.delay(0.2, function()
 				dropdownList.Visible = false
-				dropdownList.Transparency = 0
 
 				-- Clear options
 				for _, btn in pairs(multidropdownState.OptionButtons) do

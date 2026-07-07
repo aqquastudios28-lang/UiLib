@@ -208,7 +208,6 @@ function Dropdown.Create(config: table)
 
 			task.delay(0.2, function()
 				dropdownList.Visible = false
-				dropdownList.Transparency = 0
 
 				-- Clear options
 				for _, btn in pairs(dropdownState.OptionButtons) do

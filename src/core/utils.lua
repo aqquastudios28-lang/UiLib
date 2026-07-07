@@ -17,10 +17,23 @@ function Utils.Tween(object: Instance, properties: table, duration: number, easi
 		easingDirection
 	)
 
-	local tween = tweenService:Create(object, tweenInfo, properties)
-	tween:Play()
+	-- Guard against invalid tween properties (e.g. `Transparency`, which is not
+	-- a real GuiObject property). If Create fails, apply the valid properties
+	-- instantly so the end state is still correct, instead of crashing.
+	local ok, tween = pcall(function()
+		return tweenService:Create(object, tweenInfo, properties)
+	end)
+	if ok and tween then
+		tween:Play()
+		return tween
+	end
 
-	return tween
+	for prop, value in pairs(properties) do
+		pcall(function()
+			object[prop] = value
+		end)
+	end
+	return nil
 end
 
 -- Create rounded corner with precise radius

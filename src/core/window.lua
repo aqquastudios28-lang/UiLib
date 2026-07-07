@@ -227,6 +227,8 @@ function Window.Create(config: table)
 		tabData.Content.BackgroundTransparency = 1
 		tabData.Content.Visible = false
 		tabData.Content.ZIndex = 2
+		-- Grow to fit its widgets so the scroll canvas measures correctly.
+		Utils.SafeAutoSize(tabData.Content, "Y")
 
 		local tabLayout = Instance.new("UIListLayout")
 		tabLayout.FillDirection = Enum.FillDirection.Vertical

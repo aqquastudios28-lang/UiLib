@@ -1520,7 +1520,6 @@ function Dropdown.Create(config: table)
 
 			task.delay(0.2, function()
 				dropdownList.Visible = false
-				dropdownList.Transparency = 0
 
 				
 				for _, btn in pairs(dropdownState.OptionButtons) do
@@ -2108,7 +2107,6 @@ function MultiDropdown.Create(config: table)
 
 			task.delay(0.2, function()
 				dropdownList.Visible = false
-				dropdownList.Transparency = 0
 
 				
 				for _, btn in pairs(multidropdownState.OptionButtons) do
@@ -3138,6 +3136,9 @@ function Row.Create(config: table)
 	layout.Parent = rowFrame
 
 	
+	Utils.SafeAutoSize(rowFrame, "Y")
+
+	
 	local rowState = {
 		Frame = rowFrame,
 		Layout = layout,
@@ -3187,10 +3188,6 @@ function Row.Create(config: table)
 
 	
 	rowFrame.Parent = parent
-
-	
-	task.wait(0.01)
-	rowFrame.Size = UDim2.new(1, 0, 0, rowFrame.AbsoluteContentSize.Y)
 
 	return rowState
 end
@@ -3288,6 +3285,11 @@ function Section.Create(config: table)
 	contentFrame.Parent = sectionFrame
 
 	
+	
+	Utils.SafeAutoSize(contentFrame, "Y")
+	Utils.SafeAutoSize(sectionFrame, "Y")
+
+	
 	local sectionState = {
 		Frame = sectionFrame,
 		Header = header,
@@ -3306,7 +3308,6 @@ function Section.Create(config: table)
 
 	
 	if collapsed then
-		sectionFrame.Size = UDim2.new(1, 0, 0, 32)
 		contentFrame.Visible = false
 	end
 
@@ -3317,27 +3318,12 @@ function Section.Create(config: table)
 		if sectionState.IsCollapsed then
 			
 			expandIcon.Image = Icons.Get("caret-right", "Regular")
-
-			
-			for _, child in ipairs(contentFrame:GetChildren()) do
-				if child:IsA("Frame") then
-					Utils.Tween(child, {
-						Transparency = 1,
-						Size = UDim2.new(1, 0, 0, 0),
-					}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-				end
-			end
-
-			task.delay(0.2, function()
-				contentFrame.Visible = false
-				sectionFrame.Size = UDim2.new(1, 0, 0, 32)
-			end)
+			contentFrame.Visible = false
 		else
 			
 			expandIcon.Image = Icons.Get("caret-down", "Regular")
 			contentFrame.Visible = true
 
-			
 			Utils.Tween(header, {
 				BackgroundColor3 = Theme.Colors.BackgroundHover,
 			}, 0.15, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
@@ -3347,25 +3333,6 @@ function Section.Create(config: table)
 					BackgroundColor3 = Theme.Colors.BackgroundTertiary,
 				}, 0.15, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 			end)
-
-			
-			task.wait(0.01)
-			sectionFrame.Size = UDim2.new(1, 0, 0, 32 + contentFrame.AbsoluteContentSize.Y)
-
-			
-			for i, child in ipairs(contentFrame:GetChildren()) do
-				if child:IsA("Frame") then
-					child.Transparency = 1
-					child.Size = UDim2.new(1, 0, 0, 0)
-
-					task.delay(i * 0.03, function()
-						Utils.Tween(child, {
-							Transparency = 0,
-							Size = UDim2.new(1, 0, 0, child.AbsoluteContentSize.Y),
-						}, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-					end)
-				end
-			end
 		end
 	end
 
@@ -3375,14 +3342,9 @@ function Section.Create(config: table)
 	end
 
 	function sectionState:AddComponent(component)
+		
 		if typeof(component) == "Instance" then
 			component.Parent = contentFrame
-		end
-
-		
-		if not sectionState.IsCollapsed then
-			task.wait(0.01)
-			sectionFrame.Size = UDim2.new(1, 0, 0, 32 + contentFrame.AbsoluteContentSize.Y)
 		end
 	end
 
@@ -4445,10 +4407,23 @@ function Utils.Tween(object: Instance, properties: table, duration: number, easi
 		easingDirection
 	)
 
-	local tween = tweenService:Create(object, tweenInfo, properties)
-	tween:Play()
+	
+	
+	
+	local ok, tween = pcall(function()
+		return tweenService:Create(object, tweenInfo, properties)
+	end)
+	if ok and tween then
+		tween:Play()
+		return tween
+	end
 
-	return tween
+	for prop, value in pairs(properties) do
+		pcall(function()
+			object[prop] = value
+		end)
+	end
+	return nil
 end
 
 
@@ -5087,6 +5062,8 @@ function Window.Create(config: table)
 		tabData.Content.BackgroundTransparency = 1
 		tabData.Content.Visible = false
 		tabData.Content.ZIndex = 2
+		
+		Utils.SafeAutoSize(tabData.Content, "Y")
 
 		local tabLayout = Instance.new("UIListLayout")
 		tabLayout.FillDirection = Enum.FillDirection.Vertical
