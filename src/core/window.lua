@@ -25,7 +25,15 @@ function Window.Create(config: table)
 	local height = config.Height or 400
 	local minWidth = config.MinWidth or 400
 	local minHeight = config.MinHeight or 300
-	local parent = config.Parent or Players.LocalPlayer:WaitForChild("PlayerGui")
+
+	-- A GuiObject only renders inside a ScreenGui. When no explicit parent is
+	-- given, create one and mount it in a protected container (gethui/CoreGui).
+	local screenGui = nil
+	local parent = config.Parent
+	if not parent then
+		screenGui = Utils.CreateScreenGui("QwenUILib")
+		parent = screenGui
+	end
 
 	-- Main outer frame (Doppelrand - Concentric Double-Bezel)
 	local outerFrame = Instance.new("Frame")
@@ -156,8 +164,8 @@ function Window.Create(config: table)
 	contentContainer.ScrollBarThickness = 4
 	contentContainer.ScrollBarImageColor3 = Theme.Colors.AccentPrimary
 	contentContainer.ScrollBarImageTransparency = 0.5
-	contentContainer.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
 	contentContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
+	Utils.AutoCanvasY(contentContainer)
 	contentContainer.ZIndex = 2
 	contentContainer.ClipsDescendants = true
 
@@ -186,6 +194,7 @@ function Window.Create(config: table)
 
 	-- Window state
 	local windowState = {
+		ScreenGui = screenGui,
 		OuterFrame = outerFrame,
 		InnerFrame = innerFrame,
 		TitleBar = titleBar,
@@ -246,16 +255,17 @@ function Window.Create(config: table)
 		if targetTab then
 			targetTab.Visible = true
 
-			-- Staggered reveal animation
+			-- Staggered reveal animation (slide up into place).
+			-- Note: GuiObject has no `Transparency` property, so we only animate
+			-- Position, which is valid on every GuiObject.
 			for i, child in targetTab:GetChildren() do
-				if child:IsA("Frame") or child:IsA("TextLabel") then
-					child.Transparency = 1
-					child.Position = UDim2.new(child.Position.X.Scale, child.Position.X.Offset, child.Position.Y.Scale, child.Position.Y.Offset + 10)
+				if child:IsA("GuiObject") then
+					local basePos = child.Position
+					child.Position = UDim2.new(basePos.X.Scale, basePos.X.Offset, basePos.Y.Scale, basePos.Y.Offset + 10)
 
 					task.delay(i * 0.03, function()
 						Utils.Tween(child, {
-							Transparency = 0,
-							Position = UDim2.new(child.Position.X.Scale, child.Position.X.Offset, child.Position.Y.Scale, child.Position.Y.Offset - 10),
+							Position = basePos,
 						}, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 					end)
 				end
@@ -272,6 +282,9 @@ function Window.Create(config: table)
 
 		task.delay(0.3, function()
 			outerFrame:Destroy()
+			if screenGui then
+				screenGui:Destroy()
+			end
 			Window.Registry[windowState] = nil
 			if Window.ActiveWindow == windowState then
 				Window.ActiveWindow = nil

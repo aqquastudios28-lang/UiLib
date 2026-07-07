@@ -129,8 +129,8 @@ function Console.Create(config: table)
 	logContainer.ClipsDescendants = true
 	logContainer.ScrollBarThickness = 4
 	logContainer.ScrollBarImageColor3 = Theme.Colors.AccentPrimary
-	logContainer.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
 	logContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
+	Utils.AutoCanvasY(logContainer)
 
 	local logCorner = Utils.CreateCorner(Theme.CornerRadius.WidgetInner, logContainer)
 	logContainer.Parent = consoleFrame
@@ -454,7 +454,7 @@ function Label.Create(config: table)
 	labelFrame.TextYAlignment = Enum.TextYAlignment.Top
 	labelFrame.ZIndex = 2
 	labelFrame.TextWrapped = true
-	labelFrame.TextAutomaticSize = Enum.AutomaticSize.Y
+	Utils.SafeAutoSize(labelFrame, "Y", "TextAutomaticSize")
 
 	labelFrame.Parent = parent
 
@@ -523,7 +523,7 @@ function Paragraph.Create(config: table)
 	paragraphFrame.TextYAlignment = Enum.TextYAlignment.Top
 	paragraphFrame.ZIndex = 2
 	paragraphFrame.TextWrapped = true
-	paragraphFrame.TextAutomaticSize = Enum.AutomaticSize.XY
+	Utils.SafeAutoSize(paragraphFrame, "XY", "TextAutomaticSize")
 
 	paragraphFrame.Parent = parent
 
@@ -1415,8 +1415,8 @@ function Dropdown.Create(config: table)
 	dropdownList.ClipsDescendants = true
 	dropdownList.ScrollBarThickness = 4
 	dropdownList.ScrollBarImageColor3 = Theme.Colors.AccentPrimary
-	dropdownList.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
 	dropdownList.CanvasSize = UDim2.new(0, 0, 0, 0)
+	Utils.AutoCanvasY(dropdownList)
 
 	local listCorner = Utils.CreateCorner(Theme.CornerRadius.WidgetOuter, dropdownList)
 	local listStroke = Utils.CreateStroke(dropdownList, Theme.Colors.BorderPrimary, 1, Theme.Transparency.Border)
@@ -1922,8 +1922,8 @@ function MultiDropdown.Create(config: table)
 	dropdownList.ClipsDescendants = true
 	dropdownList.ScrollBarThickness = 4
 	dropdownList.ScrollBarImageColor3 = Theme.Colors.AccentPrimary
-	dropdownList.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
 	dropdownList.CanvasSize = UDim2.new(0, 0, 0, 0)
+	Utils.AutoCanvasY(dropdownList)
 
 	local listCorner = Utils.CreateCorner(Theme.CornerRadius.WidgetOuter, dropdownList)
 	local listStroke = Utils.CreateStroke(dropdownList, Theme.Colors.BorderPrimary, 1, Theme.Transparency.Border)
@@ -3975,6 +3975,16 @@ local Icons = custom_require("core/icons")
 
 Notification.Registry = {}
 Notification.NextId = 1
+Notification._gui = nil
+
+
+
+local function getNotificationGui(): Instance
+	if not Notification._gui or not Notification._gui.Parent then
+		Notification._gui = Utils.CreateScreenGui("QwenUILib_Notifications")
+	end
+	return Notification._gui
+end
 
 
 Notification.Types = {
@@ -3989,7 +3999,11 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 	type = type or "Info"
 	local notifData = Notification.Types[type] or Notification.Types.Info
 
-	parent = parent or Players.LocalPlayer:WaitForChild("PlayerGui")
+	
+	
+	if typeof(parent) ~= "Instance" then
+		parent = getNotificationGui()
+	end
 
 	
 	local container = Instance.new("Frame")
@@ -4716,6 +4730,117 @@ function Utils.DeepMerge(original: table, new: table): table
 end
 
 
+
+
+function Utils.GetGuiParent(): Instance
+	local ok, hui = pcall(function()
+		if typeof(gethui) == "function" then
+			return gethui()
+		end
+		return nil
+	end)
+	if ok and hui then
+		return hui
+	end
+
+	local coreOk, coreGui = pcall(function()
+		return game:GetService("CoreGui")
+	end)
+	if coreOk and coreGui then
+		return coreGui
+	end
+
+	local player = game:GetService("Players").LocalPlayer
+	if player then
+		return player:WaitForChild("PlayerGui")
+	end
+
+	error("QwenUILib: no valid GUI container found (no gethui, CoreGui, or PlayerGui)")
+end
+
+
+
+function Utils.CreateScreenGui(name: string?): ScreenGui
+	local screenGui = Instance.new("ScreenGui")
+	screenGui.Name = name or "QwenUILib"
+	screenGui.ResetOnSpawn = false
+	screenGui.IgnoreGuiInset = true
+	screenGui.DisplayOrder = 999
+
+	
+	pcall(function()
+		screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	end)
+
+	local parent = Utils.GetGuiParent()
+
+	
+	pcall(function()
+		if syn and syn.protect_gui then
+			syn.protect_gui(screenGui)
+		elseif typeof(protectgui) == "function" then
+			protectgui(screenGui)
+		end
+	end)
+
+	screenGui.Parent = parent
+	return screenGui
+end
+
+
+
+
+function Utils.AutoCanvasY(scrollFrame: Instance)
+	local enumOk = pcall(function()
+		return Enum.AutomaticCanvasSize.Y
+	end)
+
+	if enumOk then
+		local applied = pcall(function()
+			scrollFrame.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
+		end)
+		if applied then
+			return
+		end
+	end
+
+	
+	local function bind(layout)
+		if not (layout and layout:IsA("UIGridStyleLayout")) then
+			return
+		end
+		local function update()
+			local content = layout.AbsoluteContentSize
+			scrollFrame.CanvasSize = UDim2.new(0, 0, 0, content.Y)
+		end
+		layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(update)
+		update()
+	end
+
+	local existing = scrollFrame:FindFirstChildWhichIsA("UIGridStyleLayout")
+	if existing then
+		bind(existing)
+	else
+		scrollFrame.ChildAdded:Connect(function(child)
+			if child:IsA("UIGridStyleLayout") then
+				bind(child)
+			end
+		end)
+	end
+end
+
+
+
+
+function Utils.SafeAutoSize(obj: Instance, axis: string?, property: string?)
+	axis = axis or "Y"
+	property = property or "AutomaticSize"
+	pcall(function()
+		obj[property] = Enum.AutomaticSize[axis]
+	end)
+end
+
+
 function Utils.CreateCleanupWrapper(object: Instance, cleanupFunc: () -> ())
 	local mt = {
 		__gc = function()
@@ -4765,7 +4890,15 @@ function Window.Create(config: table)
 	local height = config.Height or 400
 	local minWidth = config.MinWidth or 400
 	local minHeight = config.MinHeight or 300
-	local parent = config.Parent or Players.LocalPlayer:WaitForChild("PlayerGui")
+
+	
+	
+	local screenGui = nil
+	local parent = config.Parent
+	if not parent then
+		screenGui = Utils.CreateScreenGui("QwenUILib")
+		parent = screenGui
+	end
 
 	
 	local outerFrame = Instance.new("Frame")
@@ -4896,8 +5029,8 @@ function Window.Create(config: table)
 	contentContainer.ScrollBarThickness = 4
 	contentContainer.ScrollBarImageColor3 = Theme.Colors.AccentPrimary
 	contentContainer.ScrollBarImageTransparency = 0.5
-	contentContainer.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
 	contentContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
+	Utils.AutoCanvasY(contentContainer)
 	contentContainer.ZIndex = 2
 	contentContainer.ClipsDescendants = true
 
@@ -4926,6 +5059,7 @@ function Window.Create(config: table)
 
 	
 	local windowState = {
+		ScreenGui = screenGui,
 		OuterFrame = outerFrame,
 		InnerFrame = innerFrame,
 		TitleBar = titleBar,
@@ -4987,15 +5121,16 @@ function Window.Create(config: table)
 			targetTab.Visible = true
 
 			
+			
+			
 			for i, child in targetTab:GetChildren() do
-				if child:IsA("Frame") or child:IsA("TextLabel") then
-					child.Transparency = 1
-					child.Position = UDim2.new(child.Position.X.Scale, child.Position.X.Offset, child.Position.Y.Scale, child.Position.Y.Offset + 10)
+				if child:IsA("GuiObject") then
+					local basePos = child.Position
+					child.Position = UDim2.new(basePos.X.Scale, basePos.X.Offset, basePos.Y.Scale, basePos.Y.Offset + 10)
 
 					task.delay(i * 0.03, function()
 						Utils.Tween(child, {
-							Transparency = 0,
-							Position = UDim2.new(child.Position.X.Scale, child.Position.X.Offset, child.Position.Y.Scale, child.Position.Y.Offset - 10),
+							Position = basePos,
 						}, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 					end)
 				end
@@ -5012,6 +5147,9 @@ function Window.Create(config: table)
 
 		task.delay(0.3, function()
 			outerFrame:Destroy()
+			if screenGui then
+				screenGui:Destroy()
+			end
 			Window.Registry[windowState] = nil
 			if Window.ActiveWindow == windowState then
 				Window.ActiveWindow = nil

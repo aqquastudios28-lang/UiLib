@@ -15,6 +15,16 @@ local Icons = require(script.Parent.Icons)
 -- Active notifications
 Notification.Registry = {}
 Notification.NextId = 1
+Notification._gui = nil
+
+-- Lazily create (and reuse) a ScreenGui to hold notifications. Toasts are
+-- GuiObjects and only render inside a ScreenGui.
+local function getNotificationGui(): Instance
+	if not Notification._gui or not Notification._gui.Parent then
+		Notification._gui = Utils.CreateScreenGui("QwenUILib_Notifications")
+	end
+	return Notification._gui
+end
 
 -- Notification types with semantic colors
 Notification.Types = {
@@ -29,7 +39,11 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 	type = type or "Info"
 	local notifData = Notification.Types[type] or Notification.Types.Info
 
-	parent = parent or Players.LocalPlayer:WaitForChild("PlayerGui")
+	-- Only honor an explicit Instance parent; anything else (nil or a window
+	-- state table) falls back to the shared notification ScreenGui.
+	if typeof(parent) ~= "Instance" then
+		parent = getNotificationGui()
+	end
 
 	-- Main container
 	local container = Instance.new("Frame")

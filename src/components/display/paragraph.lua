@@ -35,7 +35,7 @@ function Paragraph.Create(config: table)
 	paragraphFrame.TextYAlignment = Enum.TextYAlignment.Top
 	paragraphFrame.ZIndex = 2
 	paragraphFrame.TextWrapped = true
-	paragraphFrame.TextAutomaticSize = Enum.AutomaticSize.XY
+	Utils.SafeAutoSize(paragraphFrame, "XY", "TextAutomaticSize")
 
 	paragraphFrame.Parent = parent
 

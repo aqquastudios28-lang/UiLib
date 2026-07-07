@@ -98,8 +98,8 @@ function MultiDropdown.Create(config: table)
 	dropdownList.ClipsDescendants = true
 	dropdownList.ScrollBarThickness = 4
 	dropdownList.ScrollBarImageColor3 = Theme.Colors.AccentPrimary
-	dropdownList.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
 	dropdownList.CanvasSize = UDim2.new(0, 0, 0, 0)
+	Utils.AutoCanvasY(dropdownList)
 
 	local listCorner = Utils.CreateCorner(Theme.CornerRadius.WidgetOuter, dropdownList)
 	local listStroke = Utils.CreateStroke(dropdownList, Theme.Colors.BorderPrimary, 1, Theme.Transparency.Border)

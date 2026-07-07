@@ -36,7 +36,7 @@ function Label.Create(config: table)
 	labelFrame.TextYAlignment = Enum.TextYAlignment.Top
 	labelFrame.ZIndex = 2
 	labelFrame.TextWrapped = true
-	labelFrame.TextAutomaticSize = Enum.AutomaticSize.Y
+	Utils.SafeAutoSize(labelFrame, "Y", "TextAutomaticSize")
 
 	labelFrame.Parent = parent
 

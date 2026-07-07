@@ -293,6 +293,117 @@ function Utils.DeepMerge(original: table, new: table): table
 	return original
 end
 
+-- Resolve the best container to hold a ScreenGui.
+-- Executors: gethui() returns a hidden, protected container.
+-- Fallbacks: CoreGui (works on many executors) then PlayerGui (Studio/live).
+function Utils.GetGuiParent(): Instance
+	local ok, hui = pcall(function()
+		if typeof(gethui) == "function" then
+			return gethui()
+		end
+		return nil
+	end)
+	if ok and hui then
+		return hui
+	end
+
+	local coreOk, coreGui = pcall(function()
+		return game:GetService("CoreGui")
+	end)
+	if coreOk and coreGui then
+		return coreGui
+	end
+
+	local player = game:GetService("Players").LocalPlayer
+	if player then
+		return player:WaitForChild("PlayerGui")
+	end
+
+	error("QwenUILib: no valid GUI container found (no gethui, CoreGui, or PlayerGui)")
+end
+
+-- Create a ScreenGui with sane defaults and mount it into a protected container.
+-- Without this, GuiObjects parented directly to PlayerGui/CoreGui never render.
+function Utils.CreateScreenGui(name: string?): ScreenGui
+	local screenGui = Instance.new("ScreenGui")
+	screenGui.Name = name or "QwenUILib"
+	screenGui.ResetOnSpawn = false
+	screenGui.IgnoreGuiInset = true
+	screenGui.DisplayOrder = 999
+
+	-- Honor authored ZIndex values across sibling frames.
+	pcall(function()
+		screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	end)
+
+	local parent = Utils.GetGuiParent()
+
+	-- Hide from detection where the executor supports it.
+	pcall(function()
+		if syn and syn.protect_gui then
+			syn.protect_gui(screenGui)
+		elseif typeof(protectgui) == "function" then
+			protectgui(screenGui)
+		end
+	end)
+
+	screenGui.Parent = parent
+	return screenGui
+end
+
+-- Grow a ScrollingFrame's CanvasSize to fit its content on the Y axis.
+-- Prefers native AutomaticCanvasSize, but falls back to a manual updater for
+-- executor clients whose Enum table lacks AutomaticCanvasSize.
+function Utils.AutoCanvasY(scrollFrame: Instance)
+	local enumOk = pcall(function()
+		return Enum.AutomaticCanvasSize.Y
+	end)
+
+	if enumOk then
+		local applied = pcall(function()
+			scrollFrame.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
+		end)
+		if applied then
+			return
+		end
+	end
+
+	-- Manual fallback: drive CanvasSize from the layout's AbsoluteContentSize.
+	local function bind(layout)
+		if not (layout and layout:IsA("UIGridStyleLayout")) then
+			return
+		end
+		local function update()
+			local content = layout.AbsoluteContentSize
+			scrollFrame.CanvasSize = UDim2.new(0, 0, 0, content.Y)
+		end
+		layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(update)
+		update()
+	end
+
+	local existing = scrollFrame:FindFirstChildWhichIsA("UIGridStyleLayout")
+	if existing then
+		bind(existing)
+	else
+		scrollFrame.ChildAdded:Connect(function(child)
+			if child:IsA("UIGridStyleLayout") then
+				bind(child)
+			end
+		end)
+	end
+end
+
+-- Safely set AutomaticSize (or TextAutomaticSize) on a GuiObject, guarding
+-- older executor clients whose Enum table lacks AutomaticSize.
+-- axis: "X" | "Y" | "XY" (default "Y"). property defaults to "AutomaticSize".
+function Utils.SafeAutoSize(obj: Instance, axis: string?, property: string?)
+	axis = axis or "Y"
+	property = property or "AutomaticSize"
+	pcall(function()
+		obj[property] = Enum.AutomaticSize[axis]
+	end)
+end
+
 -- Create safe wrapper for cleanup
 function Utils.CreateCleanupWrapper(object: Instance, cleanupFunc: () -> ())
 	local mt = {

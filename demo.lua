@@ -1,5 +1,5 @@
 -- QwenUILib Demo
--- A minimal demo showcasing the bundled library
+-- Showcases the bundled library using its real component API.
 
 -- Load the bundled library
 local QwenUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/main/build/bundle.lua"))()
@@ -7,11 +7,12 @@ local QwenUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/aqquas
 -- Initialize the library
 QwenUI:Init()
 
--- Create a demo window
+-- Create a demo window (mounts itself inside a protected ScreenGui)
 local Window = QwenUI:CreateWindow({
 	Title = "QwenUILib Demo",
-	Size = UDim2.new(0, 500, 0, 600),
-	Theme = "Default"
+	Width = 500,
+	Height = 600,
+	Theme = "Default",
 })
 
 -- Create tabs
@@ -19,76 +20,109 @@ local HomeTab = QwenUI:AddTab(Window, "Home")
 local InputsTab = QwenUI:AddTab(Window, "Inputs")
 local DisplayTab = QwenUI:AddTab(Window, "Display")
 
--- Switch to the first tab
+-- Show the Home tab
 QwenUI:SwitchTab(Window, "Home")
 
 -- Populate Home tab
-local HomeSection = HomeTab.Content:FindFirstChild("ContentContainer") and HomeTab.Content or Instance.new("Frame")
-HomeSection.Name = "HomeSection"
-HomeSection.Size = UDim2.new(1, 0, 0, 0)
-HomeSection.BackgroundTransparency = 1
+QwenUI.Label.Create({
+	Parent = HomeTab.Content,
+	Text = "Welcome to QwenUILib!",
+})
 
-local HomeLabel = HomeSection:AddLabel("Welcome to QwenUILib!")
-HomeLabel:SetText("This is a premium Roblox UI library with tabs.")
-
-local HomeParagraph = HomeSection:AddParagraph("About", "QwenUILib provides a comprehensive set of UI components for Roblox games, including windows, buttons, toggles, sliders, and more.")
-
-HomeSection.Parent = HomeTab.Content
+QwenUI.Paragraph.Create({
+	Parent = HomeTab.Content,
+	Text = "QwenUILib provides a comprehensive set of UI components for Roblox: windows, buttons, toggles, sliders, dropdowns, and more.",
+})
 
 -- Populate Inputs tab
-local InputSection = InputsTab.Content:FindFirstChild("ContentContainer") and InputsTab.Content or Instance.new("Frame")
-InputSection.Name = "InputSection"
-InputSection.Size = UDim2.new(1, 0, 0, 0)
-InputSection.BackgroundTransparency = 1
+QwenUI.Button.Create({
+	Parent = InputsTab.Content,
+	Text = "Click Me",
+	Callback = function()
+		QwenUI:Notify("Button clicked!", "Info")
+	end,
+})
 
-local Button = InputSection:AddButton("Click Me", function()
-	QwenUI:Notify("Button clicked!", "info")
-end)
+QwenUI.Toggle.Create({
+	Parent = InputsTab.Content,
+	Text = "Enable Feature",
+	Default = false,
+	Callback = function(value)
+		print("Toggle state:", value)
+	end,
+})
 
-local Toggle = InputSection:AddToggle("Enable Feature", false, function(value)
-	print("Toggle state:", value)
-end)
+QwenUI.Slider.Create({
+	Parent = InputsTab.Content,
+	Text = "Volume",
+	Min = 0,
+	Max = 100,
+	Default = 50,
+	Callback = function(value)
+		print("Slider value:", value)
+	end,
+})
 
-local Slider = InputSection:AddSlider("Volume", 0, 100, 50, function(value)
-	print("Slider value:", value)
-end)
+QwenUI.Dropdown.Create({
+	Parent = InputsTab.Content,
+	Text = "Select Option",
+	Options = { "Option A", "Option B", "Option C" },
+	Default = "Option A",
+	Callback = function(value)
+		print("Selected:", value)
+	end,
+})
 
-local Dropdown = InputSection:AddDropdown("Select Option", {"Option A", "Option B", "Option C"}, function(value)
-	print("Selected:", value)
-end)
+QwenUI.TextBox.Create({
+	Parent = InputsTab.Content,
+	Text = "Enter Text",
+	Placeholder = "Default text",
+	Callback = function(value)
+		print("Text:", value)
+	end,
+})
 
-local TextBox = InputSection:AddTextBox("Enter Text", "Default text", function(value)
-	print("Text:", value)
-end)
+QwenUI.ColorPicker.Create({
+	Parent = InputsTab.Content,
+	Text = "Choose Color",
+	Default = Color3.new(1, 1, 1),
+	Callback = function(color)
+		print("Color:", color)
+	end,
+})
 
-local ColorPicker = InputSection:AddColorPicker("Choose Color", Color3.new(1, 1, 1), function(color)
-	print("Color:", color)
-end)
-
-local Keybind = InputSection:AddKeybind("Hotkey", Enum.KeyCode.F, function(key)
-	print("Key pressed:", key)
-end)
-
-InputSection.Parent = InputsTab.Content
+QwenUI.Keybind.Create({
+	Parent = InputsTab.Content,
+	Text = "Hotkey",
+	Default = Enum.KeyCode.F,
+	Callback = function(key)
+		print("Key pressed:", key)
+	end,
+})
 
 -- Populate Display tab
-local DisplaySection = DisplayTab.Content:FindFirstChild("ContentContainer") and DisplayTab.Content or Instance.new("Frame")
-DisplaySection.Name = "DisplaySection"
-DisplaySection.Size = UDim2.new(1, 0, 0, 0)
-DisplaySection.BackgroundTransparency = 1
+local Console = QwenUI.Console.Create({
+	Parent = DisplayTab.Content,
+	Title = "Console Output",
+	MaxLines = 50,
+})
+Console:Log("QwenUILib initialized!", "Info")
+Console:Log("This is a demo console.", "Info")
 
-local Console = DisplaySection:AddConsole("Console Output", 5)
-Console:Print("QwenUILib initialized!", "info")
-Console:Print("This is a demo console.", "info")
-
-local ProgressBar = DisplaySection:AddProgressBar("Loading...", 0, 100, 50)
+local ProgressBar = QwenUI.ProgressBar.Create({
+	Parent = DisplayTab.Content,
+	Text = "Loading...",
+	Value = 50,
+})
 ProgressBar:SetValue(75)
 
-local Image = DisplaySection:AddImage("Example Image", "rbxassetid://123456789", 200, 200)
-
-DisplaySection.Parent = DisplayTab.Content
+QwenUI.Image.Create({
+	Parent = DisplayTab.Content,
+	Image = "rbxassetid://123456789",
+	Caption = "Example Image",
+})
 
 -- Show a notification
-QwenUI:Notify("QwenUILib Demo loaded successfully!", "success")
+QwenUI:Notify("QwenUILib Demo loaded successfully!", "Success")
 
 print("Demo loaded successfully!")

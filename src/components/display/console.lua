@@ -108,8 +108,8 @@ function Console.Create(config: table)
 	logContainer.ClipsDescendants = true
 	logContainer.ScrollBarThickness = 4
 	logContainer.ScrollBarImageColor3 = Theme.Colors.AccentPrimary
-	logContainer.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
 	logContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
+	Utils.AutoCanvasY(logContainer)
 
 	local logCorner = Utils.CreateCorner(Theme.CornerRadius.WidgetInner, logContainer)
 	logContainer.Parent = consoleFrame
