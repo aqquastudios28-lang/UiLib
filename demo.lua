@@ -2,7 +2,7 @@
 -- A minimal demo showcasing the bundled library
 
 -- Load the bundled library
-local QwenUI = loadstring(game:HttpGet("build/bundle.lua"))()
+local QwenUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/main/build/bundle.lua"))()
 
 -- Initialize the library
 QwenUI:Init()
