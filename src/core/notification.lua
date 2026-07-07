@@ -217,7 +217,10 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 	end)
 
 	-- Update progress animation to respect pause
-	local progressConnection = RunService.Heartbeat:Connect(function()
+	-- Declared first so the closure below can reference it to self-disconnect;
+	-- `local x = expr` would not have x in scope inside expr.
+	local progressConnection
+	progressConnection = RunService.Heartbeat:Connect(function()
 		if isPaused then
 			-- Keep progress bar at current size while paused
 			return

@@ -2342,7 +2342,8 @@ function Slider.Create(config: table)
 				Position = UDim2.new(thumb.Position.X.Scale, thumb.Position.X.Offset - 2, 0.5, -10),
 			}, 0.15, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 
-			local connection = RunService.Heartbeat:Connect(function()
+			local connection
+			connection = RunService.Heartbeat:Connect(function()
 				if not sliderState.IsDragging then
 					connection:Disconnect()
 					return
@@ -4165,7 +4166,10 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 	end)
 
 	
-	local progressConnection = RunService.Heartbeat:Connect(function()
+	
+	
+	local progressConnection
+	progressConnection = RunService.Heartbeat:Connect(function()
 		if isPaused then
 			
 			return
