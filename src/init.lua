@@ -45,6 +45,21 @@ function QwenUI:CreateWindow(config: table)
 	return Window.Create(config)
 end
 
+-- Tab management helpers on window instances
+function QwenUI:AddTab(window, tabName: string, icon: string?)
+	if typeof(window) == "Instance" then
+		window = window:GetAttribute("QwenWindowState") or window
+	end
+	return window:AddTab(tabName, icon)
+end
+
+function QwenUI:SwitchTab(window, tabName: string)
+	if typeof(window) == "Instance" then
+		window = window:GetAttribute("QwenWindowState") or window
+	end
+	window:SwitchTab(tabName)
+end
+
 -- Create a notification
 function QwenUI:Notify(message: string, type: string?, parent: Instance?)
 	return Notification.Create(message, type, parent)

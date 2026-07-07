@@ -25,9 +25,9 @@ modules["components/display/console"] = function()
 local Console = {}
 Console.__index = Console
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
-local Icons = require(script.Parent.Parent.Icons)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
 
 
 function Console.Create(config: table)
@@ -307,8 +307,8 @@ modules["components/display/image"] = function()
 local Image = {}
 Image.__index = Image
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 
 function Image.Create(config: table)
@@ -422,8 +422,8 @@ modules["components/display/label"] = function()
 local Label = {}
 Label.__index = Label
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 
 function Label.Create(config: table)
@@ -492,8 +492,8 @@ modules["components/display/paragraph"] = function()
 local Paragraph = {}
 Paragraph.__index = Paragraph
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 
 function Paragraph.Create(config: table)
@@ -561,8 +561,8 @@ modules["components/display/progressbar"] = function()
 local ProgressBar = {}
 ProgressBar.__index = ProgressBar
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 
 function ProgressBar.Create(config: table)
@@ -728,9 +728,9 @@ modules["components/inputs/button"] = function()
 local Button = {}
 Button.__index = Button
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
-local Icons = require(script.Parent.Parent.Icons)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
 
 
 function Button.Create(config: table)
@@ -966,8 +966,8 @@ modules["components/inputs/colorpicker"] = function()
 local ColorPicker = {}
 ColorPicker.__index = ColorPicker
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 
 function ColorPicker.Create(config: table)
@@ -1321,9 +1321,9 @@ modules["components/inputs/dropdown"] = function()
 local Dropdown = {}
 Dropdown.__index = Dropdown
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
-local Icons = require(script.Parent.Parent.Icons)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
 
 
 function Dropdown.Create(config: table)
@@ -1623,8 +1623,8 @@ modules["components/inputs/keybind"] = function()
 local Keybind = {}
 Keybind.__index = Keybind
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 local UserInputService = game:GetService("UserInputService")
 
 
@@ -1828,9 +1828,9 @@ modules["components/inputs/multidropdown"] = function()
 local MultiDropdown = {}
 MultiDropdown.__index = MultiDropdown
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
-local Icons = require(script.Parent.Parent.Icons)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
 
 
 function MultiDropdown.Create(config: table)
@@ -2201,8 +2201,8 @@ modules["components/inputs/slider"] = function()
 local Slider = {}
 Slider.__index = Slider
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 
 function Slider.Create(config: table)
@@ -2451,8 +2451,8 @@ modules["components/inputs/textbox"] = function()
 local TextBox = {}
 TextBox.__index = TextBox
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 
 function TextBox.Create(config: table)
@@ -2627,8 +2627,8 @@ modules["components/inputs/toggle"] = function()
 local Toggle = {}
 Toggle.__index = Toggle
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 
 function Toggle.Create(config: table)
@@ -2825,8 +2825,8 @@ modules["components/layout/banner"] = function()
 local Banner = {}
 Banner.__index = Banner
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 
 function Banner.Create(config: table)
@@ -2993,8 +2993,8 @@ modules["components/layout/divider"] = function()
 local Divider = {}
 Divider.__index = Divider
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 
 function Divider.Create(config: table)
@@ -3117,8 +3117,8 @@ modules["components/layout/row"] = function()
 local Row = {}
 Row.__index = Row
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
 
 
 function Row.Create(config: table)
@@ -3215,9 +3215,9 @@ modules["components/layout/section"] = function()
 local Section = {}
 Section.__index = Section
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
-local Icons = require(script.Parent.Parent.Icons)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
 
 
 function Section.Create(config: table)
@@ -3968,9 +3968,9 @@ local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
-local Theme = require(script.Parent.Theme)
-local Utils = require(script.Parent.Utils)
-local Icons = require(script.Parent.Icons)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
 
 
 Notification.Registry = {}
@@ -4749,9 +4749,9 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
-local Theme = require(script.Parent.Parent.Theme)
-local Utils = require(script.Parent.Parent.Utils)
-local Icons = require(script.Parent.Parent.Icons)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
 
 
 Window.Registry = {}
@@ -5024,7 +5024,7 @@ function Window.Create(config: table)
 	end
 
 	function windowState:Notify(message: string, type: string?)
-		local Notification = require(script.Parent.Notification)
+		local Notification = custom_require("core/notification")
 		Notification.Create(message, type or "Info", windowState)
 	end
 
@@ -5070,32 +5070,32 @@ QwenUI.__index = QwenUI
 local Players = game:GetService("Players")
 
 
-local Theme = require(script.Theme)
-local Utils = require(script.Utils)
-local Icons = require(script.Icons)
-local Window = require(script.Window)
-local Notification = require(script.Notification)
+local Theme = custom_require("core/theme")
+local Utils = custom_require("core/utils")
+local Icons = custom_require("core/icons")
+local Window = custom_require("core/window")
+local Notification = custom_require("core/notification")
 
 
-local Section = require(script.components.layout.Section)
-local Row = require(script.components.layout.Row)
-local Divider = require(script.components.layout.Divider)
-local Banner = require(script.components.layout.Banner)
+local Section = custom_require("components/layout/section")
+local Row = custom_require("components/layout/row")
+local Divider = custom_require("components/layout/divider")
+local Banner = custom_require("components/layout/banner")
 
-local Button = require(script.components.inputs.Button)
-local Toggle = require(script.components.inputs.Toggle)
-local Slider = require(script.components.inputs.Slider)
-local TextBox = require(script.components.inputs.TextBox)
-local Dropdown = require(script.components.inputs.Dropdown)
-local MultiDropdown = require(script.components.inputs.MultiDropdown)
-local ColorPicker = require(script.components.inputs.ColorPicker)
-local Keybind = require(script.components.inputs.Keybind)
+local Button = custom_require("components/inputs/button")
+local Toggle = custom_require("components/inputs/toggle")
+local Slider = custom_require("components/inputs/slider")
+local TextBox = custom_require("components/inputs/textbox")
+local Dropdown = custom_require("components/inputs/dropdown")
+local MultiDropdown = custom_require("components/inputs/multidropdown")
+local ColorPicker = custom_require("components/inputs/colorpicker")
+local Keybind = custom_require("components/inputs/keybind")
 
-local Console = require(script.components.display.Console)
-local ProgressBar = require(script.components.display.ProgressBar)
-local Label = require(script.components.display.Label)
-local Paragraph = require(script.components.display.Paragraph)
-local Image = require(script.components.display.Image)
+local Console = custom_require("components/display/console")
+local ProgressBar = custom_require("components/display/progressbar")
+local Label = custom_require("components/display/label")
+local Paragraph = custom_require("components/display/paragraph")
+local Image = custom_require("components/display/image")
 
 
 QwenUI.Version = "1.0.0"
@@ -5105,6 +5105,21 @@ QwenUI.Name = "QwenUILib"
 function QwenUI:CreateWindow(config: table)
 	config = config or {}
 	return Window.Create(config)
+end
+
+
+function QwenUI:AddTab(window, tabName: string, icon: string?)
+	if typeof(window) == "Instance" then
+		window = window:GetAttribute("QwenWindowState") or window
+	end
+	return window:AddTab(tabName, icon)
+end
+
+function QwenUI:SwitchTab(window, tabName: string)
+	if typeof(window) == "Instance" then
+		window = window:GetAttribute("QwenWindowState") or window
+	end
+	window:SwitchTab(tabName)
 end
 
 

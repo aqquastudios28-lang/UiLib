@@ -55,7 +55,10 @@ def resolve_require(file_path: str, require_expr: str, src_dir: str) -> Optional
             if path_parts:
                 path_parts.pop()
         else:
-            path_parts.append(part)
+            if path_parts:
+                path_parts[-1] = part
+            else:
+                path_parts.append(part)
 
     return '/'.join(path_parts) if path_parts else None
 
@@ -77,6 +80,18 @@ def discover_modules(src_dir: str, config: BundleConfig) -> Dict[str, str]:
                     print(f"  Discovered: {module_name}")
     
     return modules
+
+
+def build_case_insensitive_module_map(modules: Dict[str, str]) -> tuple[Dict[str, str], Dict[str, str]]:
+    """Build case-insensitive lookup maps for module names: full-path and unique basename."""
+    lowered_map = {}
+    basename_map = {}
+    for name in modules.keys():
+        lowered_map[name.lower()] = name
+        base = name.split('/')[-1].lower()
+        if base not in basename_map:
+            basename_map[base] = name
+    return lowered_map, basename_map
 
 
 def _is_in_string(s: str) -> bool:
@@ -128,6 +143,7 @@ def process_module_requires(file_path: str, content: str, src_dir: str, config: 
     
     cleaned = '\n'.join(cleaned_lines)
     pattern = r'require\s*\(\s*(script[\w\.]*?)\s*\)'
+    lowered_module_map, basename_module_map = build_case_insensitive_module_map(all_modules)
     
     def replace_req(match):
         expr = match.group(1).replace(' ', '')
@@ -135,8 +151,15 @@ def process_module_requires(file_path: str, content: str, src_dir: str, config: 
         if resolved:
             if resolved in all_modules or resolved == 'init':
                 return f'custom_require("{resolved}")'
-            else:
-                print(f"Warning: Resolved module '{resolved}' not found (from {file_path})", file=sys.stderr)
+            lowered = resolved.lower()
+            if lowered in lowered_module_map:
+                canonical = lowered_module_map[lowered]
+                return f'custom_require("{canonical}")'
+            base = lowered.split('/')[-1]
+            if base in basename_module_map:
+                canonical = basename_module_map[base]
+                return f'custom_require("{canonical}")'
+            print(f"Warning: Resolved module '{resolved}' not found (from {file_path})", file=sys.stderr)
         return match.group(0)
     
     result = re.sub(pattern, replace_req, cleaned)
