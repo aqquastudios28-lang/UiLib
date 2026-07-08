@@ -13,7 +13,8 @@ function ProgressBar.Create(config: table)
 	local parent = config.Parent
 	local text = config.Text or "Progress"
 	local value = config.Value or 0
-	local width = config.Width or UDim2.new(1, 0, 0, 24)
+	-- With a title: label row (18px) on top, track below. Without: track only.
+	local width = config.Width or UDim2.new(1, 0, 0, text ~= "" and 38 or 16)
 
 	if not parent then
 		error("ProgressBar requires a parent frame")
@@ -26,30 +27,31 @@ function ProgressBar.Create(config: table)
 	progressFrame.BackgroundTransparency = 1
 	progressFrame.ZIndex = 2
 
-	-- Text label (optional)
+	-- Text label (optional, its own row above the track)
 	local textLabel = nil
 	if text ~= "" then
 		textLabel = Instance.new("TextLabel")
 		textLabel.Name = "Text"
-		textLabel.Size = UDim2.new(1, 0, 0, 20)
-		textLabel.Position = UDim2.new(0, 0, 1, -20)
+		textLabel.Size = UDim2.new(1, -56, 0, 18)
+		textLabel.Position = UDim2.new(0, 0, 0, 0)
 		textLabel.BackgroundTransparency = 1
 		textLabel.Text = text
 		textLabel.TextColor3 = Theme.Colors.TextSecondary
 		textLabel.TextSize = Theme.Font.Size.Small
 		textLabel.Font = Theme.Font.Family
 		textLabel.TextXAlignment = Enum.TextXAlignment.Left
-		textLabel.TextYAlignment = Enum.TextYAlignment.Top
+		textLabel.TextYAlignment = Enum.TextYAlignment.Center
 		textLabel.ZIndex = 2
 
 		textLabel.Parent = progressFrame
 	end
 
-	-- Track background
+	-- Track background (leaves room for the % label on the right when there
+	-- is no title row)
 	local track = Instance.new("Frame")
 	track.Name = "Track"
-	track.Size = UDim2.new(1, 0, 0, 12)
-	track.Position = UDim2.new(0, 0, text ~= "" and 0 or 0.5, text ~= "" and 8 or -6)
+	track.Size = UDim2.new(1, text ~= "" and 0 or -52, 0, 12)
+	track.Position = UDim2.new(0, 0, text ~= "" and 0 or 0.5, text ~= "" and 24 or -6)
 	track.BackgroundColor3 = Theme.Colors.BackgroundTertiary
 	track.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
 	track.ZIndex = 2
@@ -83,18 +85,19 @@ function ProgressBar.Create(config: table)
 	local shineCorner = Utils.CreateCorner(6, shine)
 	shine.Parent = progressFill
 
-	-- Value label
+	-- Value label (kept inside the frame: top-right beside the title, or
+	-- right of the track when there is no title)
 	local valueLabel = Instance.new("TextLabel")
 	valueLabel.Name = "Value"
-	valueLabel.Size = UDim2.new(0, 50, 0, 20)
-	valueLabel.Position = UDim2.new(1, 8, text ~= "" and 0 or 0.5, text ~= "" and 8 or -10)
+	valueLabel.Size = UDim2.new(0, 48, 0, 18)
+	valueLabel.Position = UDim2.new(1, -48, text ~= "" and 0 or 0.5, text ~= "" and 0 or -9)
 	valueLabel.BackgroundTransparency = 1
 	valueLabel.Text = (tostring(math.round(value)) .. "%")
 	valueLabel.TextColor3 = Theme.Colors.TextSecondary
 	valueLabel.TextSize = Theme.Font.Size.Small
 	valueLabel.Font = Theme.Font.Family
 	valueLabel.TextXAlignment = Enum.TextXAlignment.Right
-	valueLabel.TextYAlignment = Enum.TextYAlignment.Top
+	valueLabel.TextYAlignment = Enum.TextYAlignment.Center
 	valueLabel.ZIndex = 2
 
 	valueLabel.Parent = progressFrame

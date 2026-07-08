@@ -86,10 +86,22 @@ function Section.Create(config: table)
 
 	contentFrame.Parent = sectionFrame
 
-	-- Auto-size so the section grows/shrinks to fit its children (and its
-	-- collapsed state) without any manual AbsoluteContentSize math.
-	Utils.SafeAutoSize(contentFrame, "Y")
-	Utils.SafeAutoSize(sectionFrame, "Y")
+	-- Manual sizing driven by the layout's AbsoluteContentSize. AutomaticSize
+	-- is unavailable on the target executor (SafeAutoSize silently no-ops
+	-- there), which left both frames at height 0 and made nested widgets
+	-- overlap whatever came after the section.
+	local function updateSectionSize()
+		local contentHeight = contentLayout.AbsoluteContentSize.Y + Theme.Spacing.SM * 2
+		contentFrame.Size = UDim2.new(1, 0, 0, contentHeight)
+		if contentFrame.Visible then
+			sectionFrame.Size = UDim2.new(1, 0, 0, 36 + contentHeight)
+		else
+			sectionFrame.Size = UDim2.new(1, 0, 0, 32)
+		end
+	end
+
+	contentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateSectionSize)
+	updateSectionSize()
 
 	-- Section state
 	local sectionState = {
@@ -108,9 +120,10 @@ function Section.Create(config: table)
 		sectionState:Toggle()
 	end)
 
-	-- Initial collapsed state (section auto-sizes; hiding content shrinks it)
+	-- Initial collapsed state (hiding content shrinks the section)
 	if collapsed then
 		contentFrame.Visible = false
+		updateSectionSize()
 	end
 
 	-- Section methods
@@ -118,13 +131,15 @@ function Section.Create(config: table)
 		sectionState.IsCollapsed = not sectionState.IsCollapsed
 
 		if sectionState.IsCollapsed then
-			-- Collapse: hide content; AutomaticSize shrinks the section to the header
+			-- Collapse: hide content and shrink the section to its header
 			expandIcon.Image = Icons.Get("caret-right", "Regular")
 			contentFrame.Visible = false
+			updateSectionSize()
 		else
-			-- Expand: show content; AutomaticSize grows the section to fit it
+			-- Expand: show content and grow the section to fit it
 			expandIcon.Image = Icons.Get("caret-down", "Regular")
 			contentFrame.Visible = true
+			updateSectionSize()
 
 			Utils.Tween(header, {
 				BackgroundColor3 = Theme.Colors.BackgroundHover,
@@ -144,7 +159,7 @@ function Section.Create(config: table)
 	end
 
 	function sectionState:AddComponent(component)
-		-- AutomaticSize keeps the section fitted; no manual resize needed.
+		-- The AbsoluteContentSize listener keeps the section fitted.
 		if typeof(component) == "Instance" then
 			component.Parent = contentFrame
 		end

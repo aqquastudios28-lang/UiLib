@@ -95,10 +95,10 @@ function Window.Create(config: table)
 	local titleCorner = Utils.CreateCorner(Theme.CornerRadius.WindowInner, titleBar)
 	titleBar.Parent = innerFrame
 
-	-- Title text
+	-- Title text (leave room for the search box when it is enabled)
 	local titleText = Instance.new("TextLabel")
 	titleText.Name = "Title"
-	titleText.Size = UDim2.new(1, -80, 1, 0)
+	titleText.Size = UDim2.new(1, config.SearchEnabled and -232 or -80, 1, 0)
 	titleText.Position = UDim2.new(0, 16, 0, 0)
 	titleText.BackgroundTransparency = 1
 	titleText.Text = title
@@ -154,7 +154,26 @@ function Window.Create(config: table)
 		)
 	end
 
-	-- Content container
+	-- Tab bar (hidden until the first tab is added)
+	local tabBar = Instance.new("Frame")
+	tabBar.Name = "TabBar"
+	tabBar.Size = UDim2.new(1, -24, 0, 32)
+	tabBar.Position = UDim2.new(0, 12, 0, 40)
+	tabBar.BackgroundTransparency = 1
+	tabBar.ZIndex = 3
+	tabBar.Visible = false
+	tabBar.Parent = innerFrame
+
+	local tabBarLayout = Instance.new("UIListLayout")
+	tabBarLayout.FillDirection = Enum.FillDirection.Horizontal
+	tabBarLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+	tabBarLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+	tabBarLayout.Padding = UDim.new(0, 8)
+	tabBarLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	tabBarLayout.Parent = tabBar
+
+	-- Content container. Sized for a window without tabs; AddTab shifts it down
+	-- to make room for the tab bar.
 	local contentContainer = Instance.new("ScrollingFrame")
 	contentContainer.Name = "ContentContainer"
 	contentContainer.Size = UDim2.new(1, 0, 1, -40)
@@ -164,7 +183,9 @@ function Window.Create(config: table)
 	contentContainer.ScrollBarImageColor3 = Theme.Colors.AccentPrimary
 	contentContainer.ScrollBarImageTransparency = 0.5
 	contentContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
-	Utils.AutoCanvasY(contentContainer)
+	-- +32 accounts for the content UIPadding (16 top + 16 bottom), which the
+	-- layout's AbsoluteContentSize does not include.
+	Utils.AutoCanvasY(contentContainer, 32)
 	contentContainer.ZIndex = 2
 	contentContainer.ClipsDescendants = true
 
@@ -198,6 +219,10 @@ function Window.Create(config: table)
 		InnerFrame = innerFrame,
 		TitleBar = titleBar,
 		TitleText = titleText,
+		TabBar = tabBar,
+		Tabs = {},
+		TabOrder = {},
+		ActiveTab = nil,
 		ContentContainer = contentContainer,
 		ContentLayout = contentLayout,
 		SearchFrame = searchFrame,
@@ -212,8 +237,47 @@ function Window.Create(config: table)
 		Config = config,
 	}
 
+	-- Tab button styling (active tab is highlighted, inactive tabs are muted)
+	local function styleTabButton(button, active)
+		if active then
+			button.BackgroundColor3 = Theme.Colors.AccentPrimary
+			button.BackgroundTransparency = 0.7
+			button.TextColor3 = Theme.Colors.TextPrimary
+		else
+			button.BackgroundColor3 = Theme.Colors.BackgroundTertiary
+			button.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
+			button.TextColor3 = Theme.Colors.TextMuted
+		end
+	end
+
+	-- Measure a tab label so buttons fit their text (no AutomaticSize on old
+	-- executor clients). Falls back to a per-character estimate.
+	local function measureTabWidth(tabName)
+		local textWidth = 0
+		pcall(function()
+			local bounds = game:GetService("TextService"):GetTextSize(
+				tabName,
+				Theme.Font.Size.Body,
+				Theme.Font.Family,
+				Vector2.new(1000, 100)
+			)
+			textWidth = bounds.X
+		end)
+		if textWidth <= 0 then
+			textWidth = #tabName * 8
+		end
+		return math.ceil(textWidth) + 24
+	end
+
 	-- Window methods
 	function windowState:AddTab(tabName: string, icon: string?)
+		-- First tab: reveal the tab bar and shift content down to clear it.
+		if #windowState.TabOrder == 0 then
+			tabBar.Visible = true
+			contentContainer.Position = UDim2.new(0, 0, 0, 76)
+			contentContainer.Size = UDim2.new(1, 0, 1, -76)
+		end
+
 		local tabData = {
 			Name = tabName,
 			Icon = icon,
@@ -227,8 +291,6 @@ function Window.Create(config: table)
 		tabData.Content.BackgroundTransparency = 1
 		tabData.Content.Visible = false
 		tabData.Content.ZIndex = 2
-		-- Grow to fit its widgets so the scroll canvas measures correctly.
-		Utils.SafeAutoSize(tabData.Content, "Y")
 
 		local tabLayout = Instance.new("UIListLayout")
 		tabLayout.FillDirection = Enum.FillDirection.Vertical
@@ -238,40 +300,66 @@ function Window.Create(config: table)
 		tabLayout.SortOrder = Enum.SortOrder.LayoutOrder
 		tabLayout.Parent = tabData.Content
 
+		-- Grow to fit its widgets so the scroll canvas measures correctly
+		-- (manual fallback keeps this working without Enum.AutomaticSize).
+		Utils.AutoSizeListY(tabData.Content, tabLayout)
+
 		tabData.Content.Parent = contentContainer
+
+		-- Clickable tab button
+		local tabButton = Instance.new("TextButton")
+		tabButton.Name = ("TabButton_" .. tostring(tabName))
+		tabButton.Size = UDim2.new(0, measureTabWidth(tabName), 0, 26)
+		tabButton.Text = tabName
+		tabButton.TextSize = Theme.Font.Size.Body
+		tabButton.Font = Theme.Font.Family
+		tabButton.ZIndex = 3
+		tabButton.LayoutOrder = #windowState.TabOrder + 1
+		styleTabButton(tabButton, false)
+
+		Utils.CreateCorner(Theme.CornerRadius.Button, tabButton)
+		Utils.CreateStroke(tabButton, Theme.Colors.BorderPrimary, 1, Theme.Transparency.Border)
+
+		tabButton.MouseButton1Click:Connect(function()
+			windowState:SwitchTab(tabName)
+		end)
+
+		tabButton.Parent = tabBar
+
+		tabData.Button = tabButton
+		windowState.Tabs[tabName] = tabData
+		table.insert(windowState.TabOrder, tabName)
+
+		-- Always have a visible tab: the first one activates itself.
+		if #windowState.TabOrder == 1 then
+			windowState:SwitchTab(tabName)
+		end
 
 		return tabData
 	end
 
 	function windowState:SwitchTab(tabName: string)
-		-- Hide all tabs
-		for _, child in ipairs(contentContainer:GetChildren()) do
-			if child.Name:match("^Tab_") then
-				child.Visible = false
-			end
+		local target = windowState.Tabs[tabName]
+		if not target then
+			return
+		end
+
+		-- Hide all tabs, deactivate all buttons
+		for _, name in ipairs(windowState.TabOrder) do
+			local tab = windowState.Tabs[name]
+			tab.IsActive = false
+			tab.Content.Visible = false
+			styleTabButton(tab.Button, false)
 		end
 
 		-- Show selected tab
-		local targetTab = contentContainer:FindFirstChild(("Tab_" .. tostring(tabName)))
-		if targetTab then
-			targetTab.Visible = true
+		target.IsActive = true
+		target.Content.Visible = true
+		styleTabButton(target.Button, true)
+		windowState.ActiveTab = tabName
 
-			-- Staggered reveal animation (slide up into place).
-			-- Note: GuiObject has no Transparency property, so we only animate
-			-- Position, which is valid on every GuiObject.
-			for i, child in ipairs(targetTab:GetChildren()) do
-				if child:IsA("GuiObject") then
-					local basePos = child.Position
-					child.Position = UDim2.new(basePos.X.Scale, basePos.X.Offset, basePos.Y.Scale, basePos.Y.Offset + 10)
-
-					task.delay(i * 0.03, function()
-						Utils.Tween(child, {
-							Position = basePos,
-						}, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-					end)
-				end
-			end
-		end
+		-- Reset scroll so the top of the new tab is always in view
+		contentContainer.CanvasPosition = Vector2.new(0, 0)
 	end
 
 	function windowState:Destroy()

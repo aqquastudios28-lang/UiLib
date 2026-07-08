@@ -34,7 +34,10 @@ function Paragraph.Create(config: table)
 	paragraphFrame.TextYAlignment = Enum.TextYAlignment.Top
 	paragraphFrame.ZIndex = 2
 	paragraphFrame.TextWrapped = true
-	Utils.SafeAutoSize(paragraphFrame, "XY", "TextAutomaticSize")
+	-- Grow with the wrapped text so paragraphs never render at 0 height and
+	-- spill over the widgets below ("TextAutomaticSize" is not a real
+	-- property; AutomaticSize with a TextBounds fallback is what works).
+	Utils.AutoSizeTextY(paragraphFrame, 20)
 
 	paragraphFrame.Parent = parent
 

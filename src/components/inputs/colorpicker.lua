@@ -7,6 +7,9 @@ ColorPicker.__index = ColorPicker
 local Theme = require(script.Parent.Parent.Theme)
 local Utils = require(script.Parent.Parent.Utils)
 
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
 -- Create a color picker
 function ColorPicker.Create(config: table)
 	config = config or {}
@@ -19,17 +22,23 @@ function ColorPicker.Create(config: table)
 		error("ColorPicker requires a parent frame")
 	end
 
+	-- Closed: just the label row + preview swatch. The frame grows while the
+	-- panel is open so it pushes widgets below down instead of overlapping,
+	-- and leaves no dead gap while closed.
+	local CLOSED_HEIGHT = 40
+	local PANEL_HEIGHT = 164
+
 	-- Main color picker container
 	local colorPickerFrame = Instance.new("Frame")
 	colorPickerFrame.Name = ("ColorPicker_" .. tostring(text))
-	colorPickerFrame.Size = UDim2.new(1, 0, 0, 200)
+	colorPickerFrame.Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT)
 	colorPickerFrame.BackgroundTransparency = 1
 	colorPickerFrame.ZIndex = 2
 
 	-- Text label
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Name = "Text"
-	textLabel.Size = UDim2.new(0, 150, 0, 20)
+	textLabel.Size = UDim2.new(1, -52, 0, 40)
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
 	textLabel.BackgroundTransparency = 1
 	textLabel.Text = text
@@ -65,6 +74,7 @@ function ColorPicker.Create(config: table)
 	panel.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
 	panel.ZIndex = 2
 	panel.ClipsDescendants = true
+	panel.Visible = false
 
 	local panelCorner = Utils.CreateCorner(Theme.CornerRadius.WidgetOuter, panel)
 	local panelStroke = Utils.CreateStroke(panel, Theme.Colors.BorderPrimary, 1, Theme.Transparency.Border)
@@ -225,7 +235,7 @@ function ColorPicker.Create(config: table)
 		task.spawn(callback, color)
 	end
 
-	-- Toggle panel
+	-- Toggle panel (frame expands with it, pushing later widgets down)
 	previewButton.MouseButton1Click:Connect(function()
 		colorPickerState.IsOpen = not colorPickerState.IsOpen
 
@@ -235,12 +245,20 @@ function ColorPicker.Create(config: table)
 			panel.Size = UDim2.new(1, 0, 0, 0)
 
 			Utils.Tween(panel, {
-				Size = UDim2.new(1, 0, 0, 160),
+				Size = UDim2.new(1, 0, 0, PANEL_HEIGHT),
+			}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+
+			Utils.Tween(colorPickerFrame, {
+				Size = UDim2.new(1, 0, 0, 44 + PANEL_HEIGHT),
 			}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 		else
 			-- Close panel
 			Utils.Tween(panel, {
 				Size = UDim2.new(1, 0, 0, 0),
+			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+
+			Utils.Tween(colorPickerFrame, {
+				Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT),
 			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
 
 			task.delay(0.2, function()

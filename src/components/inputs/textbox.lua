@@ -63,15 +63,6 @@ function TextBox.Create(config: table)
 
 	textbox.Parent = textboxFrame
 
-	-- Cursor blink effect
-	local cursorVisible = true
-	local cursorConnection = RunService.Heartbeat:Connect(function()
-		if textbox:IsFocused() then
-			cursorVisible = not cursorVisible
-			textbox.PlaceholderColor3 = cursorVisible and Theme.Colors.TextMuted or Theme.Colors.TextPrimary
-		end
-	end)
-
 	-- TextBox state
 	local textboxState = {
 		Frame = textboxFrame,
@@ -151,8 +142,6 @@ function TextBox.Create(config: table)
 	end
 
 	function textboxState:Destroy()
-		cursorConnection:Disconnect()
-
 		Utils.Tween(textboxFrame, {
 			Transparency = 1,
 			Size = UDim2.new(0.5, 0, 0, 0),

@@ -19,10 +19,11 @@ function Divider.Create(config: table)
 		error("Divider requires a parent frame")
 	end
 
-	-- Main divider container
+	-- Main divider container. With a centered label the row must be tall
+	-- enough for the text, or the label bleeds over neighboring widgets.
 	local dividerFrame = Instance.new("Frame")
 	dividerFrame.Name = "Divider"
-	dividerFrame.Size = UDim2.new(1, 0, 0, thickness)
+	dividerFrame.Size = UDim2.new(1, 0, 0, text ~= "" and 20 or thickness)
 	dividerFrame.BackgroundTransparency = 1
 	dividerFrame.ZIndex = 2
 

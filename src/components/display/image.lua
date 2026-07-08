@@ -27,10 +27,10 @@ function Image.Create(config: table)
 	imageFrame.BackgroundTransparency = 1
 	imageFrame.ZIndex = 2
 
-	-- Image label
+	-- Image label (leaves a caption strip at the bottom when captioned)
 	local imageLabel = Instance.new("ImageLabel")
 	imageLabel.Name = "Image"
-	imageLabel.Size = UDim2.new(1, 0, 1, 0)
+	imageLabel.Size = UDim2.new(1, 0, 1, caption ~= "" and -24 or 0)
 	imageLabel.Position = UDim2.new(0, 0, 0, 0)
 	imageLabel.BackgroundTransparency = 1
 	imageLabel.Image = imageId ~= "" and ("rbxassetid://" .. tostring(imageId)) or ""

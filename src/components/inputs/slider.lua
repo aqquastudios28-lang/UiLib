@@ -7,6 +7,9 @@ Slider.__index = Slider
 local Theme = require(script.Parent.Parent.Theme)
 local Utils = require(script.Parent.Parent.Utils)
 
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
 -- Create a slider
 function Slider.Create(config: table)
 	config = config or {}

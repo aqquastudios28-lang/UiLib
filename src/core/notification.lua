@@ -17,13 +17,53 @@ Notification.Registry = {}
 Notification.NextId = 1
 Notification._gui = nil
 
+-- Toast geometry: fixed width, stacked bottom-right. Stacking (instead of a
+-- single shared spot) keeps simultaneous toasts from overlapping each other.
+local TOAST_WIDTH = 320
+local TOAST_HEIGHT = 64
+local TOAST_MARGIN = 20
+local TOAST_SPACING = 76
+
+-- Ordered stack of visible toasts; index 1 is the newest (bottom slot).
+Notification.Stack = {}
+
 -- Lazily create (and reuse) a ScreenGui to hold notifications. Toasts are
--- GuiObjects and only render inside a ScreenGui.
+-- GuiObjects and only render inside a ScreenGui. DisplayOrder above the
+-- window gui so toasts are never hidden behind windows.
 local function getNotificationGui(): Instance
 	if not Notification._gui or not Notification._gui.Parent then
-		Notification._gui = Utils.CreateScreenGui("QwenUILib_Notifications")
+		Notification._gui = Utils.CreateScreenGui("QwenUILib_Notifications", 1000)
 	end
 	return Notification._gui
+end
+
+-- Slot position for stack index i (1 = bottom, older toasts shift upward)
+local function slotPosition(index: number): UDim2
+	return UDim2.new(
+		1,
+		-(TOAST_WIDTH + TOAST_MARGIN),
+		1,
+		-(TOAST_MARGIN + TOAST_HEIGHT) - (index - 1) * TOAST_SPACING
+	)
+end
+
+-- Re-tween every visible toast into its slot
+local function relayoutStack()
+	for i, state in ipairs(Notification.Stack) do
+		Utils.Tween(state.Container, {
+			Position = slotPosition(i),
+		}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+	end
+end
+
+local function removeFromStack(state)
+	for i, existing in ipairs(Notification.Stack) do
+		if existing == state then
+			table.remove(Notification.Stack, i)
+			break
+		end
+	end
+	relayoutStack()
 end
 
 -- Notification types with semantic colors
@@ -45,11 +85,11 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 		parent = getNotificationGui()
 	end
 
-	-- Main container
+	-- Main container (fixed-width toast, bottom-right)
 	local container = Instance.new("Frame")
 	container.Name = ("Notification_" .. tostring(Notification.NextId))
-	container.Size = UDim2.new(1, -40, 0, 64)
-	container.Position = UDim2.new(0, 20, 1, 100)
+	container.Size = UDim2.new(0, TOAST_WIDTH, 0, TOAST_HEIGHT)
+	container.Position = UDim2.new(1, -(TOAST_WIDTH + TOAST_MARGIN), 1, 100)
 	container.BackgroundColor3 = Theme.Colors.BackgroundSecondary
 	container.BackgroundTransparency = Theme.Transparency.BackgroundSecondary
 	container.ZIndex = 100
@@ -96,13 +136,14 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 	-- Message text
 	local messageText = Instance.new("TextLabel")
 	messageText.Name = "Message"
-	messageText.Size = UDim2.new(1, -70, 0, 20)
-	messageText.Position = UDim2.new(0, 58, 0.5, -10)
+	messageText.Size = UDim2.new(1, -100, 1, -12)
+	messageText.Position = UDim2.new(0, 58, 0, 6)
 	messageText.BackgroundTransparency = 1
 	messageText.Text = message
 	messageText.TextColor3 = Theme.Colors.TextPrimary
 	messageText.TextSize = Theme.Font.Size.Body
 	messageText.Font = Theme.Font.Family
+	messageText.TextWrapped = true
 	messageText.TextXAlignment = Enum.TextXAlignment.Left
 	messageText.TextYAlignment = Enum.TextYAlignment.Center
 	messageText.ZIndex = 3
@@ -166,19 +207,30 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 		StartTime = os.clock(),
 	}
 
-	-- Slide-in animation (using Back ease for snappy feel)
-	container.Position = UDim2.new(0, 20, 1, 100)
+	-- Take the bottom slot; older toasts get pushed up by relayoutStack so
+	-- toasts never sit on top of each other.
+	table.insert(Notification.Stack, 1, notifState)
+	relayoutStack()
 
+	-- Slide-in animation (using Back ease for snappy feel)
 	Utils.Tween(container, {
-		Position = UDim2.new(0, 20, 1, -84),
+		Position = slotPosition(1),
 	}, 0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 
 	-- Close functionality
+	local isClosed = false
 	local function close()
-		-- Slide out
+		if isClosed then
+			return
+		end
+		isClosed = true
+
+		-- Free the slot so the remaining toasts settle down
+		removeFromStack(notifState)
+
+		-- Slide out to the right
 		Utils.Tween(container, {
-			Position = UDim2.new(0, 20, 1, 100),
-			Transparency = 1,
+			Position = UDim2.new(1, TOAST_MARGIN, 1, container.Position.Y.Offset),
 		}, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
 
 		task.delay(0.3, function()
@@ -252,6 +304,7 @@ function Notification.DismissAll()
 		end
 	end
 	table.clear(Notification.Registry)
+	table.clear(Notification.Stack)
 end
 
 -- Dismiss specific notification by ID
@@ -262,6 +315,7 @@ function Notification.Dismiss(id: number)
 				notifState.Container:Destroy()
 			end
 			Notification.Registry[notifState] = nil
+			removeFromStack(notifState)
 			break
 		end
 	end

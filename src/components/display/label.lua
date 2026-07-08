@@ -35,7 +35,10 @@ function Label.Create(config: table)
 	labelFrame.TextYAlignment = Enum.TextYAlignment.Top
 	labelFrame.ZIndex = 2
 	labelFrame.TextWrapped = true
-	Utils.SafeAutoSize(labelFrame, "Y", "TextAutomaticSize")
+	-- Grow with the wrapped text so long labels never spill over the next
+	-- widget ("TextAutomaticSize" is not a real property; AutomaticSize with a
+	-- TextBounds fallback is what actually works).
+	Utils.AutoSizeTextY(labelFrame, 20)
 
 	labelFrame.Parent = parent
 

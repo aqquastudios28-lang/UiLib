@@ -195,8 +195,12 @@ function Console.Create(config: table)
 		end
 
 		
-		task.wait(0.01)
-		logContainer.CanvasPosition = Vector2.new(0, logContainer.AbsoluteCanvasSize.Y)
+		
+		
+		task.delay(0.03, function()
+			local target = logLayout.AbsoluteContentSize.Y - logContainer.AbsoluteSize.Y
+			logContainer.CanvasPosition = Vector2.new(0, math.max(0, target))
+		end)
 	end
 
 	
@@ -332,7 +336,7 @@ function Image.Create(config: table)
 	
 	local imageLabel = Instance.new("ImageLabel")
 	imageLabel.Name = "Image"
-	imageLabel.Size = UDim2.new(1, 0, 1, 0)
+	imageLabel.Size = UDim2.new(1, 0, 1, caption ~= "" and -24 or 0)
 	imageLabel.Position = UDim2.new(0, 0, 0, 0)
 	imageLabel.BackgroundTransparency = 1
 	imageLabel.Image = imageId ~= "" and ("rbxassetid://" .. tostring(imageId)) or ""
@@ -452,7 +456,10 @@ function Label.Create(config: table)
 	labelFrame.TextYAlignment = Enum.TextYAlignment.Top
 	labelFrame.ZIndex = 2
 	labelFrame.TextWrapped = true
-	Utils.SafeAutoSize(labelFrame, "Y", "TextAutomaticSize")
+	
+	
+	
+	Utils.AutoSizeTextY(labelFrame, 20)
 
 	labelFrame.Parent = parent
 
@@ -520,7 +527,10 @@ function Paragraph.Create(config: table)
 	paragraphFrame.TextYAlignment = Enum.TextYAlignment.Top
 	paragraphFrame.ZIndex = 2
 	paragraphFrame.TextWrapped = true
-	Utils.SafeAutoSize(paragraphFrame, "XY", "TextAutomaticSize")
+	
+	
+	
+	Utils.AutoSizeTextY(paragraphFrame, 20)
 
 	paragraphFrame.Parent = parent
 
@@ -567,7 +577,8 @@ function ProgressBar.Create(config: table)
 	local parent = config.Parent
 	local text = config.Text or "Progress"
 	local value = config.Value or 0
-	local width = config.Width or UDim2.new(1, 0, 0, 24)
+	
+	local width = config.Width or UDim2.new(1, 0, 0, text ~= "" and 38 or 16)
 
 	if not parent then
 		error("ProgressBar requires a parent frame")
@@ -585,25 +596,26 @@ function ProgressBar.Create(config: table)
 	if text ~= "" then
 		textLabel = Instance.new("TextLabel")
 		textLabel.Name = "Text"
-		textLabel.Size = UDim2.new(1, 0, 0, 20)
-		textLabel.Position = UDim2.new(0, 0, 1, -20)
+		textLabel.Size = UDim2.new(1, -56, 0, 18)
+		textLabel.Position = UDim2.new(0, 0, 0, 0)
 		textLabel.BackgroundTransparency = 1
 		textLabel.Text = text
 		textLabel.TextColor3 = Theme.Colors.TextSecondary
 		textLabel.TextSize = Theme.Font.Size.Small
 		textLabel.Font = Theme.Font.Family
 		textLabel.TextXAlignment = Enum.TextXAlignment.Left
-		textLabel.TextYAlignment = Enum.TextYAlignment.Top
+		textLabel.TextYAlignment = Enum.TextYAlignment.Center
 		textLabel.ZIndex = 2
 
 		textLabel.Parent = progressFrame
 	end
 
 	
+	
 	local track = Instance.new("Frame")
 	track.Name = "Track"
-	track.Size = UDim2.new(1, 0, 0, 12)
-	track.Position = UDim2.new(0, 0, text ~= "" and 0 or 0.5, text ~= "" and 8 or -6)
+	track.Size = UDim2.new(1, text ~= "" and 0 or -52, 0, 12)
+	track.Position = UDim2.new(0, 0, text ~= "" and 0 or 0.5, text ~= "" and 24 or -6)
 	track.BackgroundColor3 = Theme.Colors.BackgroundTertiary
 	track.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
 	track.ZIndex = 2
@@ -638,17 +650,18 @@ function ProgressBar.Create(config: table)
 	shine.Parent = progressFill
 
 	
+	
 	local valueLabel = Instance.new("TextLabel")
 	valueLabel.Name = "Value"
-	valueLabel.Size = UDim2.new(0, 50, 0, 20)
-	valueLabel.Position = UDim2.new(1, 8, text ~= "" and 0 or 0.5, text ~= "" and 8 or -10)
+	valueLabel.Size = UDim2.new(0, 48, 0, 18)
+	valueLabel.Position = UDim2.new(1, -48, text ~= "" and 0 or 0.5, text ~= "" and 0 or -9)
 	valueLabel.BackgroundTransparency = 1
 	valueLabel.Text = (tostring(math.round(value)) .. "%")
 	valueLabel.TextColor3 = Theme.Colors.TextSecondary
 	valueLabel.TextSize = Theme.Font.Size.Small
 	valueLabel.Font = Theme.Font.Family
 	valueLabel.TextXAlignment = Enum.TextXAlignment.Right
-	valueLabel.TextYAlignment = Enum.TextYAlignment.Top
+	valueLabel.TextYAlignment = Enum.TextYAlignment.Center
 	valueLabel.ZIndex = 2
 
 	valueLabel.Parent = progressFrame
@@ -965,6 +978,9 @@ ColorPicker.__index = ColorPicker
 local Theme = custom_require("core/theme")
 local Utils = custom_require("core/utils")
 
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+
 
 function ColorPicker.Create(config: table)
 	config = config or {}
@@ -978,16 +994,22 @@ function ColorPicker.Create(config: table)
 	end
 
 	
+	
+	
+	local CLOSED_HEIGHT = 40
+	local PANEL_HEIGHT = 164
+
+	
 	local colorPickerFrame = Instance.new("Frame")
 	colorPickerFrame.Name = ("ColorPicker_" .. tostring(text))
-	colorPickerFrame.Size = UDim2.new(1, 0, 0, 200)
+	colorPickerFrame.Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT)
 	colorPickerFrame.BackgroundTransparency = 1
 	colorPickerFrame.ZIndex = 2
 
 	
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Name = "Text"
-	textLabel.Size = UDim2.new(0, 150, 0, 20)
+	textLabel.Size = UDim2.new(1, -52, 0, 40)
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
 	textLabel.BackgroundTransparency = 1
 	textLabel.Text = text
@@ -1023,6 +1045,7 @@ function ColorPicker.Create(config: table)
 	panel.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
 	panel.ZIndex = 2
 	panel.ClipsDescendants = true
+	panel.Visible = false
 
 	local panelCorner = Utils.CreateCorner(Theme.CornerRadius.WidgetOuter, panel)
 	local panelStroke = Utils.CreateStroke(panel, Theme.Colors.BorderPrimary, 1, Theme.Transparency.Border)
@@ -1193,12 +1216,20 @@ function ColorPicker.Create(config: table)
 			panel.Size = UDim2.new(1, 0, 0, 0)
 
 			Utils.Tween(panel, {
-				Size = UDim2.new(1, 0, 0, 160),
+				Size = UDim2.new(1, 0, 0, PANEL_HEIGHT),
+			}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+
+			Utils.Tween(colorPickerFrame, {
+				Size = UDim2.new(1, 0, 0, 44 + PANEL_HEIGHT),
 			}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 		else
 			
 			Utils.Tween(panel, {
 				Size = UDim2.new(1, 0, 0, 0),
+			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+
+			Utils.Tween(colorPickerFrame, {
+				Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT),
 			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
 
 			task.delay(0.2, function()
@@ -1334,16 +1365,20 @@ function Dropdown.Create(config: table)
 	end
 
 	
+	
+	local CLOSED_HEIGHT = 56
+
+	
 	local dropdownFrame = Instance.new("Frame")
 	dropdownFrame.Name = ("Dropdown_" .. tostring(text))
-	dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
+	dropdownFrame.Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT)
 	dropdownFrame.BackgroundTransparency = 1
 	dropdownFrame.ZIndex = 2
 
 	
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Name = "Text"
-	textLabel.Size = UDim2.new(0, 150, 0, 20)
+	textLabel.Size = UDim2.new(1, 0, 0, 18)
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
 	textLabel.BackgroundTransparency = 1
 	textLabel.Text = text
@@ -1360,7 +1395,7 @@ function Dropdown.Create(config: table)
 	local dropdownButton = Instance.new("TextButton")
 	dropdownButton.Name = "Button"
 	dropdownButton.Size = UDim2.new(1, 0, 0, 32)
-	dropdownButton.Position = UDim2.new(0, 0, 1, -32)
+	dropdownButton.Position = UDim2.new(0, 0, 0, 24)
 	dropdownButton.BackgroundColor3 = Theme.Colors.BackgroundTertiary
 	dropdownButton.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
 	dropdownButton.ZIndex = 2
@@ -1398,10 +1433,11 @@ function Dropdown.Create(config: table)
 	)
 
 	
+	
 	local dropdownList = Instance.new("ScrollingFrame")
 	dropdownList.Name = "List"
 	dropdownList.Size = UDim2.new(1, 0, 0, 0)
-	dropdownList.Position = UDim2.new(0, 0, 1, 0)
+	dropdownList.Position = UDim2.new(0, 0, 0, 60)
 	dropdownList.BackgroundColor3 = Theme.Colors.BackgroundSecondary
 	dropdownList.BackgroundTransparency = Theme.Transparency.BackgroundSecondary
 	dropdownList.ZIndex = 10
@@ -1448,9 +1484,19 @@ function Dropdown.Create(config: table)
 			
 			dropdownList.Visible = true
 			dropdownList.Size = UDim2.new(1, 0, 0, 0)
+			
+			dropdownList.BackgroundTransparency = Theme.Transparency.BackgroundSecondary
 
 			
-			for i, option in ipairs(options) do
+			for _, btn in pairs(dropdownState.OptionButtons) do
+				if btn.Parent then
+					btn:Destroy()
+				end
+			end
+			table.clear(dropdownState.OptionButtons)
+
+			
+			for i, option in ipairs(dropdownState.Options) do
 				local optionButton = Instance.new("TextButton")
 				optionButton.Name = ("Option_" .. tostring(option))
 				optionButton.Size = UDim2.new(1, 0, 0, 28)
@@ -1499,8 +1545,16 @@ function Dropdown.Create(config: table)
 			end
 
 			
-			task.wait(0.01)
-			dropdownList.Size = UDim2.new(1, 0, 0, math.clamp(#options * 32, 0, 200))
+			
+			local listHeight = math.clamp(#dropdownState.Options * 32, 32, 160)
+
+			Utils.Tween(dropdownList, {
+				Size = UDim2.new(1, 0, 0, listHeight),
+			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+
+			Utils.Tween(dropdownFrame, {
+				Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT + listHeight + 8),
+			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 
 			
 			Utils.Tween(arrowIcon, {
@@ -1510,7 +1564,10 @@ function Dropdown.Create(config: table)
 			
 			Utils.Tween(dropdownList, {
 				Size = UDim2.new(1, 0, 0, 0),
-				Transparency = 1,
+			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+
+			Utils.Tween(dropdownFrame, {
+				Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT),
 			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
 
 			
@@ -1838,16 +1895,20 @@ function MultiDropdown.Create(config: table)
 	end
 
 	
+	
+	local CLOSED_HEIGHT = 56
+
+	
 	local multidropdownFrame = Instance.new("Frame")
 	multidropdownFrame.Name = ("MultiDropdown_" .. tostring(text))
-	multidropdownFrame.Size = UDim2.new(1, 0, 0, 40)
+	multidropdownFrame.Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT)
 	multidropdownFrame.BackgroundTransparency = 1
 	multidropdownFrame.ZIndex = 2
 
 	
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Name = "Text"
-	textLabel.Size = UDim2.new(0, 150, 0, 20)
+	textLabel.Size = UDim2.new(1, 0, 0, 18)
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
 	textLabel.BackgroundTransparency = 1
 	textLabel.Text = text
@@ -1864,7 +1925,7 @@ function MultiDropdown.Create(config: table)
 	local dropdownButton = Instance.new("TextButton")
 	dropdownButton.Name = "Button"
 	dropdownButton.Size = UDim2.new(1, 0, 0, 32)
-	dropdownButton.Position = UDim2.new(0, 0, 1, -32)
+	dropdownButton.Position = UDim2.new(0, 0, 0, 24)
 	dropdownButton.BackgroundColor3 = Theme.Colors.BackgroundTertiary
 	dropdownButton.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
 	dropdownButton.ZIndex = 2
@@ -1902,10 +1963,11 @@ function MultiDropdown.Create(config: table)
 	)
 
 	
+	
 	local dropdownList = Instance.new("ScrollingFrame")
 	dropdownList.Name = "List"
 	dropdownList.Size = UDim2.new(1, 0, 0, 0)
-	dropdownList.Position = UDim2.new(0, 0, 1, 0)
+	dropdownList.Position = UDim2.new(0, 0, 0, 60)
 	dropdownList.BackgroundColor3 = Theme.Colors.BackgroundSecondary
 	dropdownList.BackgroundTransparency = Theme.Transparency.BackgroundSecondary
 	dropdownList.ZIndex = 10
@@ -1973,6 +2035,8 @@ function MultiDropdown.Create(config: table)
 			
 			dropdownList.Visible = true
 			dropdownList.Size = UDim2.new(1, 0, 0, 0)
+			
+			dropdownList.BackgroundTransparency = Theme.Transparency.BackgroundSecondary
 
 			
 			for _, btn in pairs(multidropdownState.OptionButtons) do
@@ -1983,7 +2047,7 @@ function MultiDropdown.Create(config: table)
 			table.clear(multidropdownState.OptionButtons)
 
 			
-			for i, option in ipairs(options) do
+			for i, option in ipairs(multidropdownState.Options) do
 				local optionButton = Instance.new("TextButton")
 				optionButton.Name = ("Option_" .. tostring(option))
 				optionButton.Size = UDim2.new(1, 0, 0, 28)
@@ -2086,8 +2150,16 @@ function MultiDropdown.Create(config: table)
 			end
 
 			
-			task.wait(0.01)
-			dropdownList.Size = UDim2.new(1, 0, 0, math.clamp(#options * 32, 0, 200))
+			
+			local listHeight = math.clamp(#multidropdownState.Options * 32, 32, 160)
+
+			Utils.Tween(dropdownList, {
+				Size = UDim2.new(1, 0, 0, listHeight),
+			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+
+			Utils.Tween(multidropdownFrame, {
+				Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT + listHeight + 8),
+			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 
 			
 			Utils.Tween(arrowIcon, {
@@ -2097,7 +2169,10 @@ function MultiDropdown.Create(config: table)
 			
 			Utils.Tween(dropdownList, {
 				Size = UDim2.new(1, 0, 0, 0),
-				Transparency = 1,
+			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+
+			Utils.Tween(multidropdownFrame, {
+				Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT),
 			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
 
 			
@@ -2193,6 +2268,9 @@ Slider.__index = Slider
 
 local Theme = custom_require("core/theme")
 local Utils = custom_require("core/utils")
+
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
 
 function Slider.Create(config: table)
@@ -2501,15 +2579,6 @@ function TextBox.Create(config: table)
 	textbox.Parent = textboxFrame
 
 	
-	local cursorVisible = true
-	local cursorConnection = RunService.Heartbeat:Connect(function()
-		if textbox:IsFocused() then
-			cursorVisible = not cursorVisible
-			textbox.PlaceholderColor3 = cursorVisible and Theme.Colors.TextMuted or Theme.Colors.TextPrimary
-		end
-	end)
-
-	
 	local textboxState = {
 		Frame = textboxFrame,
 		GlowFrame = glowFrame,
@@ -2588,8 +2657,6 @@ function TextBox.Create(config: table)
 	end
 
 	function textboxState:Destroy()
-		cursorConnection:Disconnect()
-
 		Utils.Tween(textboxFrame, {
 			Transparency = 1,
 			Size = UDim2.new(0.5, 0, 0, 0),
@@ -2997,9 +3064,10 @@ function Divider.Create(config: table)
 	end
 
 	
+	
 	local dividerFrame = Instance.new("Frame")
 	dividerFrame.Name = "Divider"
-	dividerFrame.Size = UDim2.new(1, 0, 0, thickness)
+	dividerFrame.Size = UDim2.new(1, 0, 0, text ~= "" and 20 or thickness)
 	dividerFrame.BackgroundTransparency = 1
 	dividerFrame.ZIndex = 2
 
@@ -3136,7 +3204,8 @@ function Row.Create(config: table)
 	layout.Parent = rowFrame
 
 	
-	Utils.SafeAutoSize(rowFrame, "Y")
+	
+	Utils.AutoSizeListY(rowFrame, layout)
 
 	
 	local rowState = {
@@ -3286,8 +3355,20 @@ function Section.Create(config: table)
 
 	
 	
-	Utils.SafeAutoSize(contentFrame, "Y")
-	Utils.SafeAutoSize(sectionFrame, "Y")
+	
+	
+	local function updateSectionSize()
+		local contentHeight = contentLayout.AbsoluteContentSize.Y + Theme.Spacing.SM * 2
+		contentFrame.Size = UDim2.new(1, 0, 0, contentHeight)
+		if contentFrame.Visible then
+			sectionFrame.Size = UDim2.new(1, 0, 0, 36 + contentHeight)
+		else
+			sectionFrame.Size = UDim2.new(1, 0, 0, 32)
+		end
+	end
+
+	contentLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateSectionSize)
+	updateSectionSize()
 
 	
 	local sectionState = {
@@ -3309,6 +3390,7 @@ function Section.Create(config: table)
 	
 	if collapsed then
 		contentFrame.Visible = false
+		updateSectionSize()
 	end
 
 	
@@ -3319,10 +3401,12 @@ function Section.Create(config: table)
 			
 			expandIcon.Image = Icons.Get("caret-right", "Regular")
 			contentFrame.Visible = false
+			updateSectionSize()
 		else
 			
 			expandIcon.Image = Icons.Get("caret-down", "Regular")
 			contentFrame.Visible = true
+			updateSectionSize()
 
 			Utils.Tween(header, {
 				BackgroundColor3 = Theme.Colors.BackgroundHover,
@@ -3930,11 +4014,51 @@ Notification._gui = nil
 
 
 
+local TOAST_WIDTH = 320
+local TOAST_HEIGHT = 64
+local TOAST_MARGIN = 20
+local TOAST_SPACING = 76
+
+
+Notification.Stack = {}
+
+
+
+
 local function getNotificationGui(): Instance
 	if not Notification._gui or not Notification._gui.Parent then
-		Notification._gui = Utils.CreateScreenGui("QwenUILib_Notifications")
+		Notification._gui = Utils.CreateScreenGui("QwenUILib_Notifications", 1000)
 	end
 	return Notification._gui
+end
+
+
+local function slotPosition(index: number): UDim2
+	return UDim2.new(
+		1,
+		-(TOAST_WIDTH + TOAST_MARGIN),
+		1,
+		-(TOAST_MARGIN + TOAST_HEIGHT) - (index - 1) * TOAST_SPACING
+	)
+end
+
+
+local function relayoutStack()
+	for i, state in ipairs(Notification.Stack) do
+		Utils.Tween(state.Container, {
+			Position = slotPosition(i),
+		}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+	end
+end
+
+local function removeFromStack(state)
+	for i, existing in ipairs(Notification.Stack) do
+		if existing == state then
+			table.remove(Notification.Stack, i)
+			break
+		end
+	end
+	relayoutStack()
 end
 
 
@@ -3959,8 +4083,8 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 	
 	local container = Instance.new("Frame")
 	container.Name = ("Notification_" .. tostring(Notification.NextId))
-	container.Size = UDim2.new(1, -40, 0, 64)
-	container.Position = UDim2.new(0, 20, 1, 100)
+	container.Size = UDim2.new(0, TOAST_WIDTH, 0, TOAST_HEIGHT)
+	container.Position = UDim2.new(1, -(TOAST_WIDTH + TOAST_MARGIN), 1, 100)
 	container.BackgroundColor3 = Theme.Colors.BackgroundSecondary
 	container.BackgroundTransparency = Theme.Transparency.BackgroundSecondary
 	container.ZIndex = 100
@@ -4007,13 +4131,14 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 	
 	local messageText = Instance.new("TextLabel")
 	messageText.Name = "Message"
-	messageText.Size = UDim2.new(1, -70, 0, 20)
-	messageText.Position = UDim2.new(0, 58, 0.5, -10)
+	messageText.Size = UDim2.new(1, -100, 1, -12)
+	messageText.Position = UDim2.new(0, 58, 0, 6)
 	messageText.BackgroundTransparency = 1
 	messageText.Text = message
 	messageText.TextColor3 = Theme.Colors.TextPrimary
 	messageText.TextSize = Theme.Font.Size.Body
 	messageText.Font = Theme.Font.Family
+	messageText.TextWrapped = true
 	messageText.TextXAlignment = Enum.TextXAlignment.Left
 	messageText.TextYAlignment = Enum.TextYAlignment.Center
 	messageText.ZIndex = 3
@@ -4078,18 +4203,29 @@ function Notification.Create(message: string, type: string?, parent: Instance?)
 	}
 
 	
-	container.Position = UDim2.new(0, 20, 1, 100)
+	
+	table.insert(Notification.Stack, 1, notifState)
+	relayoutStack()
 
+	
 	Utils.Tween(container, {
-		Position = UDim2.new(0, 20, 1, -84),
+		Position = slotPosition(1),
 	}, 0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 
 	
+	local isClosed = false
 	local function close()
+		if isClosed then
+			return
+		end
+		isClosed = true
+
+		
+		removeFromStack(notifState)
+
 		
 		Utils.Tween(container, {
-			Position = UDim2.new(0, 20, 1, 100),
-			Transparency = 1,
+			Position = UDim2.new(1, TOAST_MARGIN, 1, container.Position.Y.Offset),
 		}, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
 
 		task.delay(0.3, function()
@@ -4163,6 +4299,7 @@ function Notification.DismissAll()
 		end
 	end
 	table.clear(Notification.Registry)
+	table.clear(Notification.Stack)
 end
 
 
@@ -4173,6 +4310,7 @@ function Notification.Dismiss(id: number)
 				notifState.Container:Destroy()
 			end
 			Notification.Registry[notifState] = nil
+			removeFromStack(notifState)
 			break
 		end
 	end
@@ -4540,18 +4678,18 @@ function Utils.CreateGlowBlob(
 	size: number?,
 	position: UDim2?
 ): Frame
+	local blobSize = size or 200
+
 	local blob = Instance.new("Frame")
 	blob.Name = "GlowBlob"
-	blob.Size = UDim2.new(0, size or 200, 0, size or 200)
-	blob.Position = position or UDim2.new(0.5, -100, 0.5, -100)
+	blob.Size = UDim2.new(0, blobSize, 0, blobSize)
+	blob.Position = position or UDim2.new(0.5, -blobSize / 2, 0.5, -blobSize / 2)
 	blob.BackgroundColor3 = color or Color3.fromHex("#7c3aed")
-	blob.BackgroundTransparency = 0.85
+	
+	blob.BackgroundTransparency = 0.93
 	blob.ZIndex = 1
 
-	local corner = Utils.CreateCorner(50, blob)
-	local blur = Instance.new("BlurEffect")
-	blur.Size = 64
-	blur.Parent = blob
+	local corner = Utils.CreateCorner(math.floor(blobSize / 2), blob)
 
 	blob.Parent = parent
 
@@ -4563,9 +4701,9 @@ function Utils.CreateGlowBlob(
 		local elapsed = os.clock() - startTime
 		blob.Position = UDim2.new(
 			0.5 + math.sin(elapsed * 0.5) * 0.1,
-			-size / 2,
+			-blobSize / 2,
 			0.5 + math.cos(elapsed * 0.3) * 0.1,
-			-size / 2
+			-blobSize / 2
 		)
 	end)
 
@@ -4587,8 +4725,8 @@ function Utils.CreateListLayout(
 ): UIListLayout
 	local layout = Instance.new("UIListLayout")
 	layout.FillDirection = horizontal and Enum.FillDirection.Horizontal or Enum.FillDirection.Vertical
-	layout.HorizontalAlignment = align or Enum.FlexAlignment.Center
-	layout.VerticalAlignment = align or Enum.FlexAlignment.Center
+	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	layout.VerticalAlignment = Enum.VerticalAlignment.Center
 	layout.Padding = UDim.new(0, padding or 8)
 	layout.SortOrder = Enum.SortOrder.LayoutOrder
 	layout.Parent = parent
@@ -4730,12 +4868,12 @@ end
 
 
 
-function Utils.CreateScreenGui(name: string?): ScreenGui
+function Utils.CreateScreenGui(name: string?, displayOrder: number?): ScreenGui
 	local screenGui = Instance.new("ScreenGui")
 	screenGui.Name = name or "QwenUILib"
 	screenGui.ResetOnSpawn = false
 	screenGui.IgnoreGuiInset = true
-	screenGui.DisplayOrder = 999
+	screenGui.DisplayOrder = displayOrder or 999
 
 	
 	pcall(function()
@@ -4760,12 +4898,16 @@ end
 
 
 
-function Utils.AutoCanvasY(scrollFrame: Instance)
+
+
+function Utils.AutoCanvasY(scrollFrame: Instance, extra: number?)
+	extra = extra or 0
+
 	local enumOk = pcall(function()
 		return Enum.AutomaticCanvasSize.Y
 	end)
 
-	if enumOk then
+	if enumOk and extra == 0 then
 		local applied = pcall(function()
 			scrollFrame.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
 		end)
@@ -4781,7 +4923,7 @@ function Utils.AutoCanvasY(scrollFrame: Instance)
 		end
 		local function update()
 			local content = layout.AbsoluteContentSize
-			scrollFrame.CanvasSize = UDim2.new(0, 0, 0, content.Y)
+			scrollFrame.CanvasSize = UDim2.new(0, 0, 0, content.Y + extra)
 		end
 		layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(update)
 		update()
@@ -4802,12 +4944,57 @@ end
 
 
 
-function Utils.SafeAutoSize(obj: Instance, axis: string?, property: string?)
+
+function Utils.SafeAutoSize(obj: Instance, axis: string?, property: string?): boolean
 	axis = axis or "Y"
 	property = property or "AutomaticSize"
-	pcall(function()
+	local ok = pcall(function()
 		obj[property] = Enum.AutomaticSize[axis]
 	end)
+	return ok
+end
+
+
+
+
+
+
+function Utils.AutoSizeListY(frame: Instance, layout: Instance, extra: number?)
+	extra = extra or 0
+
+	if extra == 0 and Utils.SafeAutoSize(frame, "Y") then
+		return
+	end
+
+	local function update()
+		frame.Size = UDim2.new(
+			frame.Size.X.Scale,
+			frame.Size.X.Offset,
+			0,
+			layout.AbsoluteContentSize.Y + extra
+		)
+	end
+	layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(update)
+	update()
+end
+
+
+
+
+function Utils.AutoSizeTextY(label: Instance, minHeight: number?)
+	minHeight = minHeight or 0
+
+	if Utils.SafeAutoSize(label, "Y") then
+		return
+	end
+
+	local function update()
+		local h = math.max(label.TextBounds.Y, minHeight)
+		label.Size = UDim2.new(label.Size.X.Scale, label.Size.X.Offset, 0, h)
+	end
+	label:GetPropertyChangedSignal("TextBounds"):Connect(update)
+	label:GetPropertyChangedSignal("AbsoluteSize"):Connect(update)
+	update()
 end
 
 
@@ -4933,7 +5120,7 @@ function Window.Create(config: table)
 	
 	local titleText = Instance.new("TextLabel")
 	titleText.Name = "Title"
-	titleText.Size = UDim2.new(1, -80, 1, 0)
+	titleText.Size = UDim2.new(1, config.SearchEnabled and -232 or -80, 1, 0)
 	titleText.Position = UDim2.new(0, 16, 0, 0)
 	titleText.BackgroundTransparency = 1
 	titleText.Text = title
@@ -4990,6 +5177,25 @@ function Window.Create(config: table)
 	end
 
 	
+	local tabBar = Instance.new("Frame")
+	tabBar.Name = "TabBar"
+	tabBar.Size = UDim2.new(1, -24, 0, 32)
+	tabBar.Position = UDim2.new(0, 12, 0, 40)
+	tabBar.BackgroundTransparency = 1
+	tabBar.ZIndex = 3
+	tabBar.Visible = false
+	tabBar.Parent = innerFrame
+
+	local tabBarLayout = Instance.new("UIListLayout")
+	tabBarLayout.FillDirection = Enum.FillDirection.Horizontal
+	tabBarLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+	tabBarLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+	tabBarLayout.Padding = UDim.new(0, 8)
+	tabBarLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	tabBarLayout.Parent = tabBar
+
+	
+	
 	local contentContainer = Instance.new("ScrollingFrame")
 	contentContainer.Name = "ContentContainer"
 	contentContainer.Size = UDim2.new(1, 0, 1, -40)
@@ -4999,7 +5205,9 @@ function Window.Create(config: table)
 	contentContainer.ScrollBarImageColor3 = Theme.Colors.AccentPrimary
 	contentContainer.ScrollBarImageTransparency = 0.5
 	contentContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
-	Utils.AutoCanvasY(contentContainer)
+	
+	
+	Utils.AutoCanvasY(contentContainer, 32)
 	contentContainer.ZIndex = 2
 	contentContainer.ClipsDescendants = true
 
@@ -5033,6 +5241,10 @@ function Window.Create(config: table)
 		InnerFrame = innerFrame,
 		TitleBar = titleBar,
 		TitleText = titleText,
+		TabBar = tabBar,
+		Tabs = {},
+		TabOrder = {},
+		ActiveTab = nil,
 		ContentContainer = contentContainer,
 		ContentLayout = contentLayout,
 		SearchFrame = searchFrame,
@@ -5048,7 +5260,46 @@ function Window.Create(config: table)
 	}
 
 	
+	local function styleTabButton(button, active)
+		if active then
+			button.BackgroundColor3 = Theme.Colors.AccentPrimary
+			button.BackgroundTransparency = 0.7
+			button.TextColor3 = Theme.Colors.TextPrimary
+		else
+			button.BackgroundColor3 = Theme.Colors.BackgroundTertiary
+			button.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
+			button.TextColor3 = Theme.Colors.TextMuted
+		end
+	end
+
+	
+	
+	local function measureTabWidth(tabName)
+		local textWidth = 0
+		pcall(function()
+			local bounds = game:GetService("TextService"):GetTextSize(
+				tabName,
+				Theme.Font.Size.Body,
+				Theme.Font.Family,
+				Vector2.new(1000, 100)
+			)
+			textWidth = bounds.X
+		end)
+		if textWidth <= 0 then
+			textWidth = #tabName * 8
+		end
+		return math.ceil(textWidth) + 24
+	end
+
+	
 	function windowState:AddTab(tabName: string, icon: string?)
+		
+		if #windowState.TabOrder == 0 then
+			tabBar.Visible = true
+			contentContainer.Position = UDim2.new(0, 0, 0, 76)
+			contentContainer.Size = UDim2.new(1, 0, 1, -76)
+		end
+
 		local tabData = {
 			Name = tabName,
 			Icon = icon,
@@ -5062,8 +5313,6 @@ function Window.Create(config: table)
 		tabData.Content.BackgroundTransparency = 1
 		tabData.Content.Visible = false
 		tabData.Content.ZIndex = 2
-		
-		Utils.SafeAutoSize(tabData.Content, "Y")
 
 		local tabLayout = Instance.new("UIListLayout")
 		tabLayout.FillDirection = Enum.FillDirection.Vertical
@@ -5073,40 +5322,66 @@ function Window.Create(config: table)
 		tabLayout.SortOrder = Enum.SortOrder.LayoutOrder
 		tabLayout.Parent = tabData.Content
 
+		
+		
+		Utils.AutoSizeListY(tabData.Content, tabLayout)
+
 		tabData.Content.Parent = contentContainer
+
+		
+		local tabButton = Instance.new("TextButton")
+		tabButton.Name = ("TabButton_" .. tostring(tabName))
+		tabButton.Size = UDim2.new(0, measureTabWidth(tabName), 0, 26)
+		tabButton.Text = tabName
+		tabButton.TextSize = Theme.Font.Size.Body
+		tabButton.Font = Theme.Font.Family
+		tabButton.ZIndex = 3
+		tabButton.LayoutOrder = #windowState.TabOrder + 1
+		styleTabButton(tabButton, false)
+
+		Utils.CreateCorner(Theme.CornerRadius.Button, tabButton)
+		Utils.CreateStroke(tabButton, Theme.Colors.BorderPrimary, 1, Theme.Transparency.Border)
+
+		tabButton.MouseButton1Click:Connect(function()
+			windowState:SwitchTab(tabName)
+		end)
+
+		tabButton.Parent = tabBar
+
+		tabData.Button = tabButton
+		windowState.Tabs[tabName] = tabData
+		table.insert(windowState.TabOrder, tabName)
+
+		
+		if #windowState.TabOrder == 1 then
+			windowState:SwitchTab(tabName)
+		end
 
 		return tabData
 	end
 
 	function windowState:SwitchTab(tabName: string)
-		
-		for _, child in ipairs(contentContainer:GetChildren()) do
-			if child.Name:match("^Tab_") then
-				child.Visible = false
-			end
+		local target = windowState.Tabs[tabName]
+		if not target then
+			return
 		end
 
 		
-		local targetTab = contentContainer:FindFirstChild(("Tab_" .. tostring(tabName)))
-		if targetTab then
-			targetTab.Visible = true
-
-			
-			
-			
-			for i, child in ipairs(targetTab:GetChildren()) do
-				if child:IsA("GuiObject") then
-					local basePos = child.Position
-					child.Position = UDim2.new(basePos.X.Scale, basePos.X.Offset, basePos.Y.Scale, basePos.Y.Offset + 10)
-
-					task.delay(i * 0.03, function()
-						Utils.Tween(child, {
-							Position = basePos,
-						}, 0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-					end)
-				end
-			end
+		for _, name in ipairs(windowState.TabOrder) do
+			local tab = windowState.Tabs[name]
+			tab.IsActive = false
+			tab.Content.Visible = false
+			styleTabButton(tab.Button, false)
 		end
+
+		
+		target.IsActive = true
+		target.Content.Visible = true
+		styleTabButton(target.Button, true)
+		windowState.ActiveTab = tabName
+
+		
+		contentContainer.CanvasPosition = Vector2.new(0, 0)
 	end
 
 	function windowState:Destroy()

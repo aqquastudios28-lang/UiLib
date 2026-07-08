@@ -34,8 +34,9 @@ function Row.Create(config: table)
 	layout.SortOrder = Enum.SortOrder.LayoutOrder
 	layout.Parent = rowFrame
 
-	-- Grow to the height of the tallest item.
-	Utils.SafeAutoSize(rowFrame, "Y")
+	-- Grow to the height of the tallest item (manual fallback keeps this
+	-- working on clients without Enum.AutomaticSize).
+	Utils.AutoSizeListY(rowFrame, layout)
 
 	-- Row state
 	local rowState = {

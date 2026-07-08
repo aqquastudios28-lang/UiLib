@@ -150,18 +150,18 @@ function Utils.CreateGlowBlob(
 	size: number?,
 	position: UDim2?
 ): Frame
+	local blobSize = size or 200
+
 	local blob = Instance.new("Frame")
 	blob.Name = "GlowBlob"
-	blob.Size = UDim2.new(0, size or 200, 0, size or 200)
-	blob.Position = position or UDim2.new(0.5, -100, 0.5, -100)
+	blob.Size = UDim2.new(0, blobSize, 0, blobSize)
+	blob.Position = position or UDim2.new(0.5, -blobSize / 2, 0.5, -blobSize / 2)
 	blob.BackgroundColor3 = color or Color3.fromHex("#7c3aed")
-	blob.BackgroundTransparency = 0.85
+	-- Very faint: this sits behind content and must never read as a solid shape.
+	blob.BackgroundTransparency = 0.93
 	blob.ZIndex = 1
 
-	local corner = Utils.CreateCorner(50, blob)
-	local blur = Instance.new("BlurEffect")
-	blur.Size = 64
-	blur.Parent = blob
+	local corner = Utils.CreateCorner(math.floor(blobSize / 2), blob)
 
 	blob.Parent = parent
 
@@ -173,9 +173,9 @@ function Utils.CreateGlowBlob(
 		local elapsed = os.clock() - startTime
 		blob.Position = UDim2.new(
 			0.5 + math.sin(elapsed * 0.5) * 0.1,
-			-size / 2,
+			-blobSize / 2,
 			0.5 + math.cos(elapsed * 0.3) * 0.1,
-			-size / 2
+			-blobSize / 2
 		)
 	end)
 
@@ -197,8 +197,8 @@ function Utils.CreateListLayout(
 ): UIListLayout
 	local layout = Instance.new("UIListLayout")
 	layout.FillDirection = horizontal and Enum.FillDirection.Horizontal or Enum.FillDirection.Vertical
-	layout.HorizontalAlignment = align or Enum.FlexAlignment.Center
-	layout.VerticalAlignment = align or Enum.FlexAlignment.Center
+	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	layout.VerticalAlignment = Enum.VerticalAlignment.Center
 	layout.Padding = UDim.new(0, padding or 8)
 	layout.SortOrder = Enum.SortOrder.LayoutOrder
 	layout.Parent = parent
@@ -340,12 +340,12 @@ end
 
 -- Create a ScreenGui with sane defaults and mount it into a protected container.
 -- Without this, GuiObjects parented directly to PlayerGui/CoreGui never render.
-function Utils.CreateScreenGui(name: string?): ScreenGui
+function Utils.CreateScreenGui(name: string?, displayOrder: number?): ScreenGui
 	local screenGui = Instance.new("ScreenGui")
 	screenGui.Name = name or "QwenUILib"
 	screenGui.ResetOnSpawn = false
 	screenGui.IgnoreGuiInset = true
-	screenGui.DisplayOrder = 999
+	screenGui.DisplayOrder = displayOrder or 999
 
 	-- Honor authored ZIndex values across sibling frames.
 	pcall(function()
@@ -370,12 +370,16 @@ end
 -- Grow a ScrollingFrame's CanvasSize to fit its content on the Y axis.
 -- Prefers native AutomaticCanvasSize, but falls back to a manual updater for
 -- executor clients whose Enum table lacks AutomaticCanvasSize.
-function Utils.AutoCanvasY(scrollFrame: Instance)
+-- extra: pixels added on top of the measured content (e.g. UIPadding, which
+-- AbsoluteContentSize does not include).
+function Utils.AutoCanvasY(scrollFrame: Instance, extra: number?)
+	extra = extra or 0
+
 	local enumOk = pcall(function()
 		return Enum.AutomaticCanvasSize.Y
 	end)
 
-	if enumOk then
+	if enumOk and extra == 0 then
 		local applied = pcall(function()
 			scrollFrame.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
 		end)
@@ -391,7 +395,7 @@ function Utils.AutoCanvasY(scrollFrame: Instance)
 		end
 		local function update()
 			local content = layout.AbsoluteContentSize
-			scrollFrame.CanvasSize = UDim2.new(0, 0, 0, content.Y)
+			scrollFrame.CanvasSize = UDim2.new(0, 0, 0, content.Y + extra)
 		end
 		layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(update)
 		update()
@@ -409,15 +413,60 @@ function Utils.AutoCanvasY(scrollFrame: Instance)
 	end
 end
 
--- Safely set AutomaticSize (or TextAutomaticSize) on a GuiObject, guarding
--- older executor clients whose Enum table lacks AutomaticSize.
+-- Safely set AutomaticSize on a GuiObject, guarding older executor clients
+-- whose Enum table lacks AutomaticSize. Returns true when it actually applied,
+-- so callers can install a manual fallback when it did not.
 -- axis: "X" | "Y" | "XY" (default "Y"). property defaults to "AutomaticSize".
-function Utils.SafeAutoSize(obj: Instance, axis: string?, property: string?)
+function Utils.SafeAutoSize(obj: Instance, axis: string?, property: string?): boolean
 	axis = axis or "Y"
 	property = property or "AutomaticSize"
-	pcall(function()
+	local ok = pcall(function()
 		obj[property] = Enum.AutomaticSize[axis]
 	end)
+	return ok
+end
+
+-- Grow a frame's Y size to fit its UIListLayout content. Uses AutomaticSize
+-- when available; otherwise drives Size.Y from the layout's
+-- AbsoluteContentSize so old executor clients still size correctly (a frame
+-- stuck at height 0 makes its children overlap whatever comes after it).
+-- extra: pixels added on top of the measured content (e.g. UIPadding).
+function Utils.AutoSizeListY(frame: Instance, layout: Instance, extra: number?)
+	extra = extra or 0
+
+	if extra == 0 and Utils.SafeAutoSize(frame, "Y") then
+		return
+	end
+
+	local function update()
+		frame.Size = UDim2.new(
+			frame.Size.X.Scale,
+			frame.Size.X.Offset,
+			0,
+			layout.AbsoluteContentSize.Y + extra
+		)
+	end
+	layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(update)
+	update()
+end
+
+-- Grow a wrapped TextLabel's Y size to fit its text. Uses AutomaticSize when
+-- available; otherwise drives Size.Y from TextBounds (which respects
+-- TextWrapped once the label has a real width).
+function Utils.AutoSizeTextY(label: Instance, minHeight: number?)
+	minHeight = minHeight or 0
+
+	if Utils.SafeAutoSize(label, "Y") then
+		return
+	end
+
+	local function update()
+		local h = math.max(label.TextBounds.Y, minHeight)
+		label.Size = UDim2.new(label.Size.X.Scale, label.Size.X.Offset, 0, h)
+	end
+	label:GetPropertyChangedSignal("TextBounds"):Connect(update)
+	label:GetPropertyChangedSignal("AbsoluteSize"):Connect(update)
+	update()
 end
 
 -- Create safe wrapper for cleanup

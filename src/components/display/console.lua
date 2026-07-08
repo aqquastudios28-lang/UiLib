@@ -173,9 +173,13 @@ function Console.Create(config: table)
 			end
 		end
 
-		-- Scroll to bottom
-		task.wait(0.01)
-		logContainer.CanvasPosition = Vector2.new(0, logContainer.AbsoluteCanvasSize.Y)
+		-- Scroll to bottom (deferred so the layout has measured the new entry;
+		-- AbsoluteContentSize works on old executor clients where
+		-- AbsoluteCanvasSize does not)
+		task.delay(0.03, function()
+			local target = logLayout.AbsoluteContentSize.Y - logContainer.AbsoluteSize.Y
+			logContainer.CanvasPosition = Vector2.new(0, math.max(0, target))
+		end)
 	end
 
 	-- Clear console

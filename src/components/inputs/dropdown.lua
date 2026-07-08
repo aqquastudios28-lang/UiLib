@@ -21,17 +21,21 @@ function Dropdown.Create(config: table)
 		error("Dropdown requires a parent frame")
 	end
 
+	-- Widget heights. The container expands while the list is open so the
+	-- options push the widgets below down instead of overlapping them.
+	local CLOSED_HEIGHT = 56
+
 	-- Main dropdown container
 	local dropdownFrame = Instance.new("Frame")
 	dropdownFrame.Name = ("Dropdown_" .. tostring(text))
-	dropdownFrame.Size = UDim2.new(1, 0, 0, 40)
+	dropdownFrame.Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT)
 	dropdownFrame.BackgroundTransparency = 1
 	dropdownFrame.ZIndex = 2
 
-	-- Text label
+	-- Text label (its own row above the button, no overlap)
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Name = "Text"
-	textLabel.Size = UDim2.new(0, 150, 0, 20)
+	textLabel.Size = UDim2.new(1, 0, 0, 18)
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
 	textLabel.BackgroundTransparency = 1
 	textLabel.Text = text
@@ -48,7 +52,7 @@ function Dropdown.Create(config: table)
 	local dropdownButton = Instance.new("TextButton")
 	dropdownButton.Name = "Button"
 	dropdownButton.Size = UDim2.new(1, 0, 0, 32)
-	dropdownButton.Position = UDim2.new(0, 0, 1, -32)
+	dropdownButton.Position = UDim2.new(0, 0, 0, 24)
 	dropdownButton.BackgroundColor3 = Theme.Colors.BackgroundTertiary
 	dropdownButton.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
 	dropdownButton.ZIndex = 2
@@ -85,11 +89,12 @@ function Dropdown.Create(config: table)
 		0.8
 	)
 
-	-- Dropdown list (hidden by default)
+	-- Dropdown list (hidden by default; sits below the button inside the
+	-- container, which grows to hold it while open)
 	local dropdownList = Instance.new("ScrollingFrame")
 	dropdownList.Name = "List"
 	dropdownList.Size = UDim2.new(1, 0, 0, 0)
-	dropdownList.Position = UDim2.new(0, 0, 1, 0)
+	dropdownList.Position = UDim2.new(0, 0, 0, 60)
 	dropdownList.BackgroundColor3 = Theme.Colors.BackgroundSecondary
 	dropdownList.BackgroundTransparency = Theme.Transparency.BackgroundSecondary
 	dropdownList.ZIndex = 10
@@ -136,9 +141,19 @@ function Dropdown.Create(config: table)
 			-- Open dropdown
 			dropdownList.Visible = true
 			dropdownList.Size = UDim2.new(1, 0, 0, 0)
+			-- Restore the backdrop in case a previous close faded it out
+			dropdownList.BackgroundTransparency = Theme.Transparency.BackgroundSecondary
+
+			-- Clear any stale options before rebuilding
+			for _, btn in pairs(dropdownState.OptionButtons) do
+				if btn.Parent then
+					btn:Destroy()
+				end
+			end
+			table.clear(dropdownState.OptionButtons)
 
 			-- Create option buttons
-			for i, option in ipairs(options) do
+			for i, option in ipairs(dropdownState.Options) do
 				local optionButton = Instance.new("TextButton")
 				optionButton.Name = ("Option_" .. tostring(option))
 				optionButton.Size = UDim2.new(1, 0, 0, 28)
@@ -186,19 +201,30 @@ function Dropdown.Create(config: table)
 				end)
 			end
 
-			-- Animate open
-			task.wait(0.01)
-			dropdownList.Size = UDim2.new(1, 0, 0, math.clamp(#options * 32, 0, 200))
+			-- Animate open: grow the list and the container together so the
+			-- widgets below get pushed down (never overlapped)
+			local listHeight = math.clamp(#dropdownState.Options * 32, 32, 160)
+
+			Utils.Tween(dropdownList, {
+				Size = UDim2.new(1, 0, 0, listHeight),
+			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+
+			Utils.Tween(dropdownFrame, {
+				Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT + listHeight + 8),
+			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 
 			-- Rotate arrow
 			Utils.Tween(arrowIcon, {
 				Rotation = 180,
 			}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 		else
-			-- Close dropdown
+			-- Close dropdown: shrink the list and the container back
 			Utils.Tween(dropdownList, {
 				Size = UDim2.new(1, 0, 0, 0),
-				Transparency = 1,
+			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+
+			Utils.Tween(dropdownFrame, {
+				Size = UDim2.new(1, 0, 0, CLOSED_HEIGHT),
 			}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
 
 			-- Rotate arrow back
