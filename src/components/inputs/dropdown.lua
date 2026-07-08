@@ -119,6 +119,9 @@ function Dropdown.Create(config: table)
 	listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	listLayout.Parent = dropdownList
 
+	-- Inset the options from the list edges
+	Utils.CreatePadding(dropdownList, 4, 4, 8, 8)
+
 	-- Dropdown state
 	local dropdownState = {
 		Frame = dropdownFrame,
@@ -164,6 +167,9 @@ function Dropdown.Create(config: table)
 				optionButton.Font = Theme.Font.Family
 				optionButton.TextXAlignment = Enum.TextXAlignment.Left
 				optionButton.ZIndex = 11
+				pcall(function()
+					optionButton.TextTruncate = Enum.TextTruncate.AtEnd
+				end)
 
 				optionButton.Parent = dropdownList
 				table.insert(dropdownState.OptionButtons, optionButton)
@@ -203,7 +209,7 @@ function Dropdown.Create(config: table)
 
 			-- Animate open: grow the list and the container together so the
 			-- widgets below get pushed down (never overlapped)
-			local listHeight = math.clamp(#dropdownState.Options * 32, 32, 160)
+			local listHeight = math.clamp(#dropdownState.Options * 32 + 4, 40, 168)
 
 			Utils.Tween(dropdownList, {
 				Size = UDim2.new(1, 0, 0, listHeight),

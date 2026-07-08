@@ -79,12 +79,22 @@ function Utils.MakeDraggable(frame: Frame, dragHandle: Frame?)
 
 	local function updatePosition(input)
 		local delta = input.Position - dragStart
-		frame.Position = UDim2.new(
-			startPos.X.Scale,
-			startPos.X.Offset + delta.X,
-			startPos.Y.Scale,
-			startPos.Y.Offset + delta.Y
-		)
+		local newX = startPos.X.Offset + delta.X
+		local newY = startPos.Y.Offset + delta.Y
+
+		-- Clamp so the frame stays reachable: the top edge never leaves the
+		-- screen and at least 60px of width remains visible. Without this a
+		-- stray drag can put the window fully offscreen with no way back.
+		pcall(function()
+			local parentSize = frame.Parent.AbsoluteSize
+			local frameSize = frame.AbsoluteSize
+			local baseX = startPos.X.Scale * parentSize.X
+			local baseY = startPos.Y.Scale * parentSize.Y
+			newX = math.clamp(newX, 60 - baseX - frameSize.X, parentSize.X - baseX - 60)
+			newY = math.clamp(newY, -baseY, parentSize.Y - baseY - 40)
+		end)
+
+		frame.Position = UDim2.new(startPos.X.Scale, newX, startPos.Y.Scale, newY)
 	end
 
 	dragTarget.InputBegan:Connect(function(input)

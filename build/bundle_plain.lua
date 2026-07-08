@@ -179,6 +179,9 @@ function Console.Create(config: table)
 		entry.TextXAlignment = Enum.TextXAlignment.Left
 		entry.TextYAlignment = Enum.TextYAlignment.Center
 		entry.ZIndex = 3
+		pcall(function()
+			entry.TextTruncate = Enum.TextTruncate.AtEnd
+		end)
 
 		entry.Parent = logContainer
 		self.LineCount = self.LineCount + (1)
@@ -1463,6 +1466,9 @@ function Dropdown.Create(config: table)
 	listLayout.Parent = dropdownList
 
 	
+	Utils.CreatePadding(dropdownList, 4, 4, 8, 8)
+
+	
 	local dropdownState = {
 		Frame = dropdownFrame,
 		Button = dropdownButton,
@@ -1507,6 +1513,9 @@ function Dropdown.Create(config: table)
 				optionButton.Font = Theme.Font.Family
 				optionButton.TextXAlignment = Enum.TextXAlignment.Left
 				optionButton.ZIndex = 11
+				pcall(function()
+					optionButton.TextTruncate = Enum.TextTruncate.AtEnd
+				end)
 
 				optionButton.Parent = dropdownList
 				table.insert(dropdownState.OptionButtons, optionButton)
@@ -1546,7 +1555,7 @@ function Dropdown.Create(config: table)
 
 			
 			
-			local listHeight = math.clamp(#dropdownState.Options * 32, 32, 160)
+			local listHeight = math.clamp(#dropdownState.Options * 32 + 4, 40, 168)
 
 			Utils.Tween(dropdownList, {
 				Size = UDim2.new(1, 0, 0, listHeight),
@@ -1698,9 +1707,10 @@ function Keybind.Create(config: table)
 	keybindFrame.ZIndex = 2
 
 	
+	
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Name = "Text"
-	textLabel.Size = UDim2.new(0, 150, 0, 20)
+	textLabel.Size = UDim2.new(1, -130, 1, 0)
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
 	textLabel.BackgroundTransparency = 1
 	textLabel.Text = text
@@ -1993,6 +2003,9 @@ function MultiDropdown.Create(config: table)
 	listLayout.Parent = dropdownList
 
 	
+	Utils.CreatePadding(dropdownList, 4, 4, 8, 8)
+
+	
 	local multidropdownState = {
 		Frame = multidropdownFrame,
 		Button = dropdownButton,
@@ -2058,6 +2071,9 @@ function MultiDropdown.Create(config: table)
 				optionButton.Font = Theme.Font.Family
 				optionButton.TextXAlignment = Enum.TextXAlignment.Left
 				optionButton.ZIndex = 11
+				pcall(function()
+					optionButton.TextTruncate = Enum.TextTruncate.AtEnd
+				end)
 
 				
 				local checkbox = Instance.new("Frame")
@@ -2151,7 +2167,7 @@ function MultiDropdown.Create(config: table)
 
 			
 			
-			local listHeight = math.clamp(#multidropdownState.Options * 32, 32, 160)
+			local listHeight = math.clamp(#multidropdownState.Options * 32 + 4, 40, 168)
 
 			Utils.Tween(dropdownList, {
 				Size = UDim2.new(1, 0, 0, listHeight),
@@ -2295,9 +2311,10 @@ function Slider.Create(config: table)
 	sliderFrame.ZIndex = 2
 
 	
+	
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Name = "Text"
-	textLabel.Size = UDim2.new(0, 150, 0, 20)
+	textLabel.Size = UDim2.new(1, -70, 0, 20)
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
 	textLabel.BackgroundTransparency = 1
 	textLabel.Text = text
@@ -2941,15 +2958,15 @@ function Banner.Create(config: table)
 	
 	local titleText = Instance.new("TextLabel")
 	titleText.Name = "Title"
-	titleText.Size = UDim2.new(1, -24, 0, 28)
-	titleText.Position = UDim2.new(0, 12, 0.5, -14)
+	titleText.Size = UDim2.new(1, -24, 0, 22)
+	titleText.Position = UDim2.new(0, 12, 0.5, subtitle ~= "" and -22 or -11)
 	titleText.BackgroundTransparency = 1
 	titleText.Text = title
 	titleText.TextColor3 = Theme.Colors.TextPrimary
 	titleText.TextSize = Theme.Font.Size.Header
 	titleText.Font = Theme.Font.Family
 	titleText.TextXAlignment = Enum.TextXAlignment.Left
-	titleText.TextYAlignment = Enum.TextYAlignment.Top
+	titleText.TextYAlignment = Enum.TextYAlignment.Center
 	titleText.ZIndex = 3
 
 	titleText.Parent = innerFrame
@@ -2958,15 +2975,15 @@ function Banner.Create(config: table)
 	if subtitle ~= "" then
 		local subtitleText = Instance.new("TextLabel")
 		subtitleText.Name = "Subtitle"
-		subtitleText.Size = UDim2.new(1, -24, 0, 20)
-		subtitleText.Position = UDim2.new(0, 12, 0.5, 4)
+		subtitleText.Size = UDim2.new(1, -24, 0, 18)
+		subtitleText.Position = UDim2.new(0, 12, 0.5, 2)
 		subtitleText.BackgroundTransparency = 1
 		subtitleText.Text = subtitle
 		subtitleText.TextColor3 = Theme.Colors.TextSecondary
 		subtitleText.TextSize = Theme.Font.Size.Body
 		subtitleText.Font = Theme.Font.Family
 		subtitleText.TextXAlignment = Enum.TextXAlignment.Left
-		subtitleText.TextYAlignment = Enum.TextYAlignment.Top
+		subtitleText.TextYAlignment = Enum.TextYAlignment.Center
 		subtitleText.ZIndex = 3
 
 		subtitleText.Parent = innerFrame
@@ -2993,24 +3010,26 @@ function Banner.Create(config: table)
 			if bannerState.SubtitleText then
 				bannerState.SubtitleText:Destroy()
 				bannerState.SubtitleText = nil
+				titleText.Position = UDim2.new(0, 12, 0.5, -11)
 			end
 		else
 			if not bannerState.SubtitleText then
 				local subtitleText = Instance.new("TextLabel")
 				subtitleText.Name = "Subtitle"
-				subtitleText.Size = UDim2.new(1, -24, 0, 20)
-				subtitleText.Position = UDim2.new(0, 12, 0.5, 4)
+				subtitleText.Size = UDim2.new(1, -24, 0, 18)
+				subtitleText.Position = UDim2.new(0, 12, 0.5, 2)
 				subtitleText.BackgroundTransparency = 1
 				subtitleText.Text = newSubtitle
 				subtitleText.TextColor3 = Theme.Colors.TextSecondary
 				subtitleText.TextSize = Theme.Font.Size.Body
 				subtitleText.Font = Theme.Font.Family
 				subtitleText.TextXAlignment = Enum.TextXAlignment.Left
-				subtitleText.TextYAlignment = Enum.TextYAlignment.Top
+				subtitleText.TextYAlignment = Enum.TextYAlignment.Center
 				subtitleText.ZIndex = 3
 
 				subtitleText.Parent = innerFrame
 				bannerState.SubtitleText = subtitleText
+				titleText.Position = UDim2.new(0, 12, 0.5, -22)
 			else
 				bannerState.SubtitleText.Text = newSubtitle
 			end
@@ -3474,7 +3493,7 @@ local PhosphorRegular = {
 	["search"] = "rbxassetid://6031095062",
 	["plus"] = "rbxassetid://6031094585",
 	["minus"] = "rbxassetid://6031094418",
-	["x"] = "6031095195",
+	["x"] = "rbxassetid://6031095195",
 	["check"] = "rbxassetid://6031094687",
 	["arrow-right"] = "rbxassetid://6031094536",
 	["arrow-left"] = "rbxassetid://6031094523",
@@ -3496,8 +3515,8 @@ local PhosphorRegular = {
 	["lock"] = "rbxassetid://6031095419",
 	["lock-open"] = "rbxassetid://6031095426",
 	["warning"] = "rbxassetid://6031095183",
-	["info"] = "rbxassetid://6031094833",
-	["question"] = "rbxassetid://6031095035",
+	["info"] = "rbxassetid://6031094835",
+	["question"] = "rbxassetid://6031095038",
 	["lightning"] = "rbxassetid://6031095350",
 	["fire"] = "rbxassetid://6031094781",
 	["rocket"] = "rbxassetid://6031095053",
@@ -3581,8 +3600,6 @@ local PhosphorRegular = {
 	["check-circle"] = "rbxassetid://6031094676",
 	["x-circle"] = "rbxassetid://6031095206",
 	["warning-circle"] = "rbxassetid://6031095186",
-	["info"] = "rbxassetid://6031094835",
-	["question"] = "rbxassetid://6031095038",
 	["exclamation"] = "rbxassetid://6031094772",
 }
 
@@ -3619,8 +3636,8 @@ local PhosphorFilled = {
 	["lock"] = "rbxassetid://6031095423",
 	["lock-open"] = "rbxassetid://6031095430",
 	["warning"] = "rbxassetid://6031095187",
-	["info"] = "rbxassetid://6031094837",
-	["question"] = "rbxassetid://6031095042",
+	["info"] = "rbxassetid://6031094839",
+	["question"] = "rbxassetid://6031095046",
 	["lightning"] = "rbxassetid://6031095354",
 	["fire"] = "rbxassetid://6031094785",
 	["rocket"] = "rbxassetid://6031095057",
@@ -3704,8 +3721,6 @@ local PhosphorFilled = {
 	["check-circle"] = "rbxassetid://6031094680",
 	["x-circle"] = "rbxassetid://6031095210",
 	["warning-circle"] = "rbxassetid://6031095190",
-	["info"] = "rbxassetid://6031094839",
-	["question"] = "rbxassetid://6031095046",
 	["exclamation"] = "rbxassetid://6031094776",
 }
 
@@ -3717,7 +3732,7 @@ local MaterialIcons = {
 	["notifications"] = "rbxassetid://6031094768",
 	["favorite"] = "rbxassetid://6031094828",
 	["star"] = "rbxassetid://6031095142",
-	["search"] = "rbxassetid://6031095066",
+	["search"] = "rbxassetid://6031095336",
 	["add"] = "rbxassetid://6031094589",
 	["remove"] = "rbxassetid://6031094422",
 	["close"] = "rbxassetid://6031095199",
@@ -3739,9 +3754,9 @@ local MaterialIcons = {
 	["visibility-off"] = "rbxassetid://6031094780",
 	["lock"] = "rbxassetid://6031095423",
 	["lock-open"] = "rbxassetid://6031095430",
-	["warning"] = "rbxassetid://6031095187",
-	["info"] = "rbxassetid://6031094837",
-	["help"] = "rbxassetid://6031095042",
+	["warning"] = "rbxassetid://6031095190",
+	["info"] = "rbxassetid://6031094839",
+	["help"] = "rbxassetid://6031095046",
 	["error"] = "rbxassetid://6031094776",
 	["bolt"] = "rbxassetid://6031095354",
 	["local-fire-department"] = "rbxassetid://6031094785",
@@ -3785,8 +3800,7 @@ local MaterialIcons = {
 	["mouse"] = "rbxassetid://6031095416",
 	["download"] = "rbxassetid://6031094760",
 	["upload"] = "rbxassetid://6031095168",
-	["tune"] = "rbxassetid://6031094950",
-	["tune"] = "rbxassetid://6031095090",
+	["tune"] = "rbxassetid://6031095102",
 	["palette"] = "rbxassetid://6031094441",
 	["gradient"] = "rbxassetid://6031095127",
 	["format-color-text"] = "rbxassetid://6031095158",
@@ -3817,17 +3831,11 @@ local MaterialIcons = {
 	["notifications-active"] = "rbxassetid://6031094574",
 	["notifications-none"] = "rbxassetid://6031094568",
 	["notifications-off"] = "rbxassetid://6031094581",
-	["search"] = "rbxassetid://6031095336",
 	["filter-list"] = "rbxassetid://6031094843",
-	["tune"] = "rbxassetid://6031095102",
 	["toggle-on"] = "rbxassetid://6031095159",
 	["toggle-off"] = "rbxassetid://6031095155",
 	["check-circle"] = "rbxassetid://6031094680",
 	["cancel"] = "rbxassetid://6031095210",
-	["warning"] = "rbxassetid://6031095190",
-	["info"] = "rbxassetid://6031094839",
-	["help"] = "rbxassetid://6031095046",
-	["error"] = "rbxassetid://6031094776",
 }
 
 
@@ -3896,10 +3904,13 @@ function Icons.Create(
 	transparency: number?,
 	weight: string?
 ): ImageLabel
+	
+	
+	
 	local assetId = Icons.Get(name, weight)
 	if not assetId then
 		warn(("Icon \"" .. tostring(name) .. "\" not found in preset " .. tostring(Icons.ActivePreset)))
-		return nil
+		assetId = ""
 	end
 
 	local image = Instance.new("ImageLabel")
@@ -4387,13 +4398,17 @@ Theme.Font = {
 		Small = 12,
 		Tiny = 10,
 	},
-	Weight = {
-		Regular = Enum.FontWeight.Regular,
-		Medium = Enum.FontWeight.Medium,
-		Semibold = Enum.FontWeight.SemiBold,
-		Bold = Enum.FontWeight.Bold,
-	},
+	Weight = {},
 }
+
+
+
+pcall(function()
+	Theme.Font.Weight.Regular = Enum.FontWeight.Regular
+	Theme.Font.Weight.Medium = Enum.FontWeight.Medium
+	Theme.Font.Weight.Semibold = Enum.FontWeight.SemiBold
+	Theme.Font.Weight.Bold = Enum.FontWeight.Bold
+end)
 
 
 Theme.Spacing = {
@@ -4607,12 +4622,22 @@ function Utils.MakeDraggable(frame: Frame, dragHandle: Frame?)
 
 	local function updatePosition(input)
 		local delta = input.Position - dragStart
-		frame.Position = UDim2.new(
-			startPos.X.Scale,
-			startPos.X.Offset + delta.X,
-			startPos.Y.Scale,
-			startPos.Y.Offset + delta.Y
-		)
+		local newX = startPos.X.Offset + delta.X
+		local newY = startPos.Y.Offset + delta.Y
+
+		
+		
+		
+		pcall(function()
+			local parentSize = frame.Parent.AbsoluteSize
+			local frameSize = frame.AbsoluteSize
+			local baseX = startPos.X.Scale * parentSize.X
+			local baseY = startPos.Y.Scale * parentSize.Y
+			newX = math.clamp(newX, 60 - baseX - frameSize.X, parentSize.X - baseX - 60)
+			newY = math.clamp(newY, -baseY, parentSize.Y - baseY - 40)
+		end)
+
+		frame.Position = UDim2.new(startPos.X.Scale, newX, startPos.Y.Scale, newY)
 	end
 
 	dragTarget.InputBegan:Connect(function(input)
@@ -5118,9 +5143,10 @@ function Window.Create(config: table)
 	titleBar.Parent = innerFrame
 
 	
+	
 	local titleText = Instance.new("TextLabel")
 	titleText.Name = "Title"
-	titleText.Size = UDim2.new(1, config.SearchEnabled and -232 or -80, 1, 0)
+	titleText.Size = UDim2.new(1, config.SearchEnabled and -282 or -96, 1, 0)
 	titleText.Position = UDim2.new(0, 16, 0, 0)
 	titleText.BackgroundTransparency = 1
 	titleText.Text = title
@@ -5133,6 +5159,65 @@ function Window.Create(config: table)
 	titleText.Parent = titleBar
 
 	
+	local function makeTitleButton(name, xOffset)
+		local button = Instance.new("TextButton")
+		button.Name = name
+		button.Size = UDim2.new(0, 24, 0, 24)
+		button.Position = UDim2.new(1, xOffset, 0.5, -12)
+		button.BackgroundColor3 = Theme.Colors.BackgroundTertiary
+		button.BackgroundTransparency = 1
+		button.Text = ""
+		button.ZIndex = 4
+		Utils.CreateCorner(Theme.CornerRadius.Small, button)
+		button.Parent = titleBar
+		return button
+	end
+
+	local closeButton = makeTitleButton("CloseButton", -36)
+	local closeIcon = Icons.Create(
+		"x",
+		closeButton,
+		UDim2.new(0, 14, 0, 14),
+		UDim2.new(0.5, -7, 0.5, -7),
+		Theme.Colors.TextMuted,
+		0.4
+	)
+	closeIcon.ZIndex = 4
+
+	local minimizeButton = makeTitleButton("MinimizeButton", -64)
+	local minimizeIcon = Icons.Create(
+		"minus",
+		minimizeButton,
+		UDim2.new(0, 14, 0, 14),
+		UDim2.new(0.5, -7, 0.5, -7),
+		Theme.Colors.TextMuted,
+		0.4
+	)
+	minimizeIcon.ZIndex = 4
+
+	
+	local function wireTitleButtonHover(button, hoverColor)
+		button.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement then
+				Utils.Tween(button, {
+					BackgroundColor3 = hoverColor,
+					BackgroundTransparency = 0.4,
+				}, 0.15, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+			end
+		end)
+		button.InputEnded:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement then
+				Utils.Tween(button, {
+					BackgroundTransparency = 1,
+				}, 0.15, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+			end
+		end)
+	end
+
+	wireTitleButtonHover(closeButton, Theme.Colors.Error)
+	wireTitleButtonHover(minimizeButton, Theme.Colors.BackgroundHover)
+
+	
 	local searchFrame = nil
 	local searchInput = nil
 
@@ -5140,7 +5225,7 @@ function Window.Create(config: table)
 		searchFrame = Instance.new("Frame")
 		searchFrame.Name = "SearchFrame"
 		searchFrame.Size = UDim2.new(0, 180, 0, 28)
-		searchFrame.Position = UDim2.new(1, -200, 0.5, -14)
+		searchFrame.Position = UDim2.new(1, -252, 0.5, -14)
 		searchFrame.BackgroundColor3 = Theme.Colors.BackgroundTertiary
 		searchFrame.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
 		searchFrame.ZIndex = 3
@@ -5177,13 +5262,23 @@ function Window.Create(config: table)
 	end
 
 	
-	local tabBar = Instance.new("Frame")
+	
+	local tabBar = Instance.new("ScrollingFrame")
 	tabBar.Name = "TabBar"
 	tabBar.Size = UDim2.new(1, -24, 0, 32)
 	tabBar.Position = UDim2.new(0, 12, 0, 40)
 	tabBar.BackgroundTransparency = 1
+	tabBar.BorderSizePixel = 0
+	tabBar.ScrollBarThickness = 2
+	tabBar.ScrollBarImageColor3 = Theme.Colors.AccentPrimary
+	tabBar.ScrollBarImageTransparency = 0.6
+	tabBar.CanvasSize = UDim2.new(0, 0, 0, 0)
+	tabBar.ClipsDescendants = true
 	tabBar.ZIndex = 3
 	tabBar.Visible = false
+	pcall(function()
+		tabBar.ScrollingDirection = Enum.ScrollingDirection.X
+	end)
 	tabBar.Parent = innerFrame
 
 	local tabBarLayout = Instance.new("UIListLayout")
@@ -5193,6 +5288,11 @@ function Window.Create(config: table)
 	tabBarLayout.Padding = UDim.new(0, 8)
 	tabBarLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	tabBarLayout.Parent = tabBar
+
+	
+	tabBarLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		tabBar.CanvasSize = UDim2.new(0, tabBarLayout.AbsoluteContentSize.X, 0, 0)
+	end)
 
 	
 	
@@ -5384,7 +5484,39 @@ function Window.Create(config: table)
 		contentContainer.CanvasPosition = Vector2.new(0, 0)
 	end
 
+	function windowState:SetVisible(visible: boolean)
+		windowState.IsOpen = visible
+		outerFrame.Visible = visible
+	end
+
+	function windowState:ToggleVisibility()
+		windowState:SetVisible(not windowState.IsOpen)
+	end
+
+	function windowState:SetMinimized(minimized: boolean)
+		windowState.IsMinimized = minimized
+
+		if minimized then
+			
+			Utils.Tween(outerFrame, {
+				Size = UDim2.new(0, windowState.Width, 0, 52),
+			}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+		else
+			Utils.Tween(outerFrame, {
+				Size = UDim2.new(0, windowState.Width, 0, windowState.Height),
+			}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+		end
+	end
+
+	function windowState:ToggleMinimize()
+		windowState:SetMinimized(not windowState.IsMinimized)
+	end
+
 	function windowState:Destroy()
+		if windowState.ToggleConnection then
+			windowState.ToggleConnection:Disconnect()
+			windowState.ToggleConnection = nil
+		end
 		
 		Utils.Tween(outerFrame, {
 			Size = UDim2.new(0, 0, 0, 0),
@@ -5410,6 +5542,29 @@ function Window.Create(config: table)
 	function windowState:Notify(message: string, type: string?)
 		local Notification = custom_require("core/notification")
 		Notification.Create(message, type or "Info", windowState)
+	end
+
+	
+	closeButton.MouseButton1Click:Connect(function()
+		windowState:Destroy()
+	end)
+
+	minimizeButton.MouseButton1Click:Connect(function()
+		windowState:ToggleMinimize()
+	end)
+
+	
+	local toggleKey = config.ToggleKey
+	if toggleKey == nil then
+		toggleKey = Enum.KeyCode.RightShift
+	end
+	if toggleKey then
+		windowState.ToggleKey = toggleKey
+		windowState.ToggleConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+			if not gameProcessed and input.KeyCode == toggleKey then
+				windowState:ToggleVisibility()
+			end
+		end)
 	end
 
 	

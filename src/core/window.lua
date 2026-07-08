@@ -95,10 +95,11 @@ function Window.Create(config: table)
 	local titleCorner = Utils.CreateCorner(Theme.CornerRadius.WindowInner, titleBar)
 	titleBar.Parent = innerFrame
 
-	-- Title text (leave room for the search box when it is enabled)
+	-- Title text (leave room for the window controls, and the search box when
+	-- it is enabled)
 	local titleText = Instance.new("TextLabel")
 	titleText.Name = "Title"
-	titleText.Size = UDim2.new(1, config.SearchEnabled and -232 or -80, 1, 0)
+	titleText.Size = UDim2.new(1, config.SearchEnabled and -282 or -96, 1, 0)
 	titleText.Position = UDim2.new(0, 16, 0, 0)
 	titleText.BackgroundTransparency = 1
 	titleText.Text = title
@@ -110,7 +111,66 @@ function Window.Create(config: table)
 
 	titleText.Parent = titleBar
 
-	-- Search bar (optional)
+	-- Window controls: minimize + close, top-right of the title bar
+	local function makeTitleButton(name, xOffset)
+		local button = Instance.new("TextButton")
+		button.Name = name
+		button.Size = UDim2.new(0, 24, 0, 24)
+		button.Position = UDim2.new(1, xOffset, 0.5, -12)
+		button.BackgroundColor3 = Theme.Colors.BackgroundTertiary
+		button.BackgroundTransparency = 1
+		button.Text = ""
+		button.ZIndex = 4
+		Utils.CreateCorner(Theme.CornerRadius.Small, button)
+		button.Parent = titleBar
+		return button
+	end
+
+	local closeButton = makeTitleButton("CloseButton", -36)
+	local closeIcon = Icons.Create(
+		"x",
+		closeButton,
+		UDim2.new(0, 14, 0, 14),
+		UDim2.new(0.5, -7, 0.5, -7),
+		Theme.Colors.TextMuted,
+		0.4
+	)
+	closeIcon.ZIndex = 4
+
+	local minimizeButton = makeTitleButton("MinimizeButton", -64)
+	local minimizeIcon = Icons.Create(
+		"minus",
+		minimizeButton,
+		UDim2.new(0, 14, 0, 14),
+		UDim2.new(0.5, -7, 0.5, -7),
+		Theme.Colors.TextMuted,
+		0.4
+	)
+	minimizeIcon.ZIndex = 4
+
+	-- Hover feedback: close tints red, minimize lightens
+	local function wireTitleButtonHover(button, hoverColor)
+		button.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement then
+				Utils.Tween(button, {
+					BackgroundColor3 = hoverColor,
+					BackgroundTransparency = 0.4,
+				}, 0.15, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+			end
+		end)
+		button.InputEnded:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement then
+				Utils.Tween(button, {
+					BackgroundTransparency = 1,
+				}, 0.15, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+			end
+		end)
+	end
+
+	wireTitleButtonHover(closeButton, Theme.Colors.Error)
+	wireTitleButtonHover(minimizeButton, Theme.Colors.BackgroundHover)
+
+	-- Search bar (optional; sits left of the window controls)
 	local searchFrame = nil
 	local searchInput = nil
 
@@ -118,7 +178,7 @@ function Window.Create(config: table)
 		searchFrame = Instance.new("Frame")
 		searchFrame.Name = "SearchFrame"
 		searchFrame.Size = UDim2.new(0, 180, 0, 28)
-		searchFrame.Position = UDim2.new(1, -200, 0.5, -14)
+		searchFrame.Position = UDim2.new(1, -252, 0.5, -14)
 		searchFrame.BackgroundColor3 = Theme.Colors.BackgroundTertiary
 		searchFrame.BackgroundTransparency = Theme.Transparency.BackgroundTertiary
 		searchFrame.ZIndex = 3
@@ -154,14 +214,24 @@ function Window.Create(config: table)
 		)
 	end
 
-	-- Tab bar (hidden until the first tab is added)
-	local tabBar = Instance.new("Frame")
+	-- Tab bar (hidden until the first tab is added). A ScrollingFrame so tabs
+	-- that overflow the window width stay reachable instead of being clipped.
+	local tabBar = Instance.new("ScrollingFrame")
 	tabBar.Name = "TabBar"
 	tabBar.Size = UDim2.new(1, -24, 0, 32)
 	tabBar.Position = UDim2.new(0, 12, 0, 40)
 	tabBar.BackgroundTransparency = 1
+	tabBar.BorderSizePixel = 0
+	tabBar.ScrollBarThickness = 2
+	tabBar.ScrollBarImageColor3 = Theme.Colors.AccentPrimary
+	tabBar.ScrollBarImageTransparency = 0.6
+	tabBar.CanvasSize = UDim2.new(0, 0, 0, 0)
+	tabBar.ClipsDescendants = true
 	tabBar.ZIndex = 3
 	tabBar.Visible = false
+	pcall(function()
+		tabBar.ScrollingDirection = Enum.ScrollingDirection.X
+	end)
 	tabBar.Parent = innerFrame
 
 	local tabBarLayout = Instance.new("UIListLayout")
@@ -171,6 +241,11 @@ function Window.Create(config: table)
 	tabBarLayout.Padding = UDim.new(0, 8)
 	tabBarLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	tabBarLayout.Parent = tabBar
+
+	-- Keep the tab bar canvas fitted to its buttons
+	tabBarLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+		tabBar.CanvasSize = UDim2.new(0, tabBarLayout.AbsoluteContentSize.X, 0, 0)
+	end)
 
 	-- Content container. Sized for a window without tabs; AddTab shifts it down
 	-- to make room for the tab bar.
@@ -362,7 +437,39 @@ function Window.Create(config: table)
 		contentContainer.CanvasPosition = Vector2.new(0, 0)
 	end
 
+	function windowState:SetVisible(visible: boolean)
+		windowState.IsOpen = visible
+		outerFrame.Visible = visible
+	end
+
+	function windowState:ToggleVisibility()
+		windowState:SetVisible(not windowState.IsOpen)
+	end
+
+	function windowState:SetMinimized(minimized: boolean)
+		windowState.IsMinimized = minimized
+
+		if minimized then
+			-- Collapse to the title bar (outer bezel 12 + title 40)
+			Utils.Tween(outerFrame, {
+				Size = UDim2.new(0, windowState.Width, 0, 52),
+			}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+		else
+			Utils.Tween(outerFrame, {
+				Size = UDim2.new(0, windowState.Width, 0, windowState.Height),
+			}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+		end
+	end
+
+	function windowState:ToggleMinimize()
+		windowState:SetMinimized(not windowState.IsMinimized)
+	end
+
 	function windowState:Destroy()
+		if windowState.ToggleConnection then
+			windowState.ToggleConnection:Disconnect()
+			windowState.ToggleConnection = nil
+		end
 		-- Animate out
 		Utils.Tween(outerFrame, {
 			Size = UDim2.new(0, 0, 0, 0),
@@ -388,6 +495,29 @@ function Window.Create(config: table)
 	function windowState:Notify(message: string, type: string?)
 		local Notification = require(script.Parent.Notification)
 		Notification.Create(message, type or "Info", windowState)
+	end
+
+	-- Wire the window controls
+	closeButton.MouseButton1Click:Connect(function()
+		windowState:Destroy()
+	end)
+
+	minimizeButton.MouseButton1Click:Connect(function()
+		windowState:ToggleMinimize()
+	end)
+
+	-- Show/hide keybind (default RightShift; pass ToggleKey = false to disable)
+	local toggleKey = config.ToggleKey
+	if toggleKey == nil then
+		toggleKey = Enum.KeyCode.RightShift
+	end
+	if toggleKey then
+		windowState.ToggleKey = toggleKey
+		windowState.ToggleConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
+			if not gameProcessed and input.KeyCode == toggleKey then
+				windowState:ToggleVisibility()
+			end
+		end)
 	end
 
 	-- Register window

@@ -32,10 +32,11 @@ function Slider.Create(config: table)
 	sliderFrame.BackgroundTransparency = 1
 	sliderFrame.ZIndex = 2
 
-	-- Text label
+	-- Text label (relative width so it never runs under the value label on
+	-- narrow windows)
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Name = "Text"
-	textLabel.Size = UDim2.new(0, 150, 0, 20)
+	textLabel.Size = UDim2.new(1, -70, 0, 20)
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
 	textLabel.BackgroundTransparency = 1
 	textLabel.Text = text

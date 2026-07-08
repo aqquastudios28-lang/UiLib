@@ -61,18 +61,18 @@ function Banner.Create(config: table)
 	local innerCorner = Utils.CreateCorner(7, innerFrame)
 	innerFrame.Parent = bannerFrame
 
-	-- Title text
+	-- Title text (centered as a pair with the subtitle, with clear spacing)
 	local titleText = Instance.new("TextLabel")
 	titleText.Name = "Title"
-	titleText.Size = UDim2.new(1, -24, 0, 28)
-	titleText.Position = UDim2.new(0, 12, 0.5, -14)
+	titleText.Size = UDim2.new(1, -24, 0, 22)
+	titleText.Position = UDim2.new(0, 12, 0.5, subtitle ~= "" and -22 or -11)
 	titleText.BackgroundTransparency = 1
 	titleText.Text = title
 	titleText.TextColor3 = Theme.Colors.TextPrimary
 	titleText.TextSize = Theme.Font.Size.Header
 	titleText.Font = Theme.Font.Family
 	titleText.TextXAlignment = Enum.TextXAlignment.Left
-	titleText.TextYAlignment = Enum.TextYAlignment.Top
+	titleText.TextYAlignment = Enum.TextYAlignment.Center
 	titleText.ZIndex = 3
 
 	titleText.Parent = innerFrame
@@ -81,15 +81,15 @@ function Banner.Create(config: table)
 	if subtitle ~= "" then
 		local subtitleText = Instance.new("TextLabel")
 		subtitleText.Name = "Subtitle"
-		subtitleText.Size = UDim2.new(1, -24, 0, 20)
-		subtitleText.Position = UDim2.new(0, 12, 0.5, 4)
+		subtitleText.Size = UDim2.new(1, -24, 0, 18)
+		subtitleText.Position = UDim2.new(0, 12, 0.5, 2)
 		subtitleText.BackgroundTransparency = 1
 		subtitleText.Text = subtitle
 		subtitleText.TextColor3 = Theme.Colors.TextSecondary
 		subtitleText.TextSize = Theme.Font.Size.Body
 		subtitleText.Font = Theme.Font.Family
 		subtitleText.TextXAlignment = Enum.TextXAlignment.Left
-		subtitleText.TextYAlignment = Enum.TextYAlignment.Top
+		subtitleText.TextYAlignment = Enum.TextYAlignment.Center
 		subtitleText.ZIndex = 3
 
 		subtitleText.Parent = innerFrame
@@ -116,24 +116,26 @@ function Banner.Create(config: table)
 			if bannerState.SubtitleText then
 				bannerState.SubtitleText:Destroy()
 				bannerState.SubtitleText = nil
+				titleText.Position = UDim2.new(0, 12, 0.5, -11)
 			end
 		else
 			if not bannerState.SubtitleText then
 				local subtitleText = Instance.new("TextLabel")
 				subtitleText.Name = "Subtitle"
-				subtitleText.Size = UDim2.new(1, -24, 0, 20)
-				subtitleText.Position = UDim2.new(0, 12, 0.5, 4)
+				subtitleText.Size = UDim2.new(1, -24, 0, 18)
+				subtitleText.Position = UDim2.new(0, 12, 0.5, 2)
 				subtitleText.BackgroundTransparency = 1
 				subtitleText.Text = newSubtitle
 				subtitleText.TextColor3 = Theme.Colors.TextSecondary
 				subtitleText.TextSize = Theme.Font.Size.Body
 				subtitleText.Font = Theme.Font.Family
 				subtitleText.TextXAlignment = Enum.TextXAlignment.Left
-				subtitleText.TextYAlignment = Enum.TextYAlignment.Top
+				subtitleText.TextYAlignment = Enum.TextYAlignment.Center
 				subtitleText.ZIndex = 3
 
 				subtitleText.Parent = innerFrame
 				bannerState.SubtitleText = subtitleText
+				titleText.Position = UDim2.new(0, 12, 0.5, -22)
 			else
 				bannerState.SubtitleText.Text = newSubtitle
 			end

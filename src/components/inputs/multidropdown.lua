@@ -119,6 +119,9 @@ function MultiDropdown.Create(config: table)
 	listLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	listLayout.Parent = dropdownList
 
+	-- Inset the options from the list edges
+	Utils.CreatePadding(dropdownList, 4, 4, 8, 8)
+
 	-- MultiDropdown state
 	local multidropdownState = {
 		Frame = multidropdownFrame,
@@ -185,6 +188,9 @@ function MultiDropdown.Create(config: table)
 				optionButton.Font = Theme.Font.Family
 				optionButton.TextXAlignment = Enum.TextXAlignment.Left
 				optionButton.ZIndex = 11
+				pcall(function()
+					optionButton.TextTruncate = Enum.TextTruncate.AtEnd
+				end)
 
 				-- Checkbox indicator
 				local checkbox = Instance.new("Frame")
@@ -278,7 +284,7 @@ function MultiDropdown.Create(config: table)
 
 			-- Animate open: grow the list and the container together so the
 			-- widgets below get pushed down (never overlapped)
-			local listHeight = math.clamp(#multidropdownState.Options * 32, 32, 160)
+			local listHeight = math.clamp(#multidropdownState.Options * 32 + 4, 40, 168)
 
 			Utils.Tween(dropdownList, {
 				Size = UDim2.new(1, 0, 0, listHeight),

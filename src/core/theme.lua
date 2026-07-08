@@ -65,13 +65,17 @@ Theme.Font = {
 		Small = 12,
 		Tiny = 10,
 	},
-	Weight = {
-		Regular = Enum.FontWeight.Regular,
-		Medium = Enum.FontWeight.Medium,
-		Semibold = Enum.FontWeight.SemiBold,
-		Bold = Enum.FontWeight.Bold,
-	},
+	Weight = {},
 }
+
+-- Enum.FontWeight is a ~2021 addition; on the target executor's older client
+-- indexing it throws, which would kill the entire library at load time.
+pcall(function()
+	Theme.Font.Weight.Regular = Enum.FontWeight.Regular
+	Theme.Font.Weight.Medium = Enum.FontWeight.Medium
+	Theme.Font.Weight.Semibold = Enum.FontWeight.SemiBold
+	Theme.Font.Weight.Bold = Enum.FontWeight.Bold
+end)
 
 -- Spacing scale (pixels)
 Theme.Spacing = {

@@ -41,6 +41,11 @@ QwenUI.Paragraph.Create({
 	Text = "A comprehensive component set for Roblox: windows with tabs, buttons, toggles, sliders, dropdowns, color pickers, keybinds, consoles, progress bars, notifications and more. Browse the tabs above to see every widget in action.",
 })
 
+QwenUI.Paragraph.Create({
+	Parent = HomeTab.Content,
+	Text = "Press RightShift to hide/show the window. Use the - button in the title bar to collapse it, and X to close it.",
+})
+
 QwenUI.Divider.Create({ Parent = HomeTab.Content, Text = "Get Started" })
 
 QwenUI.Label.Create({

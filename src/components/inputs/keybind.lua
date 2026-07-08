@@ -28,10 +28,11 @@ function Keybind.Create(config: table)
 	keybindFrame.BackgroundTransparency = 1
 	keybindFrame.ZIndex = 2
 
-	-- Text label
+	-- Text label (relative width so it never runs under the key button on
+	-- narrow windows)
 	local textLabel = Instance.new("TextLabel")
 	textLabel.Name = "Text"
-	textLabel.Size = UDim2.new(0, 150, 0, 20)
+	textLabel.Size = UDim2.new(1, -130, 1, 0)
 	textLabel.Position = UDim2.new(0, 0, 0, 0)
 	textLabel.BackgroundTransparency = 1
 	textLabel.Text = text

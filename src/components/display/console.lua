@@ -158,6 +158,9 @@ function Console.Create(config: table)
 		entry.TextXAlignment = Enum.TextXAlignment.Left
 		entry.TextYAlignment = Enum.TextYAlignment.Center
 		entry.ZIndex = 3
+		pcall(function()
+			entry.TextTruncate = Enum.TextTruncate.AtEnd
+		end)
 
 		entry.Parent = logContainer
 		self.LineCount = self.LineCount + (1)

@@ -19,7 +19,7 @@ local PhosphorRegular = {
 	["search"] = "rbxassetid://6031095062",
 	["plus"] = "rbxassetid://6031094585",
 	["minus"] = "rbxassetid://6031094418",
-	["x"] = "6031095195",
+	["x"] = "rbxassetid://6031095195",
 	["check"] = "rbxassetid://6031094687",
 	["arrow-right"] = "rbxassetid://6031094536",
 	["arrow-left"] = "rbxassetid://6031094523",
@@ -41,8 +41,8 @@ local PhosphorRegular = {
 	["lock"] = "rbxassetid://6031095419",
 	["lock-open"] = "rbxassetid://6031095426",
 	["warning"] = "rbxassetid://6031095183",
-	["info"] = "rbxassetid://6031094833",
-	["question"] = "rbxassetid://6031095035",
+	["info"] = "rbxassetid://6031094835",
+	["question"] = "rbxassetid://6031095038",
 	["lightning"] = "rbxassetid://6031095350",
 	["fire"] = "rbxassetid://6031094781",
 	["rocket"] = "rbxassetid://6031095053",
@@ -126,8 +126,6 @@ local PhosphorRegular = {
 	["check-circle"] = "rbxassetid://6031094676",
 	["x-circle"] = "rbxassetid://6031095206",
 	["warning-circle"] = "rbxassetid://6031095186",
-	["info"] = "rbxassetid://6031094835",
-	["question"] = "rbxassetid://6031095038",
 	["exclamation"] = "rbxassetid://6031094772",
 }
 
@@ -164,8 +162,8 @@ local PhosphorFilled = {
 	["lock"] = "rbxassetid://6031095423",
 	["lock-open"] = "rbxassetid://6031095430",
 	["warning"] = "rbxassetid://6031095187",
-	["info"] = "rbxassetid://6031094837",
-	["question"] = "rbxassetid://6031095042",
+	["info"] = "rbxassetid://6031094839",
+	["question"] = "rbxassetid://6031095046",
 	["lightning"] = "rbxassetid://6031095354",
 	["fire"] = "rbxassetid://6031094785",
 	["rocket"] = "rbxassetid://6031095057",
@@ -249,8 +247,6 @@ local PhosphorFilled = {
 	["check-circle"] = "rbxassetid://6031094680",
 	["x-circle"] = "rbxassetid://6031095210",
 	["warning-circle"] = "rbxassetid://6031095190",
-	["info"] = "rbxassetid://6031094839",
-	["question"] = "rbxassetid://6031095046",
 	["exclamation"] = "rbxassetid://6031094776",
 }
 
@@ -262,7 +258,7 @@ local MaterialIcons = {
 	["notifications"] = "rbxassetid://6031094768",
 	["favorite"] = "rbxassetid://6031094828",
 	["star"] = "rbxassetid://6031095142",
-	["search"] = "rbxassetid://6031095066",
+	["search"] = "rbxassetid://6031095336",
 	["add"] = "rbxassetid://6031094589",
 	["remove"] = "rbxassetid://6031094422",
 	["close"] = "rbxassetid://6031095199",
@@ -284,9 +280,9 @@ local MaterialIcons = {
 	["visibility-off"] = "rbxassetid://6031094780",
 	["lock"] = "rbxassetid://6031095423",
 	["lock-open"] = "rbxassetid://6031095430",
-	["warning"] = "rbxassetid://6031095187",
-	["info"] = "rbxassetid://6031094837",
-	["help"] = "rbxassetid://6031095042",
+	["warning"] = "rbxassetid://6031095190",
+	["info"] = "rbxassetid://6031094839",
+	["help"] = "rbxassetid://6031095046",
 	["error"] = "rbxassetid://6031094776",
 	["bolt"] = "rbxassetid://6031095354",
 	["local-fire-department"] = "rbxassetid://6031094785",
@@ -330,8 +326,7 @@ local MaterialIcons = {
 	["mouse"] = "rbxassetid://6031095416",
 	["download"] = "rbxassetid://6031094760",
 	["upload"] = "rbxassetid://6031095168",
-	["tune"] = "rbxassetid://6031094950",
-	["tune"] = "rbxassetid://6031095090",
+	["tune"] = "rbxassetid://6031095102",
 	["palette"] = "rbxassetid://6031094441",
 	["gradient"] = "rbxassetid://6031095127",
 	["format-color-text"] = "rbxassetid://6031095158",
@@ -362,17 +357,11 @@ local MaterialIcons = {
 	["notifications-active"] = "rbxassetid://6031094574",
 	["notifications-none"] = "rbxassetid://6031094568",
 	["notifications-off"] = "rbxassetid://6031094581",
-	["search"] = "rbxassetid://6031095336",
 	["filter-list"] = "rbxassetid://6031094843",
-	["tune"] = "rbxassetid://6031095102",
 	["toggle-on"] = "rbxassetid://6031095159",
 	["toggle-off"] = "rbxassetid://6031095155",
 	["check-circle"] = "rbxassetid://6031094680",
 	["cancel"] = "rbxassetid://6031095210",
-	["warning"] = "rbxassetid://6031095190",
-	["info"] = "rbxassetid://6031094839",
-	["help"] = "rbxassetid://6031095046",
-	["error"] = "rbxassetid://6031094776",
 }
 
 -- Custom icon presets
@@ -441,10 +430,13 @@ function Icons.Create(
 	transparency: number?,
 	weight: string?
 ): ImageLabel
+	-- Always return a real ImageLabel: callers set .Image/.Rotation on the
+	-- result unconditionally, and a nil return would crash them. Unknown
+	-- icons render as an empty (invisible) image instead.
 	local assetId = Icons.Get(name, weight)
 	if not assetId then
 		warn(("Icon \"" .. tostring(name) .. "\" not found in preset " .. tostring(Icons.ActivePreset)))
-		return nil
+		assetId = ""
 	end
 
 	local image = Instance.new("ImageLabel")
