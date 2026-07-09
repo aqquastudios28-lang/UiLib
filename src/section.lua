@@ -72,48 +72,91 @@ end
 
 --// some effects because my lazy ass is too lazy to put it in the module
 local function setupEffects(ui, hover)
-local ClickEvent = Instance.new("BindableEvent")
+    local ClickEvent = Instance.new("BindableEvent")
 
-local uiTweenType =
-    (hover:IsA("ImageLabel") or hover:IsA("ImageButton")) and "ImageTransparency" or "BackgroundTransparency"
+    local uiTweenType =
+        (hover:IsA("ImageLabel") or hover:IsA("ImageButton")) and "ImageTransparency" or "BackgroundTransparency"
 
-local function constructTweenInfo(value)
-    return {
-        [uiTweenType] = value
-    }
-end
-
-ui.InputBegan:Connect(
-    function(input, gp)
-        if gp then
-            return
-        end
-
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            TweenService:Create(hover, UILibrary.TweenInfo, constructTweenInfo(.5)):Play()
-        elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
-            TweenService:Create(hover, UILibrary.TweenInfo, constructTweenInfo(.2)):Play()
-        end
+    local function constructTweenInfo(value)
+        return {
+            [uiTweenType] = value
+        }
     end
-)
 
-ui.InputEnded:Connect(
-    function(input, gp)
-        if gp then
-            return
+    local function getOrCreateUIScale(target)
+        local scale = target:FindFirstChild("HoverUIScale")
+        if not scale then
+            scale = Instance.new("UIScale")
+            scale.Name = "HoverUIScale"
+            scale.Scale = 1
+            scale.Parent = target
         end
-
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
-            TweenService:Create(hover, UILibrary.TweenInfo, constructTweenInfo(1)):Play()
-        elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
-            TweenService:Create(hover, UILibrary.TweenInfo, constructTweenInfo(.5)):Play()
-
-            ClickEvent:Fire()
-        end
+        return scale
     end
-)
 
-return ClickEvent.Event
+    ui.InputBegan:Connect(
+        function(input, gp)
+            if gp then
+                return
+            end
+
+            if input.UserInputType == Enum.UserInputType.MouseMovement then
+                TweenService:Create(hover, UILibrary.TweenInfo, constructTweenInfo(.85)):Play()
+                local scale = getOrCreateUIScale(ui)
+                TweenService:Create(
+                    scale,
+                    TweenInfo.new(.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+                    {
+                        Scale = 1.03
+                    }
+                ):Play()
+            elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
+                TweenService:Create(hover, UILibrary.TweenInfo, constructTweenInfo(.7)):Play()
+                local scale = getOrCreateUIScale(ui)
+                TweenService:Create(
+                    scale,
+                    TweenInfo.new(.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {
+                        Scale = 0.96
+                    }
+                ):Play()
+            end
+        end
+    )
+
+    ui.InputEnded:Connect(
+        function(input, gp)
+            if gp then
+                return
+            end
+
+            if input.UserInputType == Enum.UserInputType.MouseMovement then
+                TweenService:Create(hover, UILibrary.TweenInfo, constructTweenInfo(1)):Play()
+                local scale = getOrCreateUIScale(ui)
+                TweenService:Create(
+                    scale,
+                    TweenInfo.new(.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                    {
+                        Scale = 1.0
+                    }
+                ):Play()
+            elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
+                TweenService:Create(hover, UILibrary.TweenInfo, constructTweenInfo(.85)):Play()
+                local scale = getOrCreateUIScale(ui)
+                TweenService:Create(
+                    scale,
+                    TweenInfo.new(.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+                    {
+                        Scale = 1.0
+                    }
+                ):Play()
+
+                ClickEvent:Fire()
+            end
+        end
+    )
+
+    return ClickEvent.Event
 end
 
 function UILibrary.Section:Button(sett, callback)
