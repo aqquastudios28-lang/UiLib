@@ -337,5 +337,3 @@ if IsClient then
 
     return drag
 end
-
-return drag

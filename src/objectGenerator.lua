@@ -2532,5 +2532,3 @@ function objGen.new(objectType, cheatName)
 end
 
 return objGen
-
-return objGen

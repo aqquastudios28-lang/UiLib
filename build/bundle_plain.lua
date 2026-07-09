@@ -496,8 +496,6 @@ if IsClient then
     return drag
 end
 
-return drag
-
 end
 
 modules["effects"] = function()
@@ -3247,8 +3245,6 @@ function objGen.new(objectType, cheatName)
         error("Invalid objectType")
     end
 end
-
-return objGen
 
 return objGen
 
