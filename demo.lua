@@ -3,8 +3,9 @@
 
 print("[DEBUG] 1. Initializing demo script...")
 
-local url = "https://raw.githack.com/aqquastudios28-lang/UiLib/main/build/bundle_plain.lua"
+local url = "https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/89f38e87cc5f4c6f964dd09fc37a87d34f5e4690/build/bundle_plain.lua"
 print("[DEBUG] 2. Requesting raw UI Library content from URL:", url)
+
 
 local success, content = pcall(function()
     return game:HttpGet(url)
