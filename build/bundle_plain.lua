@@ -93,21 +93,7 @@ button.Parent = self.contentHolder.Bar2Holder
 button.LayoutOrder = Utils.getLayoutOrder(self.contentHolder.Bar2Holder)
 button.Name = name
 
-local totalCount = 0
-
-for i, v in pairs(self.contentHolder.Bar2Holder:GetChildren()) do
-    if v:IsA("GuiObject") then
-        totalCount = totalCount + 1
-    end
-end
-
-for i, v in pairs(self.contentHolder.Bar2Holder:GetChildren()) do
-    if v:IsA("GuiObject") then
-        v.Size = UDim2.fromScale(1, 1 / totalCount)
-    end
-end
-
-button.Size = UDim2.fromScale(1, 1 / totalCount)
+button.Size = UDim2.new(1, 0, 0, 60)
 
 self.oldSelf.UI[self.categoryUI.Name][name] = {}
 
@@ -1017,7 +1003,10 @@ local function getObjects()
             PromptAccentGradient = Instance.new("UIGradient"),
             PromptLineGradient = Instance.new("UIGradient"),
             PromptTitleConstraint = Instance.new("UITextSizeConstraint"),
-            PromptDescConstraint = Instance.new("UITextSizeConstraint")
+            PromptDescConstraint = Instance.new("UITextSizeConstraint"),
+            CatHoverCorner = Instance.new("UICorner"),
+            SubtabHoverCorner = Instance.new("UICorner"),
+            SubtabSelectionCorner = Instance.new("UICorner")
         }
 
         
@@ -1098,7 +1087,7 @@ local function getObjects()
         Gui.Selection.Name = "Selection"
         Gui.Selection.Parent = Gui.Checkbox
         Gui.Selection.AnchorPoint = Vector2.new(0.5, 0.5)
-        Gui.Selection.BackgroundColor3 = Color3.fromRGB(83, 87, 158)
+        Gui.Selection.BackgroundColor3 = Color3.fromRGB(134, 142, 255)
         Gui.Selection.BackgroundTransparency = 1.000
         Gui.Selection.BorderSizePixel = 0
         Gui.Selection.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -1743,7 +1732,7 @@ local function getObjects()
         Gui.Select.Size = UDim2.new(1, 0, 1, 0)
         Gui.Select.ZIndex = 120
         Gui.Select.Image = "rbxassetid://7890831727"
-        Gui.Select.ImageColor3 = Color3.fromRGB(83, 87, 158)
+        Gui.Select.ImageColor3 = Color3.fromRGB(134, 142, 255)
         Gui.Select.ImageTransparency = 1.000
         Gui.Select.ScaleType = Enum.ScaleType.Slice
         Gui.Select.SliceCenter = Rect.new(512, 512, 512, 512)
@@ -1780,7 +1769,7 @@ local function getObjects()
         Gui.Select_2.Size = UDim2.new(1, 0, 1, 0)
         Gui.Select_2.ZIndex = 121
         Gui.Select_2.Image = "rbxassetid://7890925834"
-        Gui.Select_2.ImageColor3 = Color3.fromRGB(83, 87, 158)
+        Gui.Select_2.ImageColor3 = Color3.fromRGB(134, 142, 255)
         Gui.Select_2.ImageTransparency = 1.000
         Gui.Select_2.ScaleType = Enum.ScaleType.Slice
         Gui.Select_2.SliceCenter = Rect.new(512, 512, 512, 512)
@@ -1830,7 +1819,7 @@ local function getObjects()
         Gui.Select_3.Size = UDim2.new(1, 0, 1, 0)
         Gui.Select_3.ZIndex = 121
         Gui.Select_3.Image = "http://www.roblox.com/asset/?id=8374820043"
-        Gui.Select_3.ImageColor3 = Color3.fromRGB(83, 87, 158)
+        Gui.Select_3.ImageColor3 = Color3.fromRGB(134, 142, 255)
         Gui.Select_3.ImageTransparency = 1.000
         Gui.Select_3.ScaleType = Enum.ScaleType.Slice
         Gui.Select_3.SliceCenter = Rect.new(512, 512, 512, 512)
@@ -1858,16 +1847,21 @@ local function getObjects()
         Gui.Category.BackgroundTransparency = 1.000
         Gui.Category.BorderSizePixel = 0
         Gui.Category.LayoutOrder = 1
-        Gui.Category.Size = UDim2.new(1, 0, 0.25, 0)
+        Gui.Category.Size = UDim2.new(1, 0, 0, 70)
         Gui.Category.ZIndex = 121
 
         Gui.HoverFrame_5.Name = "HoverFrame"
         Gui.HoverFrame_5.Parent = Gui.Category
-        Gui.HoverFrame_5.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+        Gui.HoverFrame_5.AnchorPoint = Vector2.new(0.5, 0.5)
+        Gui.HoverFrame_5.BackgroundColor3 = Color3.fromRGB(52, 56, 78)
         Gui.HoverFrame_5.BackgroundTransparency = 1.000
         Gui.HoverFrame_5.BorderSizePixel = 0
-        Gui.HoverFrame_5.Size = UDim2.new(1, 0, 1, 0)
+        Gui.HoverFrame_5.Position = UDim2.new(0.5, 0, 0.5, 0)
+        Gui.HoverFrame_5.Size = UDim2.new(1, -8, 1, -6)
         Gui.HoverFrame_5.ZIndex = 122
+
+        Gui.CatHoverCorner.CornerRadius = UDim.new(0, 8)
+        Gui.CatHoverCorner.Parent = Gui.HoverFrame_5
 
         Gui.Content_4.Name = "Content"
         Gui.Content_4.Parent = Gui.Category
@@ -1881,7 +1875,7 @@ local function getObjects()
         Gui.Image.Size = UDim2.new(0.400000006, 0, 0.400000006, 0)
         Gui.Image.ZIndex = 123
         Gui.Image.Image = "rbxassetid://8349124615"
-        Gui.Image.ImageColor3 = Color3.fromRGB(90, 90, 90)
+        Gui.Image.ImageColor3 = Color3.fromRGB(118, 124, 148)
 
         Gui.UIAspectRatioConstraint_6.Parent = Gui.Image
 
@@ -1891,9 +1885,9 @@ local function getObjects()
         Gui.Title.BackgroundTransparency = 1.000
         Gui.Title.Size = UDim2.new(0.800000012, 0, 0.219999999, 0)
         Gui.Title.ZIndex = 123
-        Gui.Title.Font = Enum.Font.Gotham
+        Gui.Title.Font = Enum.Font.GothamSemibold
         Gui.Title.Text = "MISC"
-        Gui.Title.TextColor3 = Color3.fromRGB(90, 90, 90)
+        Gui.Title.TextColor3 = Color3.fromRGB(118, 124, 148)
         Gui.Title.TextScaled = true
         Gui.Title.TextSize = 5.000
         Gui.Title.TextWrapped = true
@@ -1924,6 +1918,8 @@ local function getObjects()
         Gui.UIListLayout_8.Parent = Gui.Bar2Holder
         Gui.UIListLayout_8.HorizontalAlignment = Enum.HorizontalAlignment.Center
         Gui.UIListLayout_8.SortOrder = Enum.SortOrder.LayoutOrder
+        Gui.UIListLayout_8.VerticalAlignment = Enum.VerticalAlignment.Top
+        Gui.UIListLayout_8.Padding = UDim.new(0, 8)
 
         Gui.UIListLayout_9.Parent = Gui.CategoryContent
         Gui.UIListLayout_9.HorizontalAlignment = Enum.HorizontalAlignment.Center
@@ -1961,7 +1957,7 @@ local function getObjects()
         Gui.MainUI.Name = "MainUI"
         Gui.MainUI.Parent = Gui.Window
         Gui.MainUI.AnchorPoint = Vector2.new(0.5, 0.5)
-        Gui.MainUI.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+        Gui.MainUI.BackgroundColor3 = Color3.fromRGB(21, 22, 29)
         Gui.MainUI.Position = UDim2.new(0.5, 0, 0.5, 0)
         
         Gui.MainUI.Size = UDim2.new(0, 851, 0, 488)
@@ -1997,6 +1993,22 @@ local function getObjects()
         Gui.Sidebar.BackgroundTransparency = 1.000
         Gui.Sidebar.Size = UDim2.new(0.109999999, 0, 1, 0)
 
+        local mainStroke = Instance.new("UIStroke")
+        mainStroke.Name = "Border"
+        mainStroke.Color = Color3.fromRGB(50, 52, 68)
+        mainStroke.Thickness = 1
+        mainStroke.Transparency = 0.4
+        mainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        mainStroke.Parent = Gui.MainUI
+
+        local divider1 = Instance.new("Frame")
+        divider1.Name = "Divider"
+        divider1.BackgroundColor3 = Color3.fromRGB(45, 47, 59)
+        divider1.BorderSizePixel = 0
+        divider1.Position = UDim2.new(1, -1, 0, 0)
+        divider1.Size = UDim2.new(0, 1, 1, 0)
+        divider1.Parent = Gui.Sidebar
+
         Gui.ContentHolder_2.Name = "ContentHolder"
         Gui.ContentHolder_2.Parent = Gui.Sidebar
         Gui.ContentHolder_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -2024,7 +2036,7 @@ local function getObjects()
         Gui.Rank.ZIndex = 123
         Gui.Rank.Font = Enum.Font.Gotham
         Gui.Rank.Text = "Admin"
-        Gui.Rank.TextColor3 = Color3.fromRGB(94, 94, 94)
+        Gui.Rank.TextColor3 = Color3.fromRGB(125, 131, 152)
         Gui.Rank.TextSize = 14.000
         Gui.Rank.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -2052,7 +2064,7 @@ local function getObjects()
 
         Gui.Line_3.Name = "Line"
         Gui.Line_3.Parent = Gui.UserInfo
-        Gui.Line_3.BackgroundColor3 = Color3.fromRGB(74, 74, 74)
+        Gui.Line_3.BackgroundColor3 = Color3.fromRGB(45, 48, 63)
         Gui.Line_3.BorderSizePixel = 0
         Gui.Line_3.Size = UDim2.new(1, 0, 0, 1)
         Gui.Line_3.ZIndex = 123
@@ -2064,7 +2076,7 @@ local function getObjects()
         Gui.Fill.Size = UDim2.new(1, 0, 1, 0)
         Gui.Fill.ZIndex = 122
         Gui.Fill.Image = "rbxassetid://7881868371"
-        Gui.Fill.ImageColor3 = Color3.fromRGB(32, 32, 32)
+        Gui.Fill.ImageColor3 = Color3.fromRGB(24, 25, 33)
         Gui.Fill.ScaleType = Enum.ScaleType.Slice
         Gui.Fill.SliceCenter = Rect.new(512, 512, 512, 512)
         Gui.Fill.SliceScale = 0.010
@@ -2129,6 +2141,8 @@ local function getObjects()
         Gui.UIListLayout_13.Parent = Gui.CheatHolder
         Gui.UIListLayout_13.HorizontalAlignment = Enum.HorizontalAlignment.Center
         Gui.UIListLayout_13.SortOrder = Enum.SortOrder.LayoutOrder
+        Gui.UIListLayout_13.VerticalAlignment = Enum.VerticalAlignment.Top
+        Gui.UIListLayout_13.Padding = UDim.new(0, 10)
 
         Gui.Fill_2.Name = "Fill"
         Gui.Fill_2.Parent = Gui.Sidebar
@@ -2137,14 +2151,14 @@ local function getObjects()
         Gui.Fill_2.Size = UDim2.new(1, 0, 1, 0)
         Gui.Fill_2.ZIndex = 120
         Gui.Fill_2.Image = "rbxassetid://7881302920"
-        Gui.Fill_2.ImageColor3 = Color3.fromRGB(27, 27, 27)
+        Gui.Fill_2.ImageColor3 = Color3.fromRGB(16, 17, 23)
         Gui.Fill_2.ScaleType = Enum.ScaleType.Slice
         Gui.Fill_2.SliceCenter = Rect.new(512, 512, 512, 512)
         Gui.Fill_2.SliceScale = 0.020
 
         Gui.DivLine.Name = "DivLine"
         Gui.DivLine.Parent = Gui.Fill_2
-        Gui.DivLine.BackgroundColor3 = Color3.fromRGB(74, 74, 74)
+        Gui.DivLine.BackgroundColor3 = Color3.fromRGB(45, 48, 63)
         Gui.DivLine.BorderSizePixel = 0
         Gui.DivLine.Position = UDim2.new(1, 0, 0, 0)
         Gui.DivLine.Size = UDim2.new(0, 1, 0.850000024, 0)
@@ -2158,7 +2172,7 @@ local function getObjects()
         Gui.Tab2.Size = UDim2.new(0.850000024, 0, 1, 0)
         Gui.Tab2.ZIndex = 120
         Gui.Tab2.Image = "rbxassetid://7881302920"
-        Gui.Tab2.ImageColor3 = Color3.fromRGB(27, 27, 27)
+        Gui.Tab2.ImageColor3 = Color3.fromRGB(19, 20, 26)
         Gui.Tab2.ScaleType = Enum.ScaleType.Slice
         Gui.Tab2.SliceCenter = Rect.new(512, 512, 512, 512)
         Gui.Tab2.SliceScale = 0.020
@@ -2186,6 +2200,14 @@ local function getObjects()
         Gui.Sidebar2.ClipsDescendants = true
         Gui.Sidebar2.Position = UDim2.new(1, 0, 0, 0)
         Gui.Sidebar2.Size = UDim2.new(0.850000024, 0, 1, 0)
+
+        local divider2 = Instance.new("Frame")
+        divider2.Name = "Divider"
+        divider2.BackgroundColor3 = Color3.fromRGB(45, 47, 59)
+        divider2.BorderSizePixel = 0
+        divider2.Position = UDim2.new(1, -1, 0, 0)
+        divider2.Size = UDim2.new(0, 1, 1, 0)
+        divider2.Parent = Gui.Sidebar2
 
         Gui.UIAspectRatioConstraint_7.Parent = Gui.MainUI
         Gui.UIAspectRatioConstraint_7.AspectRatio = 1.7
@@ -2691,7 +2713,7 @@ local function getObjects()
         Gui.CategoryButton.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
         Gui.CategoryButton.BackgroundTransparency = 1.000
         Gui.CategoryButton.BorderSizePixel = 0
-        Gui.CategoryButton.Size = UDim2.new(1, 0, 0.200000003, 0)
+        Gui.CategoryButton.Size = UDim2.new(1, 0, 0, 60)
         Gui.CategoryButton.ZIndex = 121
 
         Gui.InnerContent.Name = "InnerContent"
@@ -2712,7 +2734,7 @@ local function getObjects()
         Gui.Image_2.Size = UDim2.new(0.400000006, 0, 0.400000006, 0)
         Gui.Image_2.ZIndex = 124
         Gui.Image_2.Image = "rbxassetid://8343977772"
-        Gui.Image_2.ImageColor3 = Color3.fromRGB(90, 90, 90)
+        Gui.Image_2.ImageColor3 = Color3.fromRGB(118, 124, 148)
 
         Gui.UIAspectRatioConstraint_12.Parent = Gui.Image_2
 
@@ -2722,9 +2744,9 @@ local function getObjects()
         Gui.Title_3.BackgroundTransparency = 1.000
         Gui.Title_3.Size = UDim2.new(0.800000012, 0, 0.219999999, 0)
         Gui.Title_3.ZIndex = 124
-        Gui.Title_3.Font = Enum.Font.Gotham
+        Gui.Title_3.Font = Enum.Font.GothamSemibold
         Gui.Title_3.Text = "AIMBOT"
-        Gui.Title_3.TextColor3 = Color3.fromRGB(90, 90, 90)
+        Gui.Title_3.TextColor3 = Color3.fromRGB(118, 124, 148)
         Gui.Title_3.TextScaled = true
         Gui.Title_3.TextSize = 5.000
         Gui.Title_3.TextWrapped = true
@@ -2735,11 +2757,14 @@ local function getObjects()
 
         Gui.SelectionShadow.Name = "SelectionShadow"
         Gui.SelectionShadow.Parent = Gui.CategoryButton
-        Gui.SelectionShadow.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        Gui.SelectionShadow.BackgroundColor3 = Color3.fromRGB(96, 104, 210)
         Gui.SelectionShadow.BackgroundTransparency = 1.000
         Gui.SelectionShadow.BorderSizePixel = 0
         Gui.SelectionShadow.Size = UDim2.new(1, 0, 1, 0)
         Gui.SelectionShadow.ZIndex = 123
+
+        Gui.SubtabSelectionCorner.CornerRadius = UDim.new(0, 8)
+        Gui.SubtabSelectionCorner.Parent = Gui.SelectionShadow
 
         Gui.UIGradient_9.Transparency =
             NumberSequence.new {
@@ -2751,11 +2776,16 @@ local function getObjects()
 
         Gui.HoverFrame_6.Name = "HoverFrame"
         Gui.HoverFrame_6.Parent = Gui.CategoryButton
-        Gui.HoverFrame_6.BackgroundColor3 = Color3.fromRGB(33, 33, 33)
+        Gui.HoverFrame_6.AnchorPoint = Vector2.new(0.5, 0.5)
+        Gui.HoverFrame_6.BackgroundColor3 = Color3.fromRGB(52, 56, 78)
         Gui.HoverFrame_6.BackgroundTransparency = 1.000
         Gui.HoverFrame_6.BorderSizePixel = 0
-        Gui.HoverFrame_6.Size = UDim2.new(1, 0, 1, 0)
+        Gui.HoverFrame_6.Position = UDim2.new(0.5, 0, 0.5, 0)
+        Gui.HoverFrame_6.Size = UDim2.new(1, -8, 1, -6)
         Gui.HoverFrame_6.ZIndex = 122
+
+        Gui.SubtabHoverCorner.CornerRadius = UDim.new(0, 8)
+        Gui.SubtabHoverCorner.Parent = Gui.HoverFrame_6
 
         Gui.CategoryFrame.Name = "CategoryFrame"
         Gui.CategoryFrame.Parent = Gui.Objects
@@ -2819,7 +2849,7 @@ local function getObjects()
 
         Gui.Border.Name = "Border"
         Gui.Border.Parent = Gui.Section
-        Gui.Border.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+        Gui.Border.BackgroundColor3 = Color3.fromRGB(25, 26, 34)
         Gui.Border.BorderSizePixel = 0
         Gui.Border.Size = UDim2.new(1, 0, 1, 0)
         Gui.Border.ZIndex = 107
@@ -2834,7 +2864,7 @@ local function getObjects()
         Gui.SectionTitle.ZIndex = 110
         Gui.SectionTitle.Font = Enum.Font.GothamBold
         Gui.SectionTitle.Text = "TEXT BOXES"
-        Gui.SectionTitle.TextColor3 = Color3.fromRGB(60, 60, 60)
+        Gui.SectionTitle.TextColor3 = Color3.fromRGB(110, 116, 140)
         Gui.SectionTitle.TextScaled = true
         Gui.SectionTitle.TextSize = 14.000
         Gui.SectionTitle.TextWrapped = true
@@ -2875,7 +2905,7 @@ local function getObjects()
         Gui.DropShadow_16.ZIndex = 105
         Gui.DropShadow_16.Image = "rbxassetid://6014261993"
         Gui.DropShadow_16.ImageColor3 = Color3.fromRGB(0, 0, 0)
-        Gui.DropShadow_16.ImageTransparency = 0.500
+        Gui.DropShadow_16.ImageTransparency = 0.700
         Gui.DropShadow_16.ScaleType = Enum.ScaleType.Slice
         Gui.DropShadow_16.SliceCenter = Rect.new(49, 49, 450, 450)
 
@@ -2911,8 +2941,8 @@ local function getObjects()
         Gui.Text_8.ZIndex = 111
         Gui.Text_8.Font = Enum.Font.GothamSemibold
         Gui.Text_8.Text = "Title"
-        Gui.Text_8.TextColor3 = Color3.fromRGB(100, 100, 100)
-        Gui.Text_8.TextSize = 18.000
+        Gui.Text_8.TextColor3 = Color3.fromRGB(220, 222, 235)
+        Gui.Text_8.TextSize = 13.000
         Gui.Text_8.TextWrapped = true
         Gui.Text_8.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -2927,8 +2957,8 @@ local function getObjects()
         Gui.Desc.ZIndex = 111
         Gui.Desc.Font = Enum.Font.Gotham
         Gui.Desc.Text = "Short description"
-        Gui.Desc.TextColor3 = Color3.fromRGB(60, 60, 60)
-        Gui.Desc.TextSize = 12.000
+        Gui.Desc.TextColor3 = Color3.fromRGB(140, 144, 165)
+        Gui.Desc.TextSize = 10.000
         Gui.Desc.TextWrapped = true
         Gui.Desc.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -2954,15 +2984,24 @@ local function getObjects()
 
         Gui.Main.Name = "Main"
         Gui.Main.Parent = Gui.Notification
-        Gui.Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Gui.Main.BackgroundColor3 = Color3.fromRGB(20, 21, 28)
+        Gui.Main.BackgroundTransparency = 0.15
         Gui.Main.BorderSizePixel = 0
         Gui.Main.Size = UDim2.new(1, 0, 1, 0)
 
-        Gui.NotifGradient.Parent = Gui.Main
+        local MainStroke = Instance.new("UIStroke")
+        MainStroke.Name = "Border"
+        MainStroke.Color = Color3.fromRGB(60, 62, 78)
+        MainStroke.Thickness = 1
+        MainStroke.Transparency = 0.4
+        MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        MainStroke.Parent = Gui.Main
+
+        Gui.NotifGradient.Parent = nil
         Gui.NotifGradient.Rotation = 90
         Gui.NotifGradient.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(32, 33, 42)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 21, 27))
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(36, 38, 49)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(23, 24, 31))
         })
 
         Gui.DropShadowHolder_15.Name = "DropShadowHolder"
@@ -2977,12 +3016,12 @@ local function getObjects()
         Gui.DropShadow_17.AnchorPoint = Vector2.new(0.5, 0.5)
         Gui.DropShadow_17.BackgroundTransparency = 1.000
         Gui.DropShadow_17.BorderSizePixel = 0
-        Gui.DropShadow_17.Position = UDim2.new(0.5, 0, 0.5, 4)
-        Gui.DropShadow_17.Size = UDim2.new(1, 30, 1, 30)
+        Gui.DropShadow_17.Position = UDim2.new(0.5, 0, 0.5, 3)
+        Gui.DropShadow_17.Size = UDim2.new(1, 24, 1, 24)
         Gui.DropShadow_17.ZIndex = 0
         Gui.DropShadow_17.Image = "rbxassetid://6014261993"
         Gui.DropShadow_17.ImageColor3 = Color3.fromRGB(0, 0, 0)
-        Gui.DropShadow_17.ImageTransparency = 0.600
+        Gui.DropShadow_17.ImageTransparency = 0.650
         Gui.DropShadow_17.ScaleType = Enum.ScaleType.Slice
         Gui.DropShadow_17.SliceCenter = Rect.new(49, 49, 450, 450)
 
@@ -2993,8 +3032,8 @@ local function getObjects()
         Gui.Content_10.Size = UDim2.new(1, 0, 1, 0)
 
         Gui.NotifContentPadding.Parent = Gui.Content_10
-        Gui.NotifContentPadding.PaddingLeft = UDim.new(0, 10)
-        Gui.NotifContentPadding.PaddingRight = UDim.new(0, 4)
+        Gui.NotifContentPadding.PaddingLeft = UDim.new(0, 12)
+        Gui.NotifContentPadding.PaddingRight = UDim.new(0, 6)
 
         Gui.UIListLayout_25.Parent = Gui.Content_10
         Gui.UIListLayout_25.FillDirection = Enum.FillDirection.Horizontal
@@ -3007,7 +3046,7 @@ local function getObjects()
         Gui.NotifAccent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.NotifAccent.BorderSizePixel = 0
         Gui.NotifAccent.LayoutOrder = -3
-        Gui.NotifAccent.Size = UDim2.new(0, 3, 1, -16)
+        Gui.NotifAccent.Size = UDim2.new(0, 4, 1, -14)
         Gui.NotifAccent.ZIndex = 12
 
         Gui.NotifAccentCorner.CornerRadius = UDim.new(1, 0)
@@ -3016,8 +3055,8 @@ local function getObjects()
         Gui.NotifAccentGradient.Parent = Gui.NotifAccent
         Gui.NotifAccentGradient.Rotation = 90
         Gui.NotifAccentGradient.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(126, 134, 235)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(83, 87, 158))
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(140, 148, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(96, 102, 200))
         })
 
         Gui.Line_4.Name = "Line"
@@ -3026,6 +3065,7 @@ local function getObjects()
         Gui.Line_4.BorderSizePixel = 0
         Gui.Line_4.LayoutOrder = -1
         Gui.Line_4.Size = UDim2.new(0, 1, 0.55, 0)
+        Gui.Line_4.Visible = false
         Gui.Line_4.ZIndex = 11
 
         Gui.NotifLineGradient.Parent = Gui.Line_4
@@ -3042,7 +3082,7 @@ local function getObjects()
         Gui.Buttons_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Buttons_2.BackgroundTransparency = 1.000
         Gui.Buttons_2.BorderSizePixel = 0
-        Gui.Buttons_2.Size = UDim2.new(0.16, 0, 1, 0)
+        Gui.Buttons_2.Size = UDim2.new(0.14, 0, 1, 0)
 
         Gui.UIListLayout_26.Parent = Gui.Buttons_2
         Gui.UIListLayout_26.HorizontalAlignment = Enum.HorizontalAlignment.Center
@@ -3056,7 +3096,7 @@ local function getObjects()
         Gui.Close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Close.BackgroundTransparency = 1.000
         Gui.Close.Position = UDim2.new(0.5, 0, 0.5, 0)
-        Gui.Close.Size = UDim2.new(1, 0, 0.32, 0)
+        Gui.Close.Size = UDim2.new(1, 0, 0.28, 0)
         Gui.Close.ZIndex = 12
         Gui.Close.Image = "rbxassetid://7072725342"
         Gui.Close.ImageColor3 = Color3.fromRGB(150, 155, 172)
@@ -3069,7 +3109,7 @@ local function getObjects()
         Gui.Text_9.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Text_9.BackgroundTransparency = 1.000
         Gui.Text_9.LayoutOrder = -2
-        Gui.Text_9.Size = UDim2.new(0.68, 0, 1, 0)
+        Gui.Text_9.Size = UDim2.new(0.72, 0, 1, 0)
 
         Gui.UIListLayout_27.Parent = Gui.Text_9
         Gui.UIListLayout_27.SortOrder = Enum.SortOrder.LayoutOrder
@@ -3084,13 +3124,13 @@ local function getObjects()
         Gui.Title_4.ZIndex = 12
         Gui.Title_4.Font = Enum.Font.GothamBold
         Gui.Title_4.Text = "Notification"
-        Gui.Title_4.TextColor3 = Color3.fromRGB(235, 238, 245)
+        Gui.Title_4.TextColor3 = Color3.fromRGB(240, 242, 250)
         Gui.Title_4.TextScaled = true
         Gui.Title_4.TextWrapped = true
         Gui.Title_4.TextXAlignment = Enum.TextXAlignment.Left
 
         Gui.NotifTitleConstraint.Parent = Gui.Title_4
-        Gui.NotifTitleConstraint.MaxTextSize = 17
+        Gui.NotifTitleConstraint.MaxTextSize = 13
 
         Gui.Desc_2.Name = "Desc"
         Gui.Desc_2.Parent = Gui.Text_9
@@ -3100,13 +3140,13 @@ local function getObjects()
         Gui.Desc_2.ZIndex = 12
         Gui.Desc_2.Font = Enum.Font.Gotham
         Gui.Desc_2.Text = "You got no choice dude"
-        Gui.Desc_2.TextColor3 = Color3.fromRGB(148, 153, 170)
+        Gui.Desc_2.TextColor3 = Color3.fromRGB(200, 202, 215)
         Gui.Desc_2.TextScaled = true
         Gui.Desc_2.TextWrapped = true
         Gui.Desc_2.TextXAlignment = Enum.TextXAlignment.Left
 
         Gui.NotifDescConstraint.Parent = Gui.Desc_2
-        Gui.NotifDescConstraint.MaxTextSize = 13
+        Gui.NotifDescConstraint.MaxTextSize = 11
 
         Gui.UIPadding_13.Parent = Gui.Text_9
         Gui.UIPadding_13.PaddingBottom = UDim.new(0, 4)
@@ -3122,7 +3162,8 @@ local function getObjects()
 
         Gui.Notification_2.Name = "Notification"
         Gui.Notification_2.Parent = Gui.Main
-        Gui.Notification_2.BackgroundColor3 = Color3.fromRGB(21, 22, 28)
+        Gui.Notification_2.Visible = false
+        Gui.Notification_2.BackgroundColor3 = Color3.fromRGB(23, 24, 31)
         Gui.Notification_2.BorderSizePixel = 0
         Gui.Notification_2.Size = UDim2.new(1, 0, 1, 0)
         Gui.Notification_2.ZIndex = 20
@@ -3146,8 +3187,8 @@ local function getObjects()
         Gui.PromptGradient.Parent = Gui.Main_2
         Gui.PromptGradient.Rotation = 90
         Gui.PromptGradient.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(32, 33, 42)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 21, 27))
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(36, 38, 49)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(23, 24, 31))
         })
 
         Gui.UICorner_22.CornerRadius = UDim.new(0, 8)
@@ -3181,8 +3222,8 @@ local function getObjects()
         Gui.Content_11.Size = UDim2.new(1, 0, 1, 0)
 
         Gui.PromptContentPadding.Parent = Gui.Content_11
-        Gui.PromptContentPadding.PaddingLeft = UDim.new(0, 10)
-        Gui.PromptContentPadding.PaddingRight = UDim.new(0, 4)
+        Gui.PromptContentPadding.PaddingLeft = UDim.new(0, 12)
+        Gui.PromptContentPadding.PaddingRight = UDim.new(0, 6)
 
         Gui.UIListLayout_28.Parent = Gui.Content_11
         Gui.UIListLayout_28.FillDirection = Enum.FillDirection.Horizontal
@@ -3195,7 +3236,7 @@ local function getObjects()
         Gui.PromptAccent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.PromptAccent.BorderSizePixel = 0
         Gui.PromptAccent.LayoutOrder = -3
-        Gui.PromptAccent.Size = UDim2.new(0, 3, 1, -16)
+        Gui.PromptAccent.Size = UDim2.new(0, 4, 1, -14)
         Gui.PromptAccent.ZIndex = 12
 
         Gui.PromptAccentCorner.CornerRadius = UDim.new(1, 0)
@@ -3204,8 +3245,8 @@ local function getObjects()
         Gui.PromptAccentGradient.Parent = Gui.PromptAccent
         Gui.PromptAccentGradient.Rotation = 90
         Gui.PromptAccentGradient.Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(126, 134, 235)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(83, 87, 158))
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(140, 148, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(96, 102, 200))
         })
 
         Gui.Line_5.Name = "Line"
@@ -3214,6 +3255,7 @@ local function getObjects()
         Gui.Line_5.BorderSizePixel = 0
         Gui.Line_5.LayoutOrder = -1
         Gui.Line_5.Size = UDim2.new(0, 1, 0.55, 0)
+        Gui.Line_5.Visible = false
         Gui.Line_5.ZIndex = 11
 
         Gui.PromptLineGradient.Parent = Gui.Line_5
@@ -3230,7 +3272,7 @@ local function getObjects()
         Gui.Buttons_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Buttons_3.BackgroundTransparency = 1.000
         Gui.Buttons_3.BorderSizePixel = 0
-        Gui.Buttons_3.Size = UDim2.new(0.16, 0, 1, 0)
+        Gui.Buttons_3.Size = UDim2.new(0.14, 0, 1, 0)
 
         Gui.UIListLayout_29.Parent = Gui.Buttons_3
         Gui.UIListLayout_29.HorizontalAlignment = Enum.HorizontalAlignment.Center
@@ -3271,7 +3313,7 @@ local function getObjects()
         Gui.Text_10.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Text_10.BackgroundTransparency = 1.000
         Gui.Text_10.LayoutOrder = -2
-        Gui.Text_10.Size = UDim2.new(0.68, 0, 1, 0)
+        Gui.Text_10.Size = UDim2.new(0.72, 0, 1, 0)
 
         Gui.UIListLayout_30.Parent = Gui.Text_10
         Gui.UIListLayout_30.SortOrder = Enum.SortOrder.LayoutOrder
@@ -3286,13 +3328,13 @@ local function getObjects()
         Gui.Title_5.ZIndex = 12
         Gui.Title_5.Font = Enum.Font.GothamBold
         Gui.Title_5.Text = "Prompt"
-        Gui.Title_5.TextColor3 = Color3.fromRGB(235, 238, 245)
+        Gui.Title_5.TextColor3 = Color3.fromRGB(240, 242, 250)
         Gui.Title_5.TextScaled = true
         Gui.Title_5.TextWrapped = true
         Gui.Title_5.TextXAlignment = Enum.TextXAlignment.Left
 
         Gui.PromptTitleConstraint.Parent = Gui.Title_5
-        Gui.PromptTitleConstraint.MaxTextSize = 17
+        Gui.PromptTitleConstraint.MaxTextSize = 16
 
         Gui.Desc_3.Name = "Desc"
         Gui.Desc_3.Parent = Gui.Text_10
@@ -3302,7 +3344,7 @@ local function getObjects()
         Gui.Desc_3.ZIndex = 12
         Gui.Desc_3.Font = Enum.Font.Gotham
         Gui.Desc_3.Text = "Would you like to start autofarm?"
-        Gui.Desc_3.TextColor3 = Color3.fromRGB(148, 153, 170)
+        Gui.Desc_3.TextColor3 = Color3.fromRGB(158, 164, 184)
         Gui.Desc_3.TextScaled = true
         Gui.Desc_3.TextWrapped = true
         Gui.Desc_3.TextXAlignment = Enum.TextXAlignment.Left
@@ -3318,7 +3360,7 @@ local function getObjects()
 
         Gui.Notification_3.Name = "Notification"
         Gui.Notification_3.Parent = Gui.Main_2
-        Gui.Notification_3.BackgroundColor3 = Color3.fromRGB(21, 22, 28)
+        Gui.Notification_3.BackgroundColor3 = Color3.fromRGB(23, 24, 31)
         Gui.Notification_3.BorderSizePixel = 0
         Gui.Notification_3.Size = UDim2.new(1, 0, 1, 0)
         Gui.Notification_3.ZIndex = 20
@@ -5130,98 +5172,48 @@ local layout = Utils.getLayoutOrder(ui)
 
 Notif.LayoutOrder = layout
 
-Notif.Notification.BackgroundTransparency = 0
-Notif.Parent.Size = UDim2.fromScale(1, 0)
+    Notif.Notification.Visible = false
+    Notif.Parent.Size = UDim2.new(1, 0, 0.1, 5)
+    Notif.Parent.Parent = ui
+    Notif.Position = UDim2.new(1.5, 0, 0, 0)
 
-Notif.Parent.Parent = ui
-
-wait(.02)
-
-TweenService:Create(
-    Notif.Parent,
-    UILibrary.TweenInfo,
-    {
-        Size = UDim2.new(1, 0, .1, 5)
-    }
-):Play()
-
-wait(.2)
-
-TweenService:Create(
-    Notif.Notification,
-    UILibrary.TweenInfo,
-    {
-        BackgroundTransparency = 1
-    }
-):Play()
-
-local connections = {}
-local isOpen = true
-
-local function expire()
-    isOpen = false
-
-    for i, v in pairs(connections) do
-        v:Disconnect()
-    end
-
-    TweenService:Create(
-        Notif.Notification,
-        UILibrary.TweenInfo,
-        {
-            BackgroundTransparency = 0
-        }
-    ):Play()
+    wait(.02)
 
     TweenService:Create(
         Notif,
-        TweenInfo.new(.3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+        TweenInfo.new(.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
         {
-            Position = UDim2.fromScale(2, 0)
-            
+            Position = UDim2.new(0, 0, 0, 0)
         }
     ):Play()
 
-    task.delay(
-        .3,
-        function()
-            TweenService:Create(
-                Notif.Parent,
-                TweenInfo.new(.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out),
-                {
-                    Size = UDim2.fromScale(0, 0)
-                }
-            ):Play()
+    local connections = {}
+    local isOpen = true
 
-            local parent = Notif.Parent
+    local function expire()
+        isOpen = false
 
-            Notif.Parent:ClearAllChildren()
-
-            wait(.3)
-            parent:Destroy()
+        for i, v in pairs(connections) do
+            v:Disconnect()
         end
-    )
 
-    for i, v in pairs(Notif:GetDescendants()) do
-        if v:IsA("ImageLabel") or v:IsA("ImageButton") then
-            TweenService:Create(
-                v,
-                UILibrary.TweenInfo,
-                {
-                    ImageTransparency = 1
-                }
-            ):Play()
-        elseif v:IsA("TextLabel") then
-            TweenService:Create(
-                v,
-                UILibrary.TweenInfo,
-                {
-                    TextTransparency = 1
-                }
-            ):Play()
-        end
+        TweenService:Create(
+            Notif,
+            TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+            {
+                Position = UDim2.new(1.5, 0, 0, 0)
+            }
+        ):Play()
+
+        task.delay(
+            .4,
+            function()
+                local parent = Notif.Parent
+                Notif.Parent:ClearAllChildren()
+                parent:Destroy()
+            end
+        )
     end
-end
 
 
 
@@ -5521,7 +5513,7 @@ if Object and self.currentSelection ~= Object then
             self.currentSelection.Content.Image,
             UILibrary.TweenInfo,
             {
-                ImageColor3 = Color3.fromRGB(90, 90, 90)
+                ImageColor3 = Color3.fromRGB(118, 124, 148)
             }
         ):Play()
 
@@ -5529,7 +5521,7 @@ if Object and self.currentSelection ~= Object then
             self.currentSelection.Content.Title,
             UILibrary.TweenInfo,
             {
-                TextColor3 = Color3.fromRGB(90, 90, 90)
+                TextColor3 = Color3.fromRGB(118, 124, 148)
             }
         ):Play()
 
@@ -5554,7 +5546,7 @@ if Object and self.currentSelection ~= Object then
         Object.Content.Image,
         UILibrary.TweenInfo,
         {
-            ImageColor3 = Color3.fromRGB(83, 87, 158)
+            ImageColor3 = Color3.fromRGB(134, 142, 255)
         }
     ):Play()
 
@@ -5562,7 +5554,7 @@ if Object and self.currentSelection ~= Object then
         Object.Content.Title,
         UILibrary.TweenInfo,
         {
-            TextColor3 = Color3.fromRGB(83, 87, 158)
+            TextColor3 = Color3.fromRGB(134, 142, 255)
         }
     ):Play()
 
@@ -5609,7 +5601,7 @@ if Object and self.currentCategorySelection ~= Object then
             self.currentCategorySelection.InnerContent.Image,
             UILibrary.TweenInfo,
             {
-                ImageColor3 = Color3.fromRGB(90, 90, 90)
+                ImageColor3 = Color3.fromRGB(118, 124, 148)
             }
         ):Play()
 
@@ -5617,7 +5609,7 @@ if Object and self.currentCategorySelection ~= Object then
             self.currentCategorySelection.InnerContent.Title,
             UILibrary.TweenInfo,
             {
-                TextColor3 = Color3.fromRGB(90, 90, 90)
+                TextColor3 = Color3.fromRGB(118, 124, 148)
             }
         ):Play()
 
@@ -5650,7 +5642,7 @@ if Object and self.currentCategorySelection ~= Object then
         Object.InnerContent.Image,
         UILibrary.TweenInfo,
         {
-            ImageColor3 = Color3.fromRGB(83, 87, 158)
+            ImageColor3 = Color3.fromRGB(134, 142, 255)
         }
     ):Play()
 
@@ -5658,7 +5650,7 @@ if Object and self.currentCategorySelection ~= Object then
         Object.InnerContent.Title,
         UILibrary.TweenInfo,
         {
-            TextColor3 = Color3.fromRGB(83, 87, 158)
+            TextColor3 = Color3.fromRGB(134, 142, 255)
         }
     ):Play()
 

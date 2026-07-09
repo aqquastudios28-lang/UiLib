@@ -18,21 +18,7 @@ button.Parent = self.contentHolder.Bar2Holder
 button.LayoutOrder = Utils.getLayoutOrder(self.contentHolder.Bar2Holder)
 button.Name = name
 
-local totalCount = 0
-
-for i, v in pairs(self.contentHolder.Bar2Holder:GetChildren()) do
-    if v:IsA("GuiObject") then
-        totalCount = totalCount + 1
-    end
-end
-
-for i, v in pairs(self.contentHolder.Bar2Holder:GetChildren()) do
-    if v:IsA("GuiObject") then
-        v.Size = UDim2.fromScale(1, 1 / totalCount)
-    end
-end
-
-button.Size = UDim2.fromScale(1, 1 / totalCount)
+button.Size = UDim2.new(1, 0, 0, 60)
 
 self.oldSelf.UI[self.categoryUI.Name][name] = {}
 

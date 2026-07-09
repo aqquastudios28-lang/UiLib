@@ -81,98 +81,48 @@ local layout = Utils.getLayoutOrder(ui)
 
 Notif.LayoutOrder = layout
 
-Notif.Notification.BackgroundTransparency = 0
-Notif.Parent.Size = UDim2.fromScale(1, 0)
+    Notif.Notification.Visible = false
+    Notif.Parent.Size = UDim2.new(1, 0, 0.1, 5)
+    Notif.Parent.Parent = ui
+    Notif.Position = UDim2.new(1.5, 0, 0, 0)
 
-Notif.Parent.Parent = ui
-
-wait(.02)
-
-TweenService:Create(
-    Notif.Parent,
-    UILibrary.TweenInfo,
-    {
-        Size = UDim2.new(1, 0, .1, 5)
-    }
-):Play()
-
-wait(.2)
-
-TweenService:Create(
-    Notif.Notification,
-    UILibrary.TweenInfo,
-    {
-        BackgroundTransparency = 1
-    }
-):Play()
-
-local connections = {}
-local isOpen = true
-
-local function expire()
-    isOpen = false
-
-    for i, v in pairs(connections) do
-        v:Disconnect()
-    end
-
-    TweenService:Create(
-        Notif.Notification,
-        UILibrary.TweenInfo,
-        {
-            BackgroundTransparency = 0
-        }
-    ):Play()
+    wait(.02)
 
     TweenService:Create(
         Notif,
-        TweenInfo.new(.3, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+        TweenInfo.new(.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
         {
-            Position = UDim2.fromScale(2, 0)
-            --Size = UDim2.fromScale(0,1)
+            Position = UDim2.new(0, 0, 0, 0)
         }
     ):Play()
 
-    task.delay(
-        .3,
-        function()
-            TweenService:Create(
-                Notif.Parent,
-                TweenInfo.new(.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out),
-                {
-                    Size = UDim2.fromScale(0, 0)
-                }
-            ):Play()
+    local connections = {}
+    local isOpen = true
 
-            local parent = Notif.Parent
+    local function expire()
+        isOpen = false
 
-            Notif.Parent:ClearAllChildren()
-
-            wait(.3)
-            parent:Destroy()
+        for i, v in pairs(connections) do
+            v:Disconnect()
         end
-    )
 
-    for i, v in pairs(Notif:GetDescendants()) do
-        if v:IsA("ImageLabel") or v:IsA("ImageButton") then
-            TweenService:Create(
-                v,
-                UILibrary.TweenInfo,
-                {
-                    ImageTransparency = 1
-                }
-            ):Play()
-        elseif v:IsA("TextLabel") then
-            TweenService:Create(
-                v,
-                UILibrary.TweenInfo,
-                {
-                    TextTransparency = 1
-                }
-            ):Play()
-        end
+        TweenService:Create(
+            Notif,
+            TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+            {
+                Position = UDim2.new(1.5, 0, 0, 0)
+            }
+        ):Play()
+
+        task.delay(
+            .4,
+            function()
+                local parent = Notif.Parent
+                Notif.Parent:ClearAllChildren()
+                parent:Destroy()
+            end
+        )
     end
-end
 
 --// too fucking lazy to re-encode all instances
 
@@ -472,7 +422,7 @@ if Object and self.currentSelection ~= Object then
             self.currentSelection.Content.Image,
             UILibrary.TweenInfo,
             {
-                ImageColor3 = Color3.fromRGB(90, 90, 90)
+                ImageColor3 = Color3.fromRGB(118, 124, 148)
             }
         ):Play()
 
@@ -480,7 +430,7 @@ if Object and self.currentSelection ~= Object then
             self.currentSelection.Content.Title,
             UILibrary.TweenInfo,
             {
-                TextColor3 = Color3.fromRGB(90, 90, 90)
+                TextColor3 = Color3.fromRGB(118, 124, 148)
             }
         ):Play()
 
@@ -505,7 +455,7 @@ if Object and self.currentSelection ~= Object then
         Object.Content.Image,
         UILibrary.TweenInfo,
         {
-            ImageColor3 = Color3.fromRGB(83, 87, 158)
+            ImageColor3 = Color3.fromRGB(134, 142, 255)
         }
     ):Play()
 
@@ -513,7 +463,7 @@ if Object and self.currentSelection ~= Object then
         Object.Content.Title,
         UILibrary.TweenInfo,
         {
-            TextColor3 = Color3.fromRGB(83, 87, 158)
+            TextColor3 = Color3.fromRGB(134, 142, 255)
         }
     ):Play()
 
@@ -560,7 +510,7 @@ if Object and self.currentCategorySelection ~= Object then
             self.currentCategorySelection.InnerContent.Image,
             UILibrary.TweenInfo,
             {
-                ImageColor3 = Color3.fromRGB(90, 90, 90)
+                ImageColor3 = Color3.fromRGB(118, 124, 148)
             }
         ):Play()
 
@@ -568,7 +518,7 @@ if Object and self.currentCategorySelection ~= Object then
             self.currentCategorySelection.InnerContent.Title,
             UILibrary.TweenInfo,
             {
-                TextColor3 = Color3.fromRGB(90, 90, 90)
+                TextColor3 = Color3.fromRGB(118, 124, 148)
             }
         ):Play()
 
@@ -601,7 +551,7 @@ if Object and self.currentCategorySelection ~= Object then
         Object.InnerContent.Image,
         UILibrary.TweenInfo,
         {
-            ImageColor3 = Color3.fromRGB(83, 87, 158)
+            ImageColor3 = Color3.fromRGB(134, 142, 255)
         }
     ):Play()
 
@@ -609,7 +559,7 @@ if Object and self.currentCategorySelection ~= Object then
         Object.InnerContent.Title,
         UILibrary.TweenInfo,
         {
-            TextColor3 = Color3.fromRGB(83, 87, 158)
+            TextColor3 = Color3.fromRGB(134, 142, 255)
         }
     ):Play()
 
