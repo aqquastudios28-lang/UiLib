@@ -200,7 +200,7 @@ table.insert(
                     Notif.Content.Buttons.Close,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(100, 100, 100)
+                        ImageColor3 = Color3.fromRGB(255, 255, 255)
                     }
                 ):Play()
             elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -223,7 +223,7 @@ table.insert(
                     Notif.Content.Buttons.Close,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(255, 255, 255)
+                        ImageColor3 = Color3.fromRGB(150, 155, 172)
                     }
                 ):Play()
             end
@@ -382,7 +382,7 @@ table.insert(
                     Close.Button,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(100, 100, 100)
+                        ImageColor3 = Color3.fromRGB(245, 160, 166)
                     }
                 ):Play()
             elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -405,7 +405,7 @@ table.insert(
                     Close.Button,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(255, 255, 255)
+                        ImageColor3 = Color3.fromRGB(205, 120, 126)
                     }
                 ):Play()
             end
@@ -426,7 +426,7 @@ table.insert(
                     Accept.Button,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(100, 100, 100)
+                        ImageColor3 = Color3.fromRGB(170, 235, 185)
                     }
                 ):Play()
             elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -450,7 +450,7 @@ table.insert(
                     Accept.Button,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(255, 255, 255)
+                        ImageColor3 = Color3.fromRGB(118, 190, 136)
                     }
                 ):Play()
             end

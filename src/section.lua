@@ -1291,7 +1291,7 @@ local function updateDropdown()
 
         Option.Name = v
         Option.Parent = element.OptionHolder.ContentHolder.Content
-        Option.LayoutOrder = i
+        Option.LayoutOrder = counter
         Option.Size = UDim2.fromScale(1, 1 / totalCounter)
 
         Option.Current.Text = v

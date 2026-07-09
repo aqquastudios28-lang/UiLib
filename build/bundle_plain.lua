@@ -978,6 +978,14 @@ local function getObjects()
             UIPadding_13 = Instance.new("UIPadding"),
             UICorner_20 = Instance.new("UICorner"),
             UIAspectRatioConstraint_14 = Instance.new("UIAspectRatioConstraint"),
+            NotifGradient = Instance.new("UIGradient"),
+            NotifContentPadding = Instance.new("UIPadding"),
+            NotifAccent = Instance.new("Frame"),
+            NotifAccentCorner = Instance.new("UICorner"),
+            NotifAccentGradient = Instance.new("UIGradient"),
+            NotifLineGradient = Instance.new("UIGradient"),
+            NotifTitleConstraint = Instance.new("UITextSizeConstraint"),
+            NotifDescConstraint = Instance.new("UITextSizeConstraint"),
             Notification_2 = Instance.new("Frame"),
             UICorner_21 = Instance.new("UICorner"),
             Prompt = Instance.new("Frame"),
@@ -1001,7 +1009,15 @@ local function getObjects()
             UIPadding_14 = Instance.new("UIPadding"),
             Notification_3 = Instance.new("Frame"),
             UICorner_23 = Instance.new("UICorner"),
-            UIAspectRatioConstraint_17 = Instance.new("UIAspectRatioConstraint")
+            UIAspectRatioConstraint_17 = Instance.new("UIAspectRatioConstraint"),
+            PromptGradient = Instance.new("UIGradient"),
+            PromptContentPadding = Instance.new("UIPadding"),
+            PromptAccent = Instance.new("Frame"),
+            PromptAccentCorner = Instance.new("UICorner"),
+            PromptAccentGradient = Instance.new("UIGradient"),
+            PromptLineGradient = Instance.new("UIGradient"),
+            PromptTitleConstraint = Instance.new("UITextSizeConstraint"),
+            PromptDescConstraint = Instance.new("UITextSizeConstraint")
         }
 
         
@@ -2938,8 +2954,16 @@ local function getObjects()
 
         Gui.Main.Name = "Main"
         Gui.Main.Parent = Gui.Notification
-        Gui.Main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        Gui.Main.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Gui.Main.BorderSizePixel = 0
         Gui.Main.Size = UDim2.new(1, 0, 1, 0)
+
+        Gui.NotifGradient.Parent = Gui.Main
+        Gui.NotifGradient.Rotation = 90
+        Gui.NotifGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(32, 33, 42)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 21, 27))
+        })
 
         Gui.DropShadowHolder_15.Name = "DropShadowHolder"
         Gui.DropShadowHolder_15.Parent = Gui.Main
@@ -2953,12 +2977,12 @@ local function getObjects()
         Gui.DropShadow_17.AnchorPoint = Vector2.new(0.5, 0.5)
         Gui.DropShadow_17.BackgroundTransparency = 1.000
         Gui.DropShadow_17.BorderSizePixel = 0
-        Gui.DropShadow_17.Position = UDim2.new(0.5, 0, 0.5, 0)
-        Gui.DropShadow_17.Size = UDim2.new(1, 47, 1, 47)
+        Gui.DropShadow_17.Position = UDim2.new(0.5, 0, 0.5, 4)
+        Gui.DropShadow_17.Size = UDim2.new(1, 30, 1, 30)
         Gui.DropShadow_17.ZIndex = 0
         Gui.DropShadow_17.Image = "rbxassetid://6014261993"
         Gui.DropShadow_17.ImageColor3 = Color3.fromRGB(0, 0, 0)
-        Gui.DropShadow_17.ImageTransparency = 0.500
+        Gui.DropShadow_17.ImageTransparency = 0.600
         Gui.DropShadow_17.ScaleType = Enum.ScaleType.Slice
         Gui.DropShadow_17.SliceCenter = Rect.new(49, 49, 450, 450)
 
@@ -2968,26 +2992,57 @@ local function getObjects()
         Gui.Content_10.BackgroundTransparency = 1.000
         Gui.Content_10.Size = UDim2.new(1, 0, 1, 0)
 
+        Gui.NotifContentPadding.Parent = Gui.Content_10
+        Gui.NotifContentPadding.PaddingLeft = UDim.new(0, 10)
+        Gui.NotifContentPadding.PaddingRight = UDim.new(0, 4)
+
         Gui.UIListLayout_25.Parent = Gui.Content_10
         Gui.UIListLayout_25.FillDirection = Enum.FillDirection.Horizontal
         Gui.UIListLayout_25.SortOrder = Enum.SortOrder.LayoutOrder
         Gui.UIListLayout_25.VerticalAlignment = Enum.VerticalAlignment.Center
-        Gui.UIListLayout_25.Padding = UDim.new(0.0299999993, 0)
+        Gui.UIListLayout_25.Padding = UDim.new(0, 6)
+
+        Gui.NotifAccent.Name = "Accent"
+        Gui.NotifAccent.Parent = Gui.Content_10
+        Gui.NotifAccent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Gui.NotifAccent.BorderSizePixel = 0
+        Gui.NotifAccent.LayoutOrder = -3
+        Gui.NotifAccent.Size = UDim2.new(0, 3, 1, -16)
+        Gui.NotifAccent.ZIndex = 12
+
+        Gui.NotifAccentCorner.CornerRadius = UDim.new(1, 0)
+        Gui.NotifAccentCorner.Parent = Gui.NotifAccent
+
+        Gui.NotifAccentGradient.Parent = Gui.NotifAccent
+        Gui.NotifAccentGradient.Rotation = 90
+        Gui.NotifAccentGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(126, 134, 235)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(83, 87, 158))
+        })
 
         Gui.Line_4.Name = "Line"
         Gui.Line_4.Parent = Gui.Content_10
-        Gui.Line_4.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        Gui.Line_4.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Line_4.BorderSizePixel = 0
         Gui.Line_4.LayoutOrder = -1
-        Gui.Line_4.Size = UDim2.new(0, 1, 1, 0)
+        Gui.Line_4.Size = UDim2.new(0, 1, 0.55, 0)
         Gui.Line_4.ZIndex = 11
+
+        Gui.NotifLineGradient.Parent = Gui.Line_4
+        Gui.NotifLineGradient.Rotation = 90
+        Gui.NotifLineGradient.Color = ColorSequence.new(Color3.fromRGB(72, 75, 95))
+        Gui.NotifLineGradient.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 1),
+            NumberSequenceKeypoint.new(0.5, 0.15),
+            NumberSequenceKeypoint.new(1, 1)
+        })
 
         Gui.Buttons_2.Name = "Buttons"
         Gui.Buttons_2.Parent = Gui.Content_10
         Gui.Buttons_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Buttons_2.BackgroundTransparency = 1.000
         Gui.Buttons_2.BorderSizePixel = 0
-        Gui.Buttons_2.Size = UDim2.new(0.189999998, -1, 1, 0)
+        Gui.Buttons_2.Size = UDim2.new(0.16, 0, 1, 0)
 
         Gui.UIListLayout_26.Parent = Gui.Buttons_2
         Gui.UIListLayout_26.HorizontalAlignment = Enum.HorizontalAlignment.Center
@@ -3000,11 +3055,11 @@ local function getObjects()
         Gui.Close.AnchorPoint = Vector2.new(0.5, 0.5)
         Gui.Close.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Close.BackgroundTransparency = 1.000
-        Gui.Close.BorderColor3 = Color3.fromRGB(27, 42, 53)
-        Gui.Close.Position = UDim2.new(0.100000001, 0, 0.5, 0)
-        Gui.Close.Size = UDim2.new(0.5, 0, 1, 0)
-        Gui.Close.ZIndex = 203
+        Gui.Close.Position = UDim2.new(0.5, 0, 0.5, 0)
+        Gui.Close.Size = UDim2.new(1, 0, 0.32, 0)
+        Gui.Close.ZIndex = 12
         Gui.Close.Image = "rbxassetid://7072725342"
+        Gui.Close.ImageColor3 = Color3.fromRGB(150, 155, 172)
         Gui.Close.ScaleType = Enum.ScaleType.Fit
 
         Gui.UIAspectRatioConstraint_13.Parent = Gui.Close
@@ -3014,45 +3069,52 @@ local function getObjects()
         Gui.Text_9.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Text_9.BackgroundTransparency = 1.000
         Gui.Text_9.LayoutOrder = -2
-        Gui.Text_9.Size = UDim2.new(0.75, 0, 1, 0)
+        Gui.Text_9.Size = UDim2.new(0.68, 0, 1, 0)
 
         Gui.UIListLayout_27.Parent = Gui.Text_9
         Gui.UIListLayout_27.SortOrder = Enum.SortOrder.LayoutOrder
         Gui.UIListLayout_27.VerticalAlignment = Enum.VerticalAlignment.Center
+        Gui.UIListLayout_27.Padding = UDim.new(0, 2)
 
         Gui.Title_4.Name = "Title"
         Gui.Title_4.Parent = Gui.Text_9
         Gui.Title_4.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Title_4.BackgroundTransparency = 1.000
-        Gui.Title_4.Size = UDim2.new(1, 0, 0.400000006, 0)
+        Gui.Title_4.Size = UDim2.new(1, 0, 0.38, 0)
         Gui.Title_4.ZIndex = 12
-        Gui.Title_4.Font = Enum.Font.GothamSemibold
+        Gui.Title_4.Font = Enum.Font.GothamBold
         Gui.Title_4.Text = "Notification"
-        Gui.Title_4.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Gui.Title_4.TextSize = 20.000
+        Gui.Title_4.TextColor3 = Color3.fromRGB(235, 238, 245)
+        Gui.Title_4.TextScaled = true
         Gui.Title_4.TextWrapped = true
         Gui.Title_4.TextXAlignment = Enum.TextXAlignment.Left
+
+        Gui.NotifTitleConstraint.Parent = Gui.Title_4
+        Gui.NotifTitleConstraint.MaxTextSize = 17
 
         Gui.Desc_2.Name = "Desc"
         Gui.Desc_2.Parent = Gui.Text_9
         Gui.Desc_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Desc_2.BackgroundTransparency = 1.000
-        Gui.Desc_2.Size = UDim2.new(1, 0, 0.400000006, 0)
+        Gui.Desc_2.Size = UDim2.new(1, 0, 0.34, 0)
         Gui.Desc_2.ZIndex = 12
         Gui.Desc_2.Font = Enum.Font.Gotham
         Gui.Desc_2.Text = "You got no choice dude"
-        Gui.Desc_2.TextColor3 = Color3.fromRGB(150, 150, 150)
-        Gui.Desc_2.TextSize = 14.000
+        Gui.Desc_2.TextColor3 = Color3.fromRGB(148, 153, 170)
+        Gui.Desc_2.TextScaled = true
         Gui.Desc_2.TextWrapped = true
         Gui.Desc_2.TextXAlignment = Enum.TextXAlignment.Left
 
+        Gui.NotifDescConstraint.Parent = Gui.Desc_2
+        Gui.NotifDescConstraint.MaxTextSize = 13
+
         Gui.UIPadding_13.Parent = Gui.Text_9
         Gui.UIPadding_13.PaddingBottom = UDim.new(0, 4)
-        Gui.UIPadding_13.PaddingLeft = UDim.new(0, 8)
-        Gui.UIPadding_13.PaddingRight = UDim.new(0, 4)
+        Gui.UIPadding_13.PaddingLeft = UDim.new(0, 2)
+        Gui.UIPadding_13.PaddingRight = UDim.new(0, 2)
         Gui.UIPadding_13.PaddingTop = UDim.new(0, 4)
 
-        Gui.UICorner_20.CornerRadius = UDim.new(0, 10)
+        Gui.UICorner_20.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_20.Parent = Gui.Main
 
         Gui.UIAspectRatioConstraint_14.Parent = Gui.Main
@@ -3060,12 +3122,12 @@ local function getObjects()
 
         Gui.Notification_2.Name = "Notification"
         Gui.Notification_2.Parent = Gui.Main
-        Gui.Notification_2.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        Gui.Notification_2.BackgroundColor3 = Color3.fromRGB(21, 22, 28)
         Gui.Notification_2.BorderSizePixel = 0
         Gui.Notification_2.Size = UDim2.new(1, 0, 1, 0)
         Gui.Notification_2.ZIndex = 20
 
-        Gui.UICorner_21.CornerRadius = UDim.new(0, 10)
+        Gui.UICorner_21.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_21.Parent = Gui.Notification_2
 
         Gui.Prompt.Name = "Prompt"
@@ -3077,11 +3139,18 @@ local function getObjects()
 
         Gui.Main_2.Name = "Main"
         Gui.Main_2.Parent = Gui.Prompt
-        Gui.Main_2.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+        Gui.Main_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Main_2.BorderSizePixel = 0
         Gui.Main_2.Size = UDim2.new(1, 0, 1, 0)
 
-        Gui.UICorner_22.CornerRadius = UDim.new(0, 10)
+        Gui.PromptGradient.Parent = Gui.Main_2
+        Gui.PromptGradient.Rotation = 90
+        Gui.PromptGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(32, 33, 42)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(20, 21, 27))
+        })
+
+        Gui.UICorner_22.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_22.Parent = Gui.Main_2
 
         Gui.DropShadowHolder_16.Name = "DropShadowHolder"
@@ -3096,12 +3165,12 @@ local function getObjects()
         Gui.DropShadow_18.AnchorPoint = Vector2.new(0.5, 0.5)
         Gui.DropShadow_18.BackgroundTransparency = 1.000
         Gui.DropShadow_18.BorderSizePixel = 0
-        Gui.DropShadow_18.Position = UDim2.new(0.5, 0, 0.5, 0)
-        Gui.DropShadow_18.Size = UDim2.new(1, 47, 1, 47)
+        Gui.DropShadow_18.Position = UDim2.new(0.5, 0, 0.5, 4)
+        Gui.DropShadow_18.Size = UDim2.new(1, 30, 1, 30)
         Gui.DropShadow_18.ZIndex = 0
         Gui.DropShadow_18.Image = "rbxassetid://6014261993"
         Gui.DropShadow_18.ImageColor3 = Color3.fromRGB(0, 0, 0)
-        Gui.DropShadow_18.ImageTransparency = 0.500
+        Gui.DropShadow_18.ImageTransparency = 0.600
         Gui.DropShadow_18.ScaleType = Enum.ScaleType.Slice
         Gui.DropShadow_18.SliceCenter = Rect.new(49, 49, 450, 450)
 
@@ -3111,26 +3180,57 @@ local function getObjects()
         Gui.Content_11.BackgroundTransparency = 1.000
         Gui.Content_11.Size = UDim2.new(1, 0, 1, 0)
 
+        Gui.PromptContentPadding.Parent = Gui.Content_11
+        Gui.PromptContentPadding.PaddingLeft = UDim.new(0, 10)
+        Gui.PromptContentPadding.PaddingRight = UDim.new(0, 4)
+
         Gui.UIListLayout_28.Parent = Gui.Content_11
         Gui.UIListLayout_28.FillDirection = Enum.FillDirection.Horizontal
         Gui.UIListLayout_28.SortOrder = Enum.SortOrder.LayoutOrder
         Gui.UIListLayout_28.VerticalAlignment = Enum.VerticalAlignment.Center
-        Gui.UIListLayout_28.Padding = UDim.new(0.0299999993, 0)
+        Gui.UIListLayout_28.Padding = UDim.new(0, 6)
+
+        Gui.PromptAccent.Name = "Accent"
+        Gui.PromptAccent.Parent = Gui.Content_11
+        Gui.PromptAccent.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Gui.PromptAccent.BorderSizePixel = 0
+        Gui.PromptAccent.LayoutOrder = -3
+        Gui.PromptAccent.Size = UDim2.new(0, 3, 1, -16)
+        Gui.PromptAccent.ZIndex = 12
+
+        Gui.PromptAccentCorner.CornerRadius = UDim.new(1, 0)
+        Gui.PromptAccentCorner.Parent = Gui.PromptAccent
+
+        Gui.PromptAccentGradient.Parent = Gui.PromptAccent
+        Gui.PromptAccentGradient.Rotation = 90
+        Gui.PromptAccentGradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(126, 134, 235)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(83, 87, 158))
+        })
 
         Gui.Line_5.Name = "Line"
         Gui.Line_5.Parent = Gui.Content_11
-        Gui.Line_5.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        Gui.Line_5.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Line_5.BorderSizePixel = 0
         Gui.Line_5.LayoutOrder = -1
-        Gui.Line_5.Size = UDim2.new(0, 1, 1, 0)
+        Gui.Line_5.Size = UDim2.new(0, 1, 0.55, 0)
         Gui.Line_5.ZIndex = 11
+
+        Gui.PromptLineGradient.Parent = Gui.Line_5
+        Gui.PromptLineGradient.Rotation = 90
+        Gui.PromptLineGradient.Color = ColorSequence.new(Color3.fromRGB(72, 75, 95))
+        Gui.PromptLineGradient.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 1),
+            NumberSequenceKeypoint.new(0.5, 0.15),
+            NumberSequenceKeypoint.new(1, 1)
+        })
 
         Gui.Buttons_3.Name = "Buttons"
         Gui.Buttons_3.Parent = Gui.Content_11
         Gui.Buttons_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        Gui.Buttons_3.BackgroundTransparency = .999
+        Gui.Buttons_3.BackgroundTransparency = 1.000
         Gui.Buttons_3.BorderSizePixel = 0
-        Gui.Buttons_3.Size = UDim2.new(0.189999998, -1, 1, 0)
+        Gui.Buttons_3.Size = UDim2.new(0.16, 0, 1, 0)
 
         Gui.UIListLayout_29.Parent = Gui.Buttons_3
         Gui.UIListLayout_29.HorizontalAlignment = Enum.HorizontalAlignment.Center
@@ -3143,11 +3243,11 @@ local function getObjects()
         Gui.Accept.AnchorPoint = Vector2.new(0.5, 0.5)
         Gui.Accept.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Accept.BackgroundTransparency = 1.000
-        Gui.Accept.BorderColor3 = Color3.fromRGB(27, 42, 53)
-        Gui.Accept.Position = UDim2.new(0.100000001, 0, 0.5, 0)
-        Gui.Accept.Size = UDim2.new(0.5, 0, 1, 0)
-        Gui.Accept.ZIndex = 203
+        Gui.Accept.Position = UDim2.new(0.5, 0, 0.5, 0)
+        Gui.Accept.Size = UDim2.new(1, 0, 1, 0)
+        Gui.Accept.ZIndex = 12
         Gui.Accept.Image = "rbxassetid://7072706620"
+        Gui.Accept.ImageColor3 = Color3.fromRGB(118, 190, 136)
         Gui.Accept.ScaleType = Enum.ScaleType.Fit
 
         Gui.UIAspectRatioConstraint_15.Parent = Gui.Accept
@@ -3157,11 +3257,11 @@ local function getObjects()
         Gui.Close_2.AnchorPoint = Vector2.new(0.5, 0.5)
         Gui.Close_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Close_2.BackgroundTransparency = 1.000
-        Gui.Close_2.BorderColor3 = Color3.fromRGB(27, 42, 53)
-        Gui.Close_2.Position = UDim2.new(0.100000001, 0, 0.5, 0)
-        Gui.Close_2.Size = UDim2.new(0.5, 0, 1, 0)
-        Gui.Close_2.ZIndex = 203
+        Gui.Close_2.Position = UDim2.new(0.5, 0, 0.5, 0)
+        Gui.Close_2.Size = UDim2.new(1, 0, 1, 0)
+        Gui.Close_2.ZIndex = 12
         Gui.Close_2.Image = "rbxassetid://7072725342"
+        Gui.Close_2.ImageColor3 = Color3.fromRGB(205, 120, 126)
         Gui.Close_2.ScaleType = Enum.ScaleType.Fit
 
         Gui.UIAspectRatioConstraint_16.Parent = Gui.Close_2
@@ -3171,52 +3271,59 @@ local function getObjects()
         Gui.Text_10.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Text_10.BackgroundTransparency = 1.000
         Gui.Text_10.LayoutOrder = -2
-        Gui.Text_10.Size = UDim2.new(0.75, 0, 1, 0)
+        Gui.Text_10.Size = UDim2.new(0.68, 0, 1, 0)
 
         Gui.UIListLayout_30.Parent = Gui.Text_10
         Gui.UIListLayout_30.SortOrder = Enum.SortOrder.LayoutOrder
         Gui.UIListLayout_30.VerticalAlignment = Enum.VerticalAlignment.Center
+        Gui.UIListLayout_30.Padding = UDim.new(0, 2)
 
         Gui.Title_5.Name = "Title"
         Gui.Title_5.Parent = Gui.Text_10
         Gui.Title_5.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Title_5.BackgroundTransparency = 1.000
-        Gui.Title_5.Size = UDim2.new(1, 0, 0.400000006, 0)
+        Gui.Title_5.Size = UDim2.new(1, 0, 0.38, 0)
         Gui.Title_5.ZIndex = 12
-        Gui.Title_5.Font = Enum.Font.GothamSemibold
+        Gui.Title_5.Font = Enum.Font.GothamBold
         Gui.Title_5.Text = "Prompt"
-        Gui.Title_5.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Gui.Title_5.TextSize = 20.000
+        Gui.Title_5.TextColor3 = Color3.fromRGB(235, 238, 245)
+        Gui.Title_5.TextScaled = true
         Gui.Title_5.TextWrapped = true
         Gui.Title_5.TextXAlignment = Enum.TextXAlignment.Left
+
+        Gui.PromptTitleConstraint.Parent = Gui.Title_5
+        Gui.PromptTitleConstraint.MaxTextSize = 17
 
         Gui.Desc_3.Name = "Desc"
         Gui.Desc_3.Parent = Gui.Text_10
         Gui.Desc_3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
         Gui.Desc_3.BackgroundTransparency = 1.000
-        Gui.Desc_3.Size = UDim2.new(1, 0, 0.400000006, 0)
+        Gui.Desc_3.Size = UDim2.new(1, 0, 0.34, 0)
         Gui.Desc_3.ZIndex = 12
         Gui.Desc_3.Font = Enum.Font.Gotham
         Gui.Desc_3.Text = "Would you like to start autofarm?"
-        Gui.Desc_3.TextColor3 = Color3.fromRGB(150, 150, 150)
-        Gui.Desc_3.TextSize = 14.000
+        Gui.Desc_3.TextColor3 = Color3.fromRGB(148, 153, 170)
+        Gui.Desc_3.TextScaled = true
         Gui.Desc_3.TextWrapped = true
         Gui.Desc_3.TextXAlignment = Enum.TextXAlignment.Left
 
+        Gui.PromptDescConstraint.Parent = Gui.Desc_3
+        Gui.PromptDescConstraint.MaxTextSize = 13
+
         Gui.UIPadding_14.Parent = Gui.Text_10
         Gui.UIPadding_14.PaddingBottom = UDim.new(0, 4)
-        Gui.UIPadding_14.PaddingLeft = UDim.new(0, 8)
-        Gui.UIPadding_14.PaddingRight = UDim.new(0, 4)
+        Gui.UIPadding_14.PaddingLeft = UDim.new(0, 2)
+        Gui.UIPadding_14.PaddingRight = UDim.new(0, 2)
         Gui.UIPadding_14.PaddingTop = UDim.new(0, 4)
 
         Gui.Notification_3.Name = "Notification"
         Gui.Notification_3.Parent = Gui.Main_2
-        Gui.Notification_3.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        Gui.Notification_3.BackgroundColor3 = Color3.fromRGB(21, 22, 28)
         Gui.Notification_3.BorderSizePixel = 0
         Gui.Notification_3.Size = UDim2.new(1, 0, 1, 0)
         Gui.Notification_3.ZIndex = 20
 
-        Gui.UICorner_23.CornerRadius = UDim.new(0, 10)
+        Gui.UICorner_23.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_23.Parent = Gui.Notification_3
 
         Gui.UIAspectRatioConstraint_17.Parent = Gui.Main_2
@@ -4546,7 +4653,7 @@ local function updateDropdown()
 
         Option.Name = v
         Option.Parent = element.OptionHolder.ContentHolder.Content
-        Option.LayoutOrder = i
+        Option.LayoutOrder = counter
         Option.Size = UDim2.fromScale(1, 1 / totalCounter)
 
         Option.Current.Text = v
@@ -5142,7 +5249,7 @@ table.insert(
                     Notif.Content.Buttons.Close,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(100, 100, 100)
+                        ImageColor3 = Color3.fromRGB(255, 255, 255)
                     }
                 ):Play()
             elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -5165,7 +5272,7 @@ table.insert(
                     Notif.Content.Buttons.Close,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(255, 255, 255)
+                        ImageColor3 = Color3.fromRGB(150, 155, 172)
                     }
                 ):Play()
             end
@@ -5324,7 +5431,7 @@ table.insert(
                     Close.Button,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(100, 100, 100)
+                        ImageColor3 = Color3.fromRGB(245, 160, 166)
                     }
                 ):Play()
             elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -5347,7 +5454,7 @@ table.insert(
                     Close.Button,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(255, 255, 255)
+                        ImageColor3 = Color3.fromRGB(205, 120, 126)
                     }
                 ):Play()
             end
@@ -5368,7 +5475,7 @@ table.insert(
                     Accept.Button,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(100, 100, 100)
+                        ImageColor3 = Color3.fromRGB(170, 235, 185)
                     }
                 ):Play()
             elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -5392,7 +5499,7 @@ table.insert(
                     Accept.Button,
                     UILibrary.TweenInfo,
                     {
-                        ImageColor3 = Color3.fromRGB(255, 255, 255)
+                        ImageColor3 = Color3.fromRGB(118, 190, 136)
                     }
                 ):Play()
             end
