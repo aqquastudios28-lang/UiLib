@@ -974,7 +974,7 @@ local function getObjects()
         Gui.Button.Size = UDim2.new(1, 0, 1, 0)
         Gui.Button.ZIndex = 110
 
-        Gui.UICorner.CornerRadius = UDim.new(0.100000001, 0)
+        Gui.UICorner.CornerRadius = UDim.new(0, 8)
         Gui.UICorner.Parent = Gui.Button
 
         Gui.DropShadowHolder.Name = "DropShadowHolder"
@@ -1022,7 +1022,7 @@ local function getObjects()
         Gui.HoverFrame.Size = UDim2.new(1, 0, 1, 0)
         Gui.HoverFrame.ZIndex = 111
 
-        Gui.UICorner_2.CornerRadius = UDim.new(0.100000001, 0)
+        Gui.UICorner_2.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_2.Parent = Gui.HoverFrame
 
         Gui.Checkbox.Name = "Checkbox"
@@ -1043,7 +1043,7 @@ local function getObjects()
         Gui.Selection.Position = UDim2.new(0.5, 0, 0.5, 0)
         Gui.Selection.ZIndex = 112
 
-        Gui.UICorner_3.CornerRadius = UDim.new(0.200000003, 0)
+        Gui.UICorner_3.CornerRadius = UDim.new(0, 6)
         Gui.UICorner_3.Parent = Gui.Selection
 
         Gui.UIGradient.Color =
@@ -1062,7 +1062,7 @@ local function getObjects()
         Gui.HoverFrame_2.Size = UDim2.new(1, 0, 1, 0)
         Gui.HoverFrame_2.ZIndex = 111
 
-        Gui.UICorner_4.CornerRadius = UDim.new(0.200000003, 0)
+        Gui.UICorner_4.CornerRadius = UDim.new(0, 6)
         Gui.UICorner_4.Parent = Gui.Checkbox
 
         Gui.Toggle.Name = "Toggle"
@@ -1087,6 +1087,7 @@ local function getObjects()
         Gui.UIGradient_2.Parent = Gui.Toggle
 
         Gui.UICorner_5.Parent = Gui.Toggle
+        Gui.UICorner_5.CornerRadius = UDim.new(0, 8)
 
         Gui.DropShadowHolder_2.Name = "DropShadowHolder"
         Gui.DropShadowHolder_2.Parent = Gui.Toggle
@@ -1155,6 +1156,7 @@ local function getObjects()
         Gui.UIGradient_3.Parent = Gui.HoverFrame_3
 
         Gui.UICorner_7.Parent = Gui.HoverFrame_3
+        Gui.UICorner_7.CornerRadius = UDim.new(0, 10)
 
         Gui.Textbox.Name = "Textbox"
         Gui.Textbox.Parent = Gui.Cheats
@@ -1187,7 +1189,7 @@ local function getObjects()
         Gui.DropShadow_3.ScaleType = Enum.ScaleType.Slice
         Gui.DropShadow_3.SliceCenter = Rect.new(49, 49, 450, 450)
 
-        Gui.UICorner_8.CornerRadius = UDim.new(0.100000001, 0)
+        Gui.UICorner_8.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_8.Parent = Gui.Textbox
 
         Gui.Text_2.Name = "Text"
@@ -1219,7 +1221,7 @@ local function getObjects()
         Gui.Keybind.Size = UDim2.new(0.200000003, 0, 1, 0)
         Gui.Keybind.ZIndex = 110
 
-        Gui.UICorner_9.CornerRadius = UDim.new(0.100000001, 0)
+        Gui.UICorner_9.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_9.Parent = Gui.Keybind
 
         Gui.DropShadowHolder_4.Name = "DropShadowHolder"
@@ -1264,7 +1266,7 @@ local function getObjects()
         Gui.HoverFrame_4.Size = UDim2.new(1, 0, 1, 0)
         Gui.HoverFrame_4.ZIndex = 111
 
-        Gui.UICorner_10.CornerRadius = UDim.new(0.100000001, 0)
+        Gui.UICorner_10.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_10.Parent = Gui.HoverFrame_4
 
         Gui.ColorPicker.Name = "ColorPicker"
@@ -1430,7 +1432,7 @@ local function getObjects()
         Gui.KeyInput.Size = UDim2.new(0.4, 0, 0.699999988, 0)
         Gui.KeyInput.ZIndex = 110
 
-        Gui.UICorner_13.CornerRadius = UDim.new(0.100000001, 0)
+        Gui.UICorner_13.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_13.Parent = Gui.KeyInput
 
         Gui.DropShadowHolder_7.Name = "DropShadowHolder"
@@ -1491,7 +1493,7 @@ local function getObjects()
         Gui.MainHolder.Size = UDim2.new(1, 0, 0.850000024, 0)
         Gui.MainHolder.ZIndex = 111
 
-        Gui.UICorner_14.CornerRadius = UDim.new(0.100000001, 0)
+        Gui.UICorner_14.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_14.Parent = Gui.MainHolder
 
         Gui.DropShadowHolder_8.Name = "DropShadowHolder"
@@ -1607,14 +1609,14 @@ local function getObjects()
         Gui.DropShadow_9.ScaleType = Enum.ScaleType.Slice
         Gui.DropShadow_9.SliceCenter = Rect.new(49, 49, 450, 450)
 
-        Gui.UICorner_15.CornerRadius = UDim.new(0.0500000007, 0)
+        Gui.UICorner_15.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_15.Parent = Gui.Cover
 
         Gui.UIPadding_4.Parent = Gui.OptionHolder
         Gui.UIPadding_4.PaddingLeft = UDim.new(0, 2)
         Gui.UIPadding_4.PaddingRight = UDim.new(0, 2)
 
-        Gui.UICorner_16.CornerRadius = UDim.new(0.0500000007, 0)
+        Gui.UICorner_16.CornerRadius = UDim.new(0, 8)
         Gui.UICorner_16.Parent = Gui.OptionHolder
 
         Gui.ContentHolder.Name = "ContentHolder"
@@ -1925,7 +1927,7 @@ local function getObjects()
         Gui.DropShadow_10.ScaleType = Enum.ScaleType.Slice
         Gui.DropShadow_10.SliceCenter = Rect.new(49, 49, 450, 450)
 
-        Gui.UICorner_17.CornerRadius = UDim.new(0.0199999996, 0)
+        Gui.UICorner_17.CornerRadius = UDim.new(0, 14)
         Gui.UICorner_17.Parent = Gui.MainUI
 
         Gui.Sidebar.Name = "Sidebar"
@@ -2609,7 +2611,7 @@ local function getObjects()
         }
         Gui.UIGradient_8.Parent = Gui.Shadow_3
 
-        Gui.UICorner_18.CornerRadius = UDim.new(0.0199999996, 0)
+        Gui.UICorner_18.CornerRadius = UDim.new(0, 12)
         Gui.UICorner_18.Parent = Gui.Shadow_3
 
         Gui.Notifications.Name = "Notifications"
@@ -2781,7 +2783,7 @@ local function getObjects()
         Gui.UITextSizeConstraint_5.MaxTextSize = 14
         Gui.UITextSizeConstraint_5.MinTextSize = 10
 
-        Gui.UICorner_19.CornerRadius = UDim.new(0, 2)
+        Gui.UICorner_19.CornerRadius = UDim.new(0, 10)
         Gui.UICorner_19.Parent = Gui.Border
 
         Gui.Content_8.Name = "Content"
@@ -3005,7 +3007,7 @@ local function getObjects()
         Gui.UIPadding_13.PaddingRight = UDim.new(0, 4)
         Gui.UIPadding_13.PaddingTop = UDim.new(0, 4)
 
-        Gui.UICorner_20.CornerRadius = UDim.new(0.0500000007, 0)
+        Gui.UICorner_20.CornerRadius = UDim.new(0, 10)
         Gui.UICorner_20.Parent = Gui.Main
 
         Gui.UIAspectRatioConstraint_14.Parent = Gui.Main
@@ -3018,7 +3020,7 @@ local function getObjects()
         Gui.Notification_2.Size = UDim2.new(1, 0, 1, 0)
         Gui.Notification_2.ZIndex = 20
 
-        Gui.UICorner_21.CornerRadius = UDim.new(0.0500000007, 0)
+        Gui.UICorner_21.CornerRadius = UDim.new(0, 10)
         Gui.UICorner_21.Parent = Gui.Notification_2
 
         Gui.Prompt.Name = "Prompt"
@@ -3034,7 +3036,7 @@ local function getObjects()
         Gui.Main_2.BorderSizePixel = 0
         Gui.Main_2.Size = UDim2.new(1, 0, 1, 0)
 
-        Gui.UICorner_22.CornerRadius = UDim.new(0.0500000007, 0)
+        Gui.UICorner_22.CornerRadius = UDim.new(0, 10)
         Gui.UICorner_22.Parent = Gui.Main_2
 
         Gui.DropShadowHolder_16.Name = "DropShadowHolder"
@@ -3169,7 +3171,7 @@ local function getObjects()
         Gui.Notification_3.Size = UDim2.new(1, 0, 1, 0)
         Gui.Notification_3.ZIndex = 20
 
-        Gui.UICorner_23.CornerRadius = UDim.new(0.0500000007, 0)
+        Gui.UICorner_23.CornerRadius = UDim.new(0, 10)
         Gui.UICorner_23.Parent = Gui.Notification_3
 
         Gui.UIAspectRatioConstraint_17.Parent = Gui.Main_2
