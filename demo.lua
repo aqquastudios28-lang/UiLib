@@ -1,9 +1,9 @@
 -- demo.lua
 -- Comprehensive demo script for QwenUILib
 
--- 1. Load the UI Library
--- (Replace URL with your raw github user content link for testing, or run locally)
-local UILibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/main/build/bundle_plain.lua"))()
+-- Uses raw.githack.com proxy to bypass executor-level HTTP caching
+local UILibrary = loadstring(game:HttpGet("https://raw.githack.com/aqquastudios28-lang/UiLib/main/build/bundle_plain.lua"))()
+
 
 -- 2. Create the window
 local Window = UILibrary.new(
