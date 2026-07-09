@@ -6,6 +6,7 @@ local modules = {}
 local cache = {}
 
 local function custom_require(name)
+    print("  [DEBUG] Requiring module: " .. tostring(name))
     if cache[name] then
         return cache[name]
     end
@@ -13,10 +14,13 @@ local function custom_require(name)
     if not func then
         error("Module not found: " .. tostring(name))
     end
+    print("  [DEBUG] Executing module: " .. tostring(name))
     local result = func()
     cache[name] = result
+    print("  [DEBUG] Module loaded: " .. tostring(name))
     return result
 end
+
 
 modules["button"] = function()
 return function(UILibrary)
