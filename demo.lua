@@ -1,12 +1,11 @@
 -- demo.lua
--- Comprehensive demo script for QwenUILib with extensive execution tracing
+-- Comprehensive, feature-complete demo script for QwenUILib
 
 print("[DEBUG] 1. Initializing demo script...")
 
-local url = "https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/a2c83be2da8d1b7b9bb1567464a9ee6deb845276/build/bundle_plain.lua"
+-- Load the library from the latest sandbox-fixed, redesigned UI commit to bypass all CDN caching
+local url = "https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/a21dd3497c643bf03da8e980801b0d80d2a23c8c/build/bundle_plain.lua"
 print("[DEBUG] 2. Requesting raw UI Library content from URL:", url)
-
-
 
 local success, content = pcall(function()
     return game:HttpGet(url)
@@ -32,162 +31,290 @@ end
 
 print("[DEBUG] 5. Library loaded successfully! Type of UILibrary:", type(UILibrary))
 
+-- 1. Create the Window
 print("[DEBUG] 6. Creating UI Window...")
 local Window = UILibrary.new(
-    "QwenUILib Demo",      -- Game Name
-    "Cerbis",              -- Username / UserID Display
-    "Premium Developer"    -- Rank / Admin tag
+    "QwenUILib Redesign",  -- Game/Hub Name
+    "Cerbis",              -- Username Display
+    "Premium Developer"    -- Rank Display
 )
 print("[DEBUG] Window created successfully!")
 
-print("[DEBUG] 7. Adjusting animation speed...")
-Window:setAnimSpeed(120)
+-- Adjust animation speed (default 100)
+Window:setAnimSpeed(125)
 
-print("[DEBUG] 8. Sending welcome Notification...")
+-- 2. Send Initial Welcome Notification
+print("[DEBUG] 7. Sending welcome notification...")
 Window:Notification({
-    Title = "Welcome!",
-    Desc = "Modern & Rounded UI loaded successfully.",
-    expire = 5
+    Title = "Library Ready!",
+    Desc = " Redesigned glassmorphic UI loaded successfully.",
+    expire = 6
 })
 
-print("[DEBUG] 9. Creating category 'Main'...")
-local MainCategory = Window:Category("Main", "rbxassetid://8349124615")
-print("[DEBUG] Category 'Main' created successfully.")
+-- 3. Create Main Categories (Main Column 1 tabs in the left-most sidebar)
+print("[DEBUG] 8. Creating main categories...")
+local MainCategory = Window:Category("Combat", "rbxassetid://8349124615")
+local SettingsCategory = Window:Category("Settings", "rbxassetid://7072725342")
 
-print("[DEBUG] 10. Creating 'Autofarm' tab button...")
-local MainTab = MainCategory:Button("Autofarm", "rbxassetid://7072706663")
-print("[DEBUG] Tab 'Autofarm' created successfully.")
+-- 4. Create Category Buttons (Subtabs in Column 2 under Main Category)
+print("[DEBUG] 9. Creating subtabs under Combat category...")
+local CombatTab = MainCategory:Button("Combat Cheats", "rbxassetid://7072706663")
+local MovementTab = MainCategory:Button("Movement Cheats", "rbxassetid://8343977772")
 
-print("[DEBUG] 11. Creating 'Config' tab button...")
-local ConfigTab = MainCategory:Button("Config", "rbxassetid://7072725342")
-print("[DEBUG] Tab 'Config' created successfully.")
+print("[DEBUG] 10. Creating subtabs under Settings category...")
+local VisualsTab = SettingsCategory:Button("UI Theme", "rbxassetid://7072725342")
+local SystemTab = SettingsCategory:Button("Config", "rbxassetid://7072725342")
 
-print("[DEBUG] 12. Creating left section 'Farming Controls' inside Autofarm tab...")
-local SectionLeft = MainTab:Section("Farming Controls", "Left")
-print("[DEBUG] Section 'Farming Controls' created.")
+-- 5. Build COMBAT TAB Sections and Controls
+print("[DEBUG] 11. Building Combat Tab sections...")
+local AimbotSection = CombatTab:Section("Aimbot Settings", "Left")
+local TriggerSection = CombatTab:Section("Triggerbot Settings", "Right")
 
-print("[DEBUG] 13. Creating right section 'Utility Settings' inside Autofarm tab...")
-local SectionRight = MainTab:Section("Utility Settings", "Right")
-print("[DEBUG] Section 'Utility Settings' created.")
-
-print("[DEBUG] 14. Adding Auto Farm toggle to left section...")
-SectionLeft:Toggle({
-    Title = "Auto Farm",
-    Description = "Automatically harvest resources.",
+-- Aimbot Section Controls
+AimbotSection:Toggle({
+    Title = "Enable Aimbot",
+    Description = "Automatically locks onto target players.",
     Default = false
 }, function(state)
-    print("[EVENT] Auto Farm state changed to:", state)
+    print("[EVENT] Aimbot Enabled:", state)
 end)
-print("[DEBUG] Toggle 'Auto Farm' added.")
 
-print("[DEBUG] 15. Adding Speed Multiplier slider to left section...")
-SectionLeft:Slider({
-    Title = "Speed Multiplier",
-    Min = 1,
-    Max = 100,
-    Default = 50
+AimbotSection:Slider({
+    Title = "Aimbot FOV",
+    Min = 10,
+    Max = 360,
+    Default = 90
 }, function(value)
-    print("[EVENT] Speed Multiplier value changed to:", value)
+    print("[EVENT] Aimbot FOV set to:", value)
 end)
-print("[DEBUG] Slider 'Speed Multiplier' added.")
 
-print("[DEBUG] 16. Adding Target Mob dropdown to left section...")
-SectionLeft:Dropdown({
-    Title = "Target Mob",
+AimbotSection:Dropdown({
+    Title = "Aimbot Target Part",
     Options = {
-        ["Goblin"] = true,
-        ["Orc"] = false,
-        ["Dragon"] = false
+        ["Head"] = true,
+        ["HumanoidRootPart"] = false,
+        ["UpperTorso"] = false
     },
     Multi = false
 }, function(options)
-    for mob, selected in pairs(options) do
+    for part, selected in pairs(options) do
         if selected then
-            print("[EVENT] Selected Target Mob:", mob)
+            print("[EVENT] Aimbot Target Part set to:", part)
         end
     end
 end)
-print("[DEBUG] Dropdown 'Target Mob' added.")
 
-print("[DEBUG] 17. Adding Instant Heal button to right section...")
-SectionRight:Button({
-    Title = "Instant Heal",
-    Description = "Instantly restore health points.",
-    ButtonName = "Execute Heal"
+AimbotSection:Checkbox({
+    Title = "Show FOV Circle",
+    Default = true
+}, function(state)
+    print("[EVENT] Show FOV Circle:", state)
+end)
+
+-- Triggerbot Section Controls
+TriggerSection:Toggle({
+    Title = "Enable Triggerbot",
+    Description = "Automatically shoots when a target is in crosshair.",
+    Default = false
+}, function(state)
+    print("[EVENT] Triggerbot Enabled:", state)
+end)
+
+TriggerSection:Slider({
+    Title = "Trigger Delay (ms)",
+    Min = 0,
+    Max = 500,
+    Default = 50
+}, function(value)
+    print("[EVENT] Trigger Delay set to:", value)
+end)
+
+TriggerSection:Dropdown({
+    Title = "Weapon Group Filter",
+    Options = {
+        ["Rifles"] = true,
+        ["Pistols"] = true,
+        ["Snipers"] = false,
+        ["Shotguns"] = false
+    },
+    Multi = true
+}, function(options)
+    print("[EVENT] Selected Weapon Groups:")
+    for group, enabled in pairs(options) do
+        print("  - " .. group .. ":", enabled)
+    end
+end)
+
+TriggerSection:Keybind({
+    Title = "Triggerbot Keybind",
+    Default = Enum.KeyCode.V
 }, function()
-    print("[EVENT] Button 'Instant Heal' clicked!")
+    print("[EVENT] Triggerbot Keybind pressed!")
+end)
+
+-- 6. Build MOVEMENT TAB Sections and Controls
+print("[DEBUG] 12. Building Movement Tab sections...")
+local PhysicsSection = MovementTab:Section("Physics Modifiers", "Left")
+local TeleportSection = MovementTab:Section("Utility Teleports", "Right")
+
+PhysicsSection:Slider({
+    Title = "WalkSpeed Hack",
+    Min = 16,
+    Max = 150,
+    Default = 16
+}, function(speed)
+    print("[EVENT] WalkSpeed changed to:", speed)
+end)
+
+PhysicsSection:Slider({
+    Title = "JumpPower Hack",
+    Min = 50,
+    Max = 300,
+    Default = 50
+}, function(power)
+    print("[EVENT] JumpPower changed to:", power)
+end)
+
+PhysicsSection:Toggle({
+    Title = "Infinite Jump",
+    Description = "Allows infinite jumping in mid-air.",
+    Default = false
+}, function(state)
+    print("[EVENT] Infinite Jump:", state)
+end)
+
+PhysicsSection:Checkbox({
+    Title = "Noclip Active",
+    Default = false
+}, function(state)
+    print("[EVENT] Noclip state set to:", state)
+end)
+
+TeleportSection:Button({
+    Title = "Teleport to Spawn",
+    Description = "Teleport instantly to the world spawn location.",
+    ButtonName = "Teleport Now"
+}, function()
+    print("[EVENT] Teleporting player to spawn...")
     Window:Notification({
-        Title = "Heal Triggered",
-        Desc = "Restored 100% Health.",
+        Title = "Teleported",
+        Desc = "Successfully moved to World Spawn point.",
         expire = 3
     })
 end)
-print("[DEBUG] Button 'Instant Heal' added.")
 
-print("[DEBUG] 18. Adding Toggle UI Key keybind to right section...")
-SectionRight:Keybind({
-    Title = "Toggle UI Key",
-    Default = Enum.KeyCode.RightControl
-}, function()
-    print("[EVENT] Keybind pressed!")
+TeleportSection:Textbox({
+    Title = "Teleport Player Name",
+    Default = "Username"
+}, function(text)
+    print("[EVENT] Target Teleport player username changed to:", text)
 end)
-print("[DEBUG] Keybind 'Toggle UI Key' added.")
 
-print("[DEBUG] 19. Adding Accent Color colorpicker to right section...")
-SectionRight:ColorPicker({
-    Title = "Accent Color",
+TeleportSection:Button({
+    Title = "Teleport to Target Player",
+    Description = "Move directly to the targeted player.",
+    ButtonName = "Go to Player"
+}, function()
+    print("[EVENT] Attempting teleport to target player...")
+end)
+
+-- 7. Build THEME TAB Sections and Controls
+print("[DEBUG] 13. Building UI Theme Tab sections...")
+local AccentSection = VisualsTab:Section("Theme Accent", "Left")
+
+AccentSection:ColorPicker({
+    Title = "Primary Accent Color",
     Default = Color3.fromRGB(134, 142, 255)
 }, function(color)
-    print("[EVENT] Color selected:", color)
+    print("[EVENT] Primary Accent color changed to:", color)
 end)
-print("[DEBUG] ColorPicker 'Accent Color' added.")
 
-print("[DEBUG] 20. Creating left section 'General Config' inside Config tab...")
-local ConfigSection = ConfigTab:Section("General Config", "Left")
-print("[DEBUG] Section 'General Config' created.")
-
-print("[DEBUG] 21. Adding Save Config on Exit checkbox to Config tab...")
-ConfigSection:Checkbox({
-    Title = "Save Config on Exit",
-    Default = true
-}, function(state)
-    print("[EVENT] Save Config checkbox changed to:", state)
-end)
-print("[DEBUG] Checkbox 'Save Config on Exit' added.")
-
-print("[DEBUG] 22. Adding Custom Prefix textbox to Config tab...")
-ConfigSection:Textbox({
-    Title = "Custom Prefix",
-    Default = "!"
-}, function(text)
-    print("[EVENT] Prefix textbox changed to:", text)
-end)
-print("[DEBUG] Textbox 'Custom Prefix' added.")
-
-print("[DEBUG] 23. Starting prompt verification task (deferred)...")
-task.spawn(function()
-    print("[DEBUG] Prompt task started. Waiting 2 seconds before prompting...")
-    task.wait(2)
-    print("[DEBUG] Prompting user with Choice dialog...")
+AccentSection:Button({
+    Title = "Test Success Prompt",
+    Description = "Opens verification choice prompt dialog.",
+    ButtonName = "Trigger Prompt"
+}, function()
+    print("[DEBUG] Verification prompt opened manually.")
     local result = Window:Prompt({
-        Title = "Execution Check",
-        Desc = "Do you want to initialize the autofarm helper script?"
+        Title = "Theme Test",
+        Desc = "Do you want to confirm these changes?"
     })
     
-    print("[DEBUG] Prompt returned result:", result)
+    print("[DEBUG] Theme verification prompt returned:", result)
     if result then
         Window:Notification({
-            Title = "Success",
-            Desc = "Autofarm initialized.",
+            Title = "Theme Confirmed",
+            Desc = "UI Accent configuration successfully verified.",
             expire = 4
         })
     else
         Window:Notification({
             Title = "Cancelled",
-            Desc = "Initialization cancelled by player.",
+            Desc = "UI Accent verification cancelled.",
             expire = 4
         })
     end
 end)
 
-print("[DEBUG] 24. Demo script successfully loaded! Checking screen GUI...")
+-- 8. Build SYSTEM CONFIG TAB Sections and Controls
+print("[DEBUG] 14. Building Config Tab sections...")
+local ConfigSection = SystemTab:Section("Configuration Profiles", "Left")
+
+ConfigSection:Textbox({
+    Title = "Configuration Name",
+    Default = "default_profile"
+}, function(text)
+    print("[EVENT] Profile name set to:", text)
+end)
+
+ConfigSection:Button({
+    Title = "Save Config",
+    Description = "Write active options to config profile.",
+    ButtonName = "Save Now"
+}, function()
+    Window:Notification({
+        Title = "Profile Saved",
+        Desc = "Active configurations written successfully.",
+        expire = 3
+    })
+end)
+
+ConfigSection:Button({
+    Title = "Load Config",
+    Description = "Load saved configurations from profile.",
+    ButtonName = "Load Now"
+}, function()
+    Window:Notification({
+        Title = "Profile Loaded",
+        Desc = "UI configuration loaded successfully.",
+        expire = 3
+    })
+end)
+
+-- 9. Trigger Initial Delayed Prompt
+print("[DEBUG] 15. Scheduling initial delayed Choice Prompt...")
+task.spawn(function()
+    task.wait(3.5)
+    print("[DEBUG] Initial Choice Prompt triggered.")
+    local result = Window:Prompt({
+        Title = "Auto-Farm Choice",
+        Desc = "Would you like to initialize the Auto-Farm helper service?"
+    })
+    
+    print("[DEBUG] Initial Choice Prompt returned:", result)
+    if result then
+        Window:Notification({
+            Title = "Success",
+            Desc = "Auto-Farm helper initialized.",
+            expire = 4
+        })
+    else
+        Window:Notification({
+            Title = "Cancelled",
+            Desc = "Auto-Farm initialization aborted.",
+            expire = 4
+        })
+    end
+end)
+
+print("[DEBUG] 16. Demo script loaded completely and running!")
