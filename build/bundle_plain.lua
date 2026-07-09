@@ -3229,25 +3229,20 @@ local function getObjects()
 end
 
 local UIObjects = getObjects()
-UIObjects.Parent = script
-
-for i, v in pairs(script.UIObjects:GetChildren()) do
-    v.Parent = v.Parent.Parent
-end
-
-script.UIObjects:Destroy()
+local Objects = UIObjects:FindFirstChild("Objects")
+local Cheats = UIObjects:FindFirstChild("Cheats")
 
 function objGen.new(objectType, cheatName)
     if objectType == "Cheat" then
-        if script.Cheats:FindFirstChild(cheatName) then
-            return script.Cheats[cheatName]:Clone()
+        if Cheats:FindFirstChild(cheatName) then
+            return Cheats[cheatName]:Clone()
         else
             error("Invalid cheatType")
         end
     end
 
-    if script.Objects:FindFirstChild(objectType) then
-        return script.Objects[objectType]:Clone()
+    if Objects:FindFirstChild(objectType) then
+        return Objects[objectType]:Clone()
     else
         error("Invalid objectType")
     end
