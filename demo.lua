@@ -3,7 +3,7 @@
 
 print("[DEBUG] 1. Initializing demo script...")
 
-local url = "https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/6223788214c76f7300e2d32a552eb9854d8abe4e/build/bundle_plain.lua"
+local url = "https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/a2c83be2da8d1b7b9bb1567464a9ee6deb845276/build/bundle_plain.lua"
 print("[DEBUG] 2. Requesting raw UI Library content from URL:", url)
 
 
