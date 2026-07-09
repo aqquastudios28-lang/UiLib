@@ -1,156 +1,25 @@
--- QwenUILib Main Entrypoint
--- Premium Roblox UI Library - Awwwards-tier Design System
+local UILibrary = {}
 
-local QwenUI = {}
-QwenUI.__index = QwenUI
-
--- Services
-local Players = game:GetService("Players")
-
--- Core modules
-local Theme = require(script.Theme)
-local Utils = require(script.Utils)
-local Icons = require(script.Icons)
-local Window = require(script.Window)
-local Notification = require(script.Notification)
-
--- Component modules
-local Section = require(script.components.layout.Section)
-local Row = require(script.components.layout.Row)
-local Divider = require(script.components.layout.Divider)
-local Banner = require(script.components.layout.Banner)
-
-local Button = require(script.components.inputs.Button)
-local Toggle = require(script.components.inputs.Toggle)
-local Slider = require(script.components.inputs.Slider)
-local TextBox = require(script.components.inputs.TextBox)
-local Dropdown = require(script.components.inputs.Dropdown)
-local MultiDropdown = require(script.components.inputs.MultiDropdown)
-local ColorPicker = require(script.components.inputs.ColorPicker)
-local Keybind = require(script.components.inputs.Keybind)
-
-local Console = require(script.components.display.Console)
-local ProgressBar = require(script.components.display.ProgressBar)
-local Label = require(script.components.display.Label)
-local Paragraph = require(script.components.display.Paragraph)
-local Image = require(script.components.display.Image)
-
--- Library info
-QwenUI.Version = "1.0.0"
-QwenUI.Name = "QwenUILib"
-
--- Create a new window
-function QwenUI:CreateWindow(config: table)
-	config = config or {}
-	return Window.Create(config)
-end
-
--- Tab management helpers on window instances
-function QwenUI:AddTab(window, tabName: string, icon: string?)
-	if typeof(window) == "Instance" then
-		window = window:GetAttribute("QwenWindowState") or window
-	end
-	return window:AddTab(tabName, icon)
-end
-
-function QwenUI:SwitchTab(window, tabName: string)
-	if typeof(window) == "Instance" then
-		window = window:GetAttribute("QwenWindowState") or window
-	end
-	window:SwitchTab(tabName)
-end
-
--- Create a notification
-function QwenUI:Notify(message: string, type: string?, parent: Instance?)
-	return Notification.Create(message, type, parent)
-end
-
--- Theme management
-function QwenUI:GetTheme()
-	return Theme
-end
-
-function QwenUI:ApplyPreset(presetName: string)
-	Theme:ApplyPreset(presetName)
-	Icons:LoadPreset(presetName)
-end
-
--- Icons management
-function QwenUI:GetIcons()
-	return Icons
-end
-
-function QwenUI:RegisterIcon(name: string, assetId: string, weight: string?)
-	return Icons:Register(name, assetId, weight)
-end
-
--- Utilities access
-function QwenUI:GetUtils()
-	return Utils
-end
-
--- Component factory functions
-QwenUI.Section = Section
-QwenUI.Row = Row
-QwenUI.Divider = Divider
-QwenUI.Banner = Banner
-
-QwenUI.Button = Button
-QwenUI.Toggle = Toggle
-QwenUI.Slider = Slider
-QwenUI.TextBox = TextBox
-QwenUI.Dropdown = Dropdown
-QwenUI.MultiDropdown = MultiDropdown
-QwenUI.ColorPicker = ColorPicker
-QwenUI.Keybind = Keybind
-
-QwenUI.Console = Console
-QwenUI.ProgressBar = ProgressBar
-QwenUI.Label = Label
-QwenUI.Paragraph = Paragraph
-QwenUI.Image = Image
-
--- Preset configurations
-QwenUI.Presets = {
-	Default = {
-		Theme = Theme,
-		Icons = "Phosphor",
-	},
-	Light = {
-		Theme = Theme,
-		Icons = "Phosphor",
-		Colors = Theme.Light,
-	},
+-- Setup sub-tables/classes
+local UILibNames = {
+    "Window",
+    "Category",
+    "Button",
+    "Section"
 }
 
--- Apply a preset
-function QwenUI:UsePreset(presetName: string)
-	if self.Presets[presetName] then
-		local preset = self.Presets[presetName]
-		self:ApplyPreset(preset.Icons)
-		-- Additional preset logic can be added here
-	end
+for i, v in pairs(UILibNames) do
+    UILibrary[v] = {}
+    UILibrary[v].__index = UILibrary[v]
 end
 
--- Cleanup all windows
-function QwenUI:DestroyAll()
-	Window.DestroyAll()
-end
+-- Initialize TweenInfo dynamically shared across modules
+UILibrary.TweenInfo = TweenInfo.new(.4, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 
--- Initialize library
-function QwenUI:Init()
-	-- Set up default icon preset
-	Icons:LoadPreset("Phosphor")
+-- Require and initialize all modular method extensions
+require(script.window)(UILibrary)
+require(script.category)(UILibrary)
+require(script.button)(UILibrary)
+require(script.section)(UILibrary)
 
-	-- Print initialization message
-	print((tostring(self.Name) .. " v" .. tostring(self.Version) .. " initialized successfully!"))
-	print("Premium Roblox UI Library - Awwwards-tier Design System")
-	print("Components: Window, Notifications, Section, Row, Divider, Banner")
-	print("Inputs: Button, Toggle, Slider, TextBox, Dropdown, MultiDropdown, ColorPicker, Keybind")
-	print("Display: Console, ProgressBar, Label, Paragraph, Image")
-
-	return self
-end
-
--- Export module
-return QwenUI
+return UILibrary
