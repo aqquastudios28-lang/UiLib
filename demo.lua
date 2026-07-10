@@ -4,7 +4,7 @@
 print("[DEBUG] 1. Initializing demo script...")
 
 -- Load the library from the latest sandbox-fixed, redesigned UI commit to bypass all CDN caching
-local url = "https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/212b1f2d84f78244b4a014b7542de47fe4f29f7f/build/bundle_plain.lua"
+local url = "https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/a7d92b20080d3748b7495a159496418bb4d9b100/build/bundle_plain.lua"
 print("[DEBUG] 2. Requesting raw UI Library content from URL:", url)
 
 local success, content = pcall(function()
