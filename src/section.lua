@@ -4,6 +4,9 @@ return function(UILibrary)
 
     local TweenService = game:GetService("TweenService")
     local RunService = game:GetService("RunService")
+    local UserInputService = game:GetService("UserInputService")
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
 
 local cheatInfo = {
 ["Button"] = {
@@ -223,7 +226,7 @@ functions.setValue = function(new)
             UILibrary.TweenInfo,
             {
                 Size = UDim2.fromScale(0.5, 0.5),
-                BackgroundTransparency = 1.1
+                BackgroundTransparency = 1
             }
         ):Play()
     end
@@ -305,7 +308,7 @@ functions.setValue = function(new)
             element,
             UILibrary.TweenInfo,
             {
-                BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+                BackgroundColor3 = Color3.fromRGB(26, 27, 37)
             }
         ):Play()
     end
@@ -354,13 +357,15 @@ cheatBase.LayoutOrder = Utils.getLayoutOrder(self.Section.Border.Content)
 local element = cheatBase.Content.ElementContent.Textbox
 
 local function updateSize()
-    local textBounds = math.clamp(element.Text.TextBounds.X, 10, element.Parent.AbsoluteSize.X) + 20
+    --// the parent can report a 0 width before its first layout pass
+    local parentWidth = math.max(element.Parent.AbsoluteSize.X, 60)
+    local textBounds = math.clamp(element.Text.TextBounds.X, 10, parentWidth) + 20
 
     TweenService:Create(
         element,
         UILibrary.TweenInfo,
         {
-            Size = UDim2.fromScale(textBounds / element.Parent.AbsoluteSize.X, 1)
+            Size = UDim2.fromScale(math.min(textBounds / parentWidth, 1), 1)
         }
     ):Play()
 end
@@ -406,7 +411,7 @@ element.Text.FocusLost:Connect(
             element,
             UILibrary.TweenInfo,
             {
-                BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+                BackgroundColor3 = Color3.fromRGB(26, 27, 37)
             }
         ):Play()
 
@@ -447,13 +452,15 @@ cheatBase.LayoutOrder = Utils.getLayoutOrder(self.Section.Border.Content)
 local element = cheatBase.Content.ElementContent.Keybind
 
 local function updateSize()
-    local textBounds = math.clamp(element.Text.TextBounds.X, 10, element.Parent.AbsoluteSize.X) + 20
+    --// the parent can report a 0 width before its first layout pass
+    local parentWidth = math.max(element.Parent.AbsoluteSize.X, 60)
+    local textBounds = math.clamp(element.Text.TextBounds.X, 10, parentWidth) + 20
 
     TweenService:Create(
         element,
         UILibrary.TweenInfo,
         {
-            Size = UDim2.fromScale(textBounds / element.Parent.AbsoluteSize.X, 1)
+            Size = UDim2.fromScale(math.min(textBounds / parentWidth, 1), 1)
         }
     ):Play()
 end
@@ -475,18 +482,20 @@ functions.setValue = function(new)
     currentKBInfo = {}
 
     keyPressConn =
-        game:GetService("UserInputService").InputBegan:Connect(
-        function(input, gp)
-            if gp then
-                return
-            end
+        UILibrary.trackConnection(
+        UserInputService.InputBegan:Connect(
+            function(input, gp)
+                if gp then
+                    return
+                end
 
-            if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == currentKb then
-                callback()
-            elseif input.UserInputType.Name == currentKb.Name then
-                callback()
+                if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == currentKb then
+                    callback()
+                elseif input.UserInputType.Name == currentKb.Name then
+                    callback()
+                end
             end
-        end
+        )
     )
 end
 
@@ -517,29 +526,42 @@ setupEffects(element, element.HoverFrame):Connect(
         local old = functions.getValue()
 
         conn =
-            game:GetService("UserInputService").InputBegan:Connect(
-            function(input, gp)
-                --if gp then return end
+            UILibrary.trackConnection(
+            UserInputService.InputBegan:Connect(
+                function(input, gp)
+                    --if gp then return end
 
-                if input.UserInputType == Enum.UserInputType.Keyboard then
-                    currentKb = input.KeyCode
+                    if input.UserInputType == Enum.UserInputType.Keyboard then
+                        rebinding = false
 
-                    rebinding = false
+                        if input.KeyCode == Enum.KeyCode.Escape then
+                            --// cancel the rebind, restore the previous key
+                            if old then
+                                functions.setValue(old)
+                            else
+                                element.Text.Text = "None"
+                                updateSize()
+                            end
+                        else
+                            currentKb = input.KeyCode
 
-                    functions.setValue(currentKb)
-                    conn:Disconnect()
-                elseif
-                    input.UserInputType == Enum.UserInputType.MouseButton2 or
-                        input.UserInputType == Enum.UserInputType.MouseButton1
-                    then
-                    currentKb = input.UserInputType
+                            functions.setValue(currentKb)
+                        end
 
-                    rebinding = false
+                        conn:Disconnect()
+                    elseif
+                        input.UserInputType == Enum.UserInputType.MouseButton2 or
+                            input.UserInputType == Enum.UserInputType.MouseButton1
+                        then
+                        currentKb = input.UserInputType
 
-                    functions.setValue(currentKb)
-                    conn:Disconnect()
+                        rebinding = false
+
+                        functions.setValue(currentKb)
+                        conn:Disconnect()
+                    end
                 end
-            end
+            )
         )
 
         currentKBInfo.old = old
@@ -567,11 +589,11 @@ self.oldSelf.oldSelf.oldSelf.UI[self.oldSelf.oldSelf.categoryUI.Name][self.oldSe
 return meta
 end
 
-function toInteger(color)
-return math.floor(color.r * 255) * 256 ^ 2 + math.floor(color.g * 255) * 256 + math.floor(color.b * 255)
+local function toInteger(color)
+return math.floor(color.R * 255) * 256 ^ 2 + math.floor(color.G * 255) * 256 + math.floor(color.B * 255)
 end
 
-function toHex(color)
+local function toHex(color)
 local int = toInteger(color)
 
 local current = int
@@ -597,6 +619,11 @@ repeat
     current = math.floor(current / 16)
     final = final .. char
 until current <= 0
+
+--// pad to a full 6 digit hex code (e.g. pure black -> #000000)
+while #final < 6 do
+    final = final .. "0"
+end
 
 return "#" .. string.reverse(final)
 end
@@ -766,6 +793,7 @@ functions.openMenu = function()
 
     table.insert(
         connections,
+        UILibrary.trackConnection(
         RunService.RenderStepped:Connect(
             function()
                 local mousePos =
@@ -819,6 +847,7 @@ functions.openMenu = function()
                     Content.ClrDisplay.Hex.Textbox.Text = toHex(clr)
                 end
             end
+        )
         )
     )
 
@@ -959,7 +988,7 @@ element.Text.Label.FocusLost:Connect(
             element.Text,
             UILibrary.TweenInfo,
             {
-                ImageColor3 = Color3.fromRGB(25, 25, 25)
+                ImageColor3 = Color3.fromRGB(26, 27, 37)
             }
         ):Play()
 
@@ -1032,6 +1061,14 @@ if sett.Max == nil then
     sett.Max = 10
 end
 
+if sett.Max <= sett.Min then
+    sett.Max = sett.Min + 1
+end
+
+local function toScale(v)
+    return math.clamp((v - sett.Min) / (sett.Max - sett.Min), 0, 1)
+end
+
 local sliderValue = sett.Min
 local scaleValue = 0
 
@@ -1043,7 +1080,7 @@ functions.setValue = function(v, scale)
     sliderValue = math.floor(v)
     scaleValue = scale
 
-    element.KeyInput.Text.Text = tostring(math.floor(v))
+    element.KeyInput.Text.Text = tostring(sliderValue)
 
     TweenService:Create(
         element.Drag.Frame.UIGradient,
@@ -1053,7 +1090,7 @@ functions.setValue = function(v, scale)
         }
     ):Play()
 
-    callback(v)
+    callback(sliderValue)
 end
 
 functions.getValue = function()
@@ -1078,7 +1115,7 @@ element.KeyInput.Text.FocusLost:Connect(
             element.KeyInput,
             UILibrary.TweenInfo,
             {
-                BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+                BackgroundColor3 = Color3.fromRGB(26, 27, 37)
             }
         ):Play()
 
@@ -1087,9 +1124,9 @@ element.KeyInput.Text.FocusLost:Connect(
         end
 
         if tonumber(element.KeyInput.Text.Text) then
-            local scale = math.clamp(tonumber(element.KeyInput.Text.Text) / sett.Max, 0, 1)
+            local newValue = tonumber(element.KeyInput.Text.Text)
 
-            functions.setValue(tonumber(element.KeyInput.Text.Text), scale)
+            functions.setValue(newValue, toScale(newValue))
         else
             element.KeyInput.Text.Text = tostring(math.floor(sliderValue))
         end
@@ -1098,23 +1135,23 @@ element.KeyInput.Text.FocusLost:Connect(
 
 local holding = false
 
-RunService.RenderStepped:Connect(
-    function()
-        if holding then
-            local mouseX = LocalPlayer:GetMouse().X
-            local sliderPos = element.Drag.AbsolutePosition.X
+UILibrary.trackConnection(
+    RunService.RenderStepped:Connect(
+        function()
+            if holding then
+                local mouseX = LocalPlayer:GetMouse().X
+                local sliderPos = element.Drag.AbsolutePosition.X
 
-            local leftBoundary = element.Drag.AbsolutePosition.X - (element.Drag.AbsoluteSize.X)
+                local rightBoundary = element.Drag.AbsolutePosition.X + (element.Drag.AbsoluteSize.X)
 
-            local rightBoundary = element.Drag.AbsolutePosition.X + (element.Drag.AbsoluteSize.X)
+                local maxPos = math.clamp((mouseX - sliderPos) / (rightBoundary - sliderPos), 0, 1)
 
-            local maxPos = math.clamp((mouseX - sliderPos) / (rightBoundary - sliderPos), 0, 1)
+                local val = ((sett.Max - sett.Min) * maxPos) + sett.Min
 
-            local val = ((sett.Max - sett.Min) * maxPos) + sett.Min
-
-            functions.setValue(val, maxPos)
+                functions.setValue(val, maxPos)
+            end
         end
-    end
+    )
 )
 
 element.Drag.InputBegan:Connect(
@@ -1142,11 +1179,11 @@ element.Drag.InputEnded:Connect(
 )
 
 if sett.Default then
-    local scale = math.clamp(tonumber(sett.Default) / sett.Max, 0, 1)
-    functions.setValue(tonumber(sett.Default), scale)
+    local default = math.clamp(tonumber(sett.Default), sett.Min, sett.Max)
+    functions.setValue(default, toScale(default))
 else
-    local scale = math.clamp((((sett.Max - sett.Min) / 2) + sett.Min) / sett.Max, 0, 1)
-    functions.setValue(tonumber((((sett.Max - sett.Min) / 2) + sett.Min)), scale)
+    local mid = ((sett.Max - sett.Min) / 2) + sett.Min
+    functions.setValue(mid, toScale(mid))
 end
 
 local meta =
@@ -1328,7 +1365,7 @@ local function updateDropdown()
                             Option,
                             UILibrary.TweenInfo,
                             {
-                                ImageColor3 = Color3.fromRGB(25, 25, 25)
+                                ImageColor3 = Color3.fromRGB(26, 27, 37)
                             }
                         ):Play()
                     end

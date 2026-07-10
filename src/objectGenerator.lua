@@ -310,7 +310,7 @@ local function getObjects()
 
         Gui.Button.Name = "Button"
         Gui.Button.Parent = Gui.Cheats
-        Gui.Button.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.Button.BackgroundColor3 = Color3.fromRGB(26, 27, 37)
         Gui.Button.BorderColor3 = Color3.fromRGB(27, 42, 53)
         Gui.Button.BorderSizePixel = 0
         Gui.Button.Size = UDim2.new(1, 0, 1, 0)
@@ -350,7 +350,7 @@ local function getObjects()
         Gui.Text.ZIndex = 112
         Gui.Text.Font = Enum.Font.GothamSemibold
         Gui.Text.Text = "BUTTON WITHOUT TITLE OR DESC"
-        Gui.Text.TextColor3 = Color3.fromRGB(100, 100, 100)
+        Gui.Text.TextColor3 = Color3.fromRGB(150, 153, 170)
         Gui.Text.TextScaled = true
         Gui.Text.TextSize = 14.000
         Gui.Text.TextWrapped = true
@@ -369,7 +369,7 @@ local function getObjects()
 
         Gui.Checkbox.Name = "Checkbox"
         Gui.Checkbox.Parent = Gui.Cheats
-        Gui.Checkbox.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.Checkbox.BackgroundColor3 = Color3.fromRGB(26, 27, 37)
         Gui.Checkbox.BorderSizePixel = 0
         Gui.Checkbox.Size = UDim2.new(0.779999971, 0, 0.779999971, 0)
         Gui.Checkbox.ZIndex = 110
@@ -409,7 +409,7 @@ local function getObjects()
 
         Gui.Toggle.Name = "Toggle"
         Gui.Toggle.Parent = Gui.Cheats
-        Gui.Toggle.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.Toggle.BackgroundColor3 = Color3.fromRGB(26, 27, 37)
         Gui.Toggle.BorderSizePixel = 0
         Gui.Toggle.Size = UDim2.new(0.300000012, 0, 0.600000024, 0)
         Gui.Toggle.ZIndex = 110
@@ -503,7 +503,7 @@ local function getObjects()
         Gui.Textbox.Name = "Textbox"
         Gui.Textbox.Parent = Gui.Cheats
         Gui.Textbox.AnchorPoint = Vector2.new(0, 0.5)
-        Gui.Textbox.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.Textbox.BackgroundColor3 = Color3.fromRGB(26, 27, 37)
         Gui.Textbox.BorderColor3 = Color3.fromRGB(27, 42, 53)
         Gui.Textbox.BorderSizePixel = 0
         Gui.Textbox.Position = UDim2.new(0, 0, 0.5, 0)
@@ -547,7 +547,7 @@ local function getObjects()
         Gui.Text_2.ClearTextOnFocus = false
         Gui.Text_2.Font = Enum.Font.GothamSemibold
         Gui.Text_2.Text = ""
-        Gui.Text_2.TextColor3 = Color3.fromRGB(100, 100, 100)
+        Gui.Text_2.TextColor3 = Color3.fromRGB(150, 153, 170)
         Gui.Text_2.TextScaled = true
         Gui.Text_2.TextSize = 14.000
         Gui.Text_2.TextWrapped = true
@@ -558,7 +558,7 @@ local function getObjects()
 
         Gui.Keybind.Name = "Keybind"
         Gui.Keybind.Parent = Gui.Cheats
-        Gui.Keybind.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.Keybind.BackgroundColor3 = Color3.fromRGB(26, 27, 37)
         Gui.Keybind.BorderSizePixel = 0
         Gui.Keybind.Size = UDim2.new(0.200000003, 0, 1, 0)
         Gui.Keybind.ZIndex = 110
@@ -597,7 +597,7 @@ local function getObjects()
         Gui.Text_3.ZIndex = 112
         Gui.Text_3.Font = Enum.Font.GothamSemibold
         Gui.Text_3.Text = "..."
-        Gui.Text_3.TextColor3 = Color3.fromRGB(100, 100, 100)
+        Gui.Text_3.TextColor3 = Color3.fromRGB(150, 153, 170)
         Gui.Text_3.TextSize = 14.000
 
         Gui.HoverFrame_4.Name = "HoverFrame"
@@ -634,7 +634,7 @@ local function getObjects()
         Gui.Text_4.Size = UDim2.new(0.699999988, 0, 0.800000012, 0)
         Gui.Text_4.ZIndex = 110
         Gui.Text_4.Image = "rbxassetid://7881709447"
-        Gui.Text_4.ImageColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.Text_4.ImageColor3 = Color3.fromRGB(26, 27, 37)
         Gui.Text_4.ScaleType = Enum.ScaleType.Slice
         Gui.Text_4.SliceCenter = Rect.new(512, 512, 512, 512)
         Gui.Text_4.SliceScale = 0.005
@@ -672,7 +672,7 @@ local function getObjects()
         Gui.Label.ZIndex = 112
         Gui.Label.Font = Enum.Font.Gotham
         Gui.Label.Text = ""
-        Gui.Label.TextColor3 = Color3.fromRGB(100, 100, 100)
+        Gui.Label.TextColor3 = Color3.fromRGB(150, 153, 170)
         Gui.Label.TextSize = 11.000
         Gui.Label.TextWrapped = true
 
@@ -733,7 +733,7 @@ local function getObjects()
 
         Gui.Drag.Name = "Drag"
         Gui.Drag.Parent = Gui.Slider
-        Gui.Drag.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        Gui.Drag.BackgroundColor3 = Color3.fromRGB(30, 31, 42)
         Gui.Drag.BorderSizePixel = 0
         Gui.Drag.LayoutOrder = -1
         Gui.Drag.Size = UDim2.new(0.75, 0, 0.200000003, 0)
@@ -743,7 +743,7 @@ local function getObjects()
         Gui.UICorner_11.Parent = Gui.Drag
 
         Gui.Frame_2.Parent = Gui.Drag
-        Gui.Frame_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Gui.Frame_2.BackgroundColor3 = Color3.fromRGB(140, 142, 255)
         Gui.Frame_2.BorderSizePixel = 0
         Gui.Frame_2.LayoutOrder = -1
         Gui.Frame_2.Size = UDim2.new(1, 0, 1, 0)
@@ -769,7 +769,7 @@ local function getObjects()
 
         Gui.KeyInput.Name = "KeyInput"
         Gui.KeyInput.Parent = Gui.Slider
-        Gui.KeyInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.KeyInput.BackgroundColor3 = Color3.fromRGB(26, 27, 37)
         Gui.KeyInput.BorderSizePixel = 0
         Gui.KeyInput.Size = UDim2.new(0.4, 0, 0.699999988, 0)
         Gui.KeyInput.ZIndex = 110
@@ -810,7 +810,7 @@ local function getObjects()
         Gui.Text_5.ZIndex = 111
         Gui.Text_5.Font = Enum.Font.GothamSemibold
         Gui.Text_5.Text = "10"
-        Gui.Text_5.TextColor3 = Color3.fromRGB(100, 100, 100)
+        Gui.Text_5.TextColor3 = Color3.fromRGB(150, 153, 170)
         Gui.Text_5.TextSize = 14.000
         Gui.Text_5.TextScaled = true
         Gui.Text_5.TextWrapped = true
@@ -830,7 +830,7 @@ local function getObjects()
         Gui.MainHolder.Name = "MainHolder"
         Gui.MainHolder.Parent = Gui.Dropdown
         Gui.MainHolder.AnchorPoint = Vector2.new(0, 0.5)
-        Gui.MainHolder.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.MainHolder.BackgroundColor3 = Color3.fromRGB(26, 27, 37)
         Gui.MainHolder.BorderSizePixel = 0
         Gui.MainHolder.Size = UDim2.new(1, 0, 0.850000024, 0)
         Gui.MainHolder.ZIndex = 111
@@ -874,7 +874,7 @@ local function getObjects()
         Gui.Text_6.ZIndex = 113
         Gui.Text_6.Font = Enum.Font.Gotham
         Gui.Text_6.Text = "None"
-        Gui.Text_6.TextColor3 = Color3.fromRGB(100, 100, 100)
+        Gui.Text_6.TextColor3 = Color3.fromRGB(150, 153, 170)
         Gui.Text_6.TextScaled = true
         Gui.Text_6.TextSize = 14.000
         Gui.Text_6.TextWrapped = true
@@ -910,7 +910,7 @@ local function getObjects()
         Gui.Icon_2.Size = UDim2.new(1, 0, 1, 0)
         Gui.Icon_2.ZIndex = 111
         Gui.Icon_2.Image = "rbxassetid://7072706663"
-        Gui.Icon_2.ImageColor3 = Color3.fromRGB(100, 100, 100)
+        Gui.Icon_2.ImageColor3 = Color3.fromRGB(150, 153, 170)
         Gui.Icon_2.ScaleType = Enum.ScaleType.Fit
 
         Gui.UIAspectRatioConstraint_5.Parent = Gui.Holder
@@ -922,7 +922,7 @@ local function getObjects()
 
         Gui.OptionHolder.Name = "OptionHolder"
         Gui.OptionHolder.Parent = Gui.Dropdown
-        Gui.OptionHolder.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.OptionHolder.BackgroundColor3 = Color3.fromRGB(26, 27, 37)
         Gui.OptionHolder.BorderSizePixel = 0
         Gui.OptionHolder.Position = UDim2.new(0, 0, 1.5, 0)
         Gui.OptionHolder.Size = UDim2.new(1, 0, 0, 0)
@@ -999,7 +999,7 @@ local function getObjects()
         Gui.Bottom.ZIndex = 120
         Gui.Bottom.AutoButtonColor = false
         Gui.Bottom.Image = "rbxassetid://7890831727"
-        Gui.Bottom.ImageColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.Bottom.ImageColor3 = Color3.fromRGB(26, 27, 37)
         Gui.Bottom.ScaleType = Enum.ScaleType.Slice
         Gui.Bottom.SliceCenter = Rect.new(512, 512, 512, 512)
         Gui.Bottom.SliceScale = 0.003
@@ -1040,7 +1040,7 @@ local function getObjects()
         Gui.Slot.ZIndex = 120
         Gui.Slot.AutoButtonColor = false
         Gui.Slot.Image = "rbxassetid://7890925834"
-        Gui.Slot.ImageColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.Slot.ImageColor3 = Color3.fromRGB(26, 27, 37)
         Gui.Slot.ScaleType = Enum.ScaleType.Slice
         Gui.Slot.SliceCenter = Rect.new(512, 512, 512, 512)
         Gui.Slot.SliceScale = 0.003
@@ -1090,7 +1090,7 @@ local function getObjects()
         Gui.Top.ZIndex = 120
         Gui.Top.AutoButtonColor = false
         Gui.Top.Image = "http://www.roblox.com/asset/?id=8374820043"
-        Gui.Top.ImageColor3 = Color3.fromRGB(25, 25, 25)
+        Gui.Top.ImageColor3 = Color3.fromRGB(26, 27, 37)
         Gui.Top.ScaleType = Enum.ScaleType.Slice
         Gui.Top.SliceCenter = Rect.new(512, 512, 512, 512)
         Gui.Top.SliceScale = 0.003
@@ -1249,7 +1249,8 @@ local function getObjects()
         Gui.MainUI.Name = "MainUI"
         Gui.MainUI.Parent = Gui.Window
         Gui.MainUI.AnchorPoint = Vector2.new(0.5, 0.5)
-        Gui.MainUI.BackgroundColor3 = Color3.fromRGB(21, 22, 29)
+        Gui.MainUI.BackgroundColor3 = Color3.fromRGB(15, 16, 23)
+        Gui.MainUI.BackgroundTransparency = 0.02
         Gui.MainUI.Position = UDim2.new(0.5, 0, 0.5, 0)
         --Gui.MainUI.Size = UDim2.new(0.47, 0, 0.75, 0)
         Gui.MainUI.Size = UDim2.new(0, 851, 0, 488)
@@ -1287,9 +1288,9 @@ local function getObjects()
 
         local mainStroke = Instance.new("UIStroke")
         mainStroke.Name = "Border"
-        mainStroke.Color = Color3.fromRGB(50, 52, 68)
+        mainStroke.Color = Color3.fromRGB(66, 68, 90)
         mainStroke.Thickness = 1
-        mainStroke.Transparency = 0.4
+        mainStroke.Transparency = 0.28
         mainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
         mainStroke.Parent = Gui.MainUI
 
@@ -1500,6 +1501,43 @@ local function getObjects()
         divider2.Position = UDim2.new(1, -1, 0, 0)
         divider2.Size = UDim2.new(0, 1, 1, 0)
         divider2.Parent = Gui.Sidebar2
+
+        local unloadBtn = Instance.new("ImageButton")
+        unloadBtn.Name = "Unload"
+        unloadBtn.AnchorPoint = Vector2.new(1, 0)
+        unloadBtn.Position = UDim2.new(1, -10, 0, 10)
+        unloadBtn.Size = UDim2.new(0, 26, 0, 26)
+        unloadBtn.BackgroundColor3 = Color3.fromRGB(28, 29, 38)
+        unloadBtn.BackgroundTransparency = 0.15
+        unloadBtn.AutoButtonColor = false
+        unloadBtn.Image = ""
+        unloadBtn.ZIndex = 150
+        unloadBtn.Parent = Gui.MainUI
+
+        local unloadCorner = Instance.new("UICorner")
+        unloadCorner.CornerRadius = UDim.new(1, 0)
+        unloadCorner.Parent = unloadBtn
+
+        local unloadStroke = Instance.new("UIStroke")
+        unloadStroke.Name = "Border"
+        unloadStroke.Color = Color3.fromRGB(50, 52, 68)
+        unloadStroke.Thickness = 1
+        unloadStroke.Transparency = 0.4
+        unloadStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        unloadStroke.Parent = unloadBtn
+
+        local unloadIcon = Instance.new("ImageLabel")
+        unloadIcon.Name = "Icon"
+        unloadIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+        unloadIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+        unloadIcon.Size = UDim2.new(0.55, 0, 0.55, 0)
+        unloadIcon.BackgroundTransparency = 1
+        unloadIcon.ZIndex = 151
+        unloadIcon.Image = "rbxassetid://3926305904"
+        unloadIcon.ImageRectOffset = Vector2.new(284, 4)
+        unloadIcon.ImageRectSize = Vector2.new(24, 24)
+        unloadIcon.ImageColor3 = Color3.fromRGB(150, 155, 172)
+        unloadIcon.Parent = unloadBtn
 
         Gui.UIAspectRatioConstraint_7.Parent = Gui.MainUI
         Gui.UIAspectRatioConstraint_7.AspectRatio = 1.7
@@ -2141,10 +2179,19 @@ local function getObjects()
 
         Gui.Border.Name = "Border"
         Gui.Border.Parent = Gui.Section
-        Gui.Border.BackgroundColor3 = Color3.fromRGB(25, 26, 34)
+        Gui.Border.BackgroundColor3 = Color3.fromRGB(20, 21, 30)
+        Gui.Border.BackgroundTransparency = 0.06
         Gui.Border.BorderSizePixel = 0
         Gui.Border.Size = UDim2.new(1, 0, 1, 0)
         Gui.Border.ZIndex = 107
+
+        local sectionStroke = Instance.new("UIStroke")
+        sectionStroke.Name = "Hairline"
+        sectionStroke.Color = Color3.fromRGB(255, 255, 255)
+        sectionStroke.Thickness = 1
+        sectionStroke.Transparency = 0.9
+        sectionStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+        sectionStroke.Parent = Gui.Border
 
         Gui.SectionTitle.Name = "SectionTitle"
         Gui.SectionTitle.Parent = Gui.Border
@@ -2156,7 +2203,7 @@ local function getObjects()
         Gui.SectionTitle.ZIndex = 110
         Gui.SectionTitle.Font = Enum.Font.GothamBold
         Gui.SectionTitle.Text = "TEXT BOXES"
-        Gui.SectionTitle.TextColor3 = Color3.fromRGB(110, 116, 140)
+        Gui.SectionTitle.TextColor3 = Color3.fromRGB(150, 154, 178)
         Gui.SectionTitle.TextScaled = true
         Gui.SectionTitle.TextSize = 14.000
         Gui.SectionTitle.TextWrapped = true
