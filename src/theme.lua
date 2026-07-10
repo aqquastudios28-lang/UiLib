@@ -1,5 +1,5 @@
 --// theme.lua
---// Central design-token module for QwenUILib — "premium black glass".
+--// Central design-token module for Obsidian — "premium black glass".
 --// Every color / radius / stroke / glow in the redesign is defined here so the
 --// whole look can be tuned from one place (and so the accent can be re-themed
 --// at runtime later). Kept old-Luau compatible: plain tables + functions only,

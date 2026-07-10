@@ -52,7 +52,7 @@ Frame.ZIndex = 300
 local Drag = Draggable.Drag(window.MainUI, Frame)
 
 --// Customize the GUI
-window.Watermark.Text = ("hydrahub v2 | %s | %s"):format(userId, gameName)
+window.Watermark.Text = ("Obsidian  |  %s  |  %s"):format(userId, gameName)
 local userinfo = window.MainUI.Sidebar.ContentHolder.UserInfo.Content
 userinfo.Rank.Text = rank
 userinfo.Title.Text = userId
