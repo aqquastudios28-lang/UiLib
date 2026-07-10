@@ -5389,6 +5389,7 @@ return function(UILibrary)
     local Players = game:GetService("Players")
     local LocalPlayer = Players.LocalPlayer
     local TweenService = game:GetService("TweenService")
+    local UserInputService = game:GetService("UserInputService")
 
     
     
@@ -5624,7 +5625,7 @@ card.ClipsDescendants = false
 card.ZIndex = 60
 card.Parent = wrapper
 Theme.corner(card, Theme.Radius.Panel)
-Theme.stroke(card, Theme.Color.Stroke, Theme.Alpha.Hairline, 1)
+local cardStroke = Theme.stroke(card, Theme.Color.Stroke, Theme.Alpha.Hairline, 1)
 Theme.shadow(card, 42, Theme.Alpha.Shadow)
 Theme.sheen(card, 0.5)
 
@@ -5635,7 +5636,7 @@ accent.BackgroundColor3 = Theme.Color.Accent
 accent.BorderSizePixel = 0
 accent.Position = UDim2.new(0, 10, 0.5, 0)
 accent.AnchorPoint = Vector2.new(0, 0.5)
-accent.Size = UDim2.new(0, 3, 1, -22)
+accent.Size = UDim2.new(0, 3, 1, -24)
 accent.ZIndex = 63
 accent.Parent = card
 Theme.corner(accent, UDim.new(1, 0))
@@ -5648,7 +5649,7 @@ badge.Name = "Badge"
 badge.BackgroundColor3 = Theme.Color.Accent
 badge.BackgroundTransparency = 0.84
 badge.BorderSizePixel = 0
-badge.Position = UDim2.new(0, 20, 0.5, 0)
+badge.Position = UDim2.new(0, 22, 0.5, 0)
 badge.AnchorPoint = Vector2.new(0, 0.5)
 badge.Size = UDim2.new(0, 30, 0, 30)
 badge.ZIndex = 63
@@ -5671,8 +5672,8 @@ badgeIcon.Parent = badge
 local title = Instance.new("TextLabel")
 title.Name = "Title"
 title.BackgroundTransparency = 1
-title.Position = UDim2.new(0, 60, 0, 12)
-title.Size = UDim2.new(1, -90, 0, 16)
+title.Position = UDim2.new(0, 62, 0, 13)
+title.Size = UDim2.new(1, -96, 0, 16)
 title.ZIndex = 63
 title.Font = Theme.Font.Bold
 title.Text = sett.Title or "Notification"
@@ -5686,8 +5687,8 @@ title.Parent = card
 local desc = Instance.new("TextLabel")
 desc.Name = "Desc"
 desc.BackgroundTransparency = 1
-desc.Position = UDim2.new(0, 60, 0, 30)
-desc.Size = UDim2.new(1, -76, 0, 24)
+desc.Position = UDim2.new(0, 62, 0, 31)
+desc.Size = UDim2.new(1, -80, 0, 22)
 desc.ZIndex = 63
 desc.Font = Theme.Font.Regular
 desc.Text = sett.Desc or ""
@@ -5703,7 +5704,7 @@ local close = Instance.new("ImageButton")
 close.Name = "Close"
 close.BackgroundTransparency = 1
 close.AnchorPoint = Vector2.new(1, 0)
-close.Position = UDim2.new(1, -10, 0, 10)
+close.Position = UDim2.new(1, -12, 0, 12)
 close.Size = UDim2.new(0, 16, 0, 16)
 close.ZIndex = 64
 close.Image = "rbxassetid://7072725342"
@@ -5751,11 +5752,28 @@ local function expire()
     end)
 end
 
-if bar then
-    TweenService:Create(bar, TweenInfo.new(sett.expire, Enum.EasingStyle.Linear), { Size = UDim2.new(0, 0, 0, 2) }):Play()
-    task.delay(sett.expire, function()
-        expire()
-    end)
+
+local hovering = false
+table.insert(connections, card.MouseEnter:Connect(function()
+    hovering = true
+    TweenService:Create(cardStroke, Theme.Tween.Quick, { Transparency = Theme.Alpha.HairlineHot }):Play()
+end))
+table.insert(connections, card.MouseLeave:Connect(function()
+    hovering = false
+    TweenService:Create(cardStroke, Theme.Tween.Quick, { Transparency = Theme.Alpha.Hairline }):Play()
+end))
+
+if sett.expire and bar then
+    local remaining = sett.expire
+    table.insert(connections, RunService.Heartbeat:Connect(function(dt)
+        if hovering then return end
+        remaining = remaining - dt
+        local frac = math.clamp(remaining / sett.expire, 0, 1)
+        bar.Size = UDim2.new(frac, 0, 0, 2)
+        if remaining <= 0 then
+            expire()
+        end
+    end))
 end
 
 table.insert(connections, close.MouseEnter:Connect(function()
@@ -5793,7 +5811,7 @@ modal.Name = "Prompt"
 modal.Active = true
 modal.AnchorPoint = Vector2.new(0.5, 0.5)
 modal.Position = UDim2.new(0.5, 0, 0.5, 0)
-modal.Size = UDim2.new(0, 336, 0, 184)
+modal.Size = UDim2.new(0, 336, 0, 190)
 modal.BackgroundColor3 = Theme.Color.WindowBase
 modal.BackgroundTransparency = Theme.Alpha.Glass
 modal.BorderSizePixel = 0
@@ -5855,7 +5873,7 @@ badgeIcon.Parent = badge
 local title = Instance.new("TextLabel")
 title.BackgroundTransparency = 1
 title.AnchorPoint = Vector2.new(0.5, 0)
-title.Position = UDim2.new(0.5, 0, 0, 68)
+title.Position = UDim2.new(0.5, 0, 0, 70)
 title.Size = UDim2.new(1, -32, 0, 20)
 title.ZIndex = 904
 title.Font = Theme.Font.Bold
@@ -5869,8 +5887,8 @@ title.Parent = modal
 local desc = Instance.new("TextLabel")
 desc.BackgroundTransparency = 1
 desc.AnchorPoint = Vector2.new(0.5, 0)
-desc.Position = UDim2.new(0.5, 0, 0, 90)
-desc.Size = UDim2.new(1, -44, 0, 36)
+desc.Position = UDim2.new(0.5, 0, 0, 94)
+desc.Size = UDim2.new(1, -44, 0, 34)
 desc.ZIndex = 904
 desc.Font = Theme.Font.Regular
 desc.Text = sett.Desc or ""
@@ -5981,6 +5999,16 @@ end))
 
 table.insert(connections, backdrop.MouseButton1Click:Connect(function()
     close(false)
+end))
+
+
+table.insert(connections, UserInputService.InputBegan:Connect(function(input, gp)
+    if gp then return end
+    if input.KeyCode == Enum.KeyCode.Return or input.KeyCode == Enum.KeyCode.KeypadEnter then
+        close(true)
+    elseif input.KeyCode == Enum.KeyCode.Escape then
+        close(false)
+    end
 end))
 
 bindable.Event:Wait()
