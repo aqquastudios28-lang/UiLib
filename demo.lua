@@ -4,7 +4,7 @@
 print("[DEBUG] 1. Initializing demo script...")
 
 -- Load the library from the latest sandbox-fixed, redesigned UI commit to bypass all CDN caching
-local url = "https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/a21dd3497c643bf03da8e980801b0d80d2a23c8c/build/bundle_plain.lua"
+local url = "https://raw.githubusercontent.com/aqquastudios28-lang/UiLib/212b1f2d84f78244b4a014b7542de47fe4f29f7f/build/bundle_plain.lua"
 print("[DEBUG] 2. Requesting raw UI Library content from URL:", url)
 
 local success, content = pcall(function()
@@ -289,6 +289,22 @@ ConfigSection:Button({
         Desc = "UI configuration loaded successfully.",
         expire = 3
     })
+end)
+
+ConfigSection:Button({
+    Title = "Unload Interface",
+    Description = "Fully removes the UI and unbinds every key/connection.",
+    ButtonName = "Unload"
+}, function()
+    local result = Window:Prompt({
+        Title = "Unload UI",
+        Desc = "Are you sure you want to unload the interface?"
+    })
+
+    if result then
+        print("[EVENT] Unloading UI via config button...")
+        Window:Unload()
+    end
 end)
 
 -- 9. Trigger Initial Delayed Prompt
